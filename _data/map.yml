@@ -1,0 +1,36 @@
+locations:
+  - id: bangkok
+    label: Bangkok
+    lat: 13.7563
+    lng: 100.5018
+    
+  - id: tokyo
+    label: Tokyo
+    lat: 35.6762
+    lng: 139.6503
+
+routes:
+  - from: bangkok
+    to: tokyo
+    mode: "Fly"
+
+# Legg til nye punkter med disse feltene:
+# - id: oslo
+#   label: Oslo
+#   lat: 59.9139
+#   lng: 10.7522
+#
+# Rekkefølgeinformasjon:
+# - Punktrekkefølgen i "locations" bestemmer uke-tallene på kartet.
+# - Markørene får automatisk "Uke 1", "Uke 2" osv. basert på rekkefølgen her.
+# - Hvis du ønsker en annen rekkefølge, flytt elementene i listen.
+#
+# Ruteforklaring:
+# - "from" og "to" refererer til id-ene i "locations".
+# - "mode" brukes til å bestemme fargen i legend og på ruten.
+# - Eksempel: mode: "Fly", "Tog", "Bil", "Buss" eller "Båt".
+#
+# Legg til nye ruter med disse feltene:
+# - from: tokyo
+#   to: osaka
+#   mode: "Tog"

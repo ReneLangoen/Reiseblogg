@@ -1,0 +1,41 @@
+title: "Thea og Renés reiseblogg"
+description: "Ukentlige oppdateringer fra vårt østlige eventyr, skrevet for venner, familie og oss selv i fremtiden."
+url: "" # Add your live URL later, e.g. https://username.github.io
+baseurl: "" # Add /repo-name if publishing to a project GitHub Pages site
+lang: nb
+timezone: Europe/Oslo
+
+permalink: /:categories/:title/
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+collections:
+  posts:
+    output: true
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      author: "Us"
+      image: ""
+      location: ""
+      stay: ""
+      days: ""
+      budget: ""
+      tags: []
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: default
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
