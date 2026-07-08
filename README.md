@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Minimal Travel Jekyll Blog
 
 En enkel Jekyll-blogg for dagboks- og reiseoppslag.
