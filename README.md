@@ -1,36 +1,54 @@
-<<<<<<< HEAD
-# Minimal Travel Jekyll Blog
+## Reiseblogg (Jekyll)
 
-En enkel Jekyll-blogg for dagboks- og reiseoppslag.
+Dette repo inneholder en enkel Jekyll-basert reiseblogg. Her er raske instruksjoner for å jobbe med den lokalt.
 
-## Kjør lokalt
+Forutsetninger
+- Ruby 2.7+ og `bundler` installert
 
+Kjør lokalt
 ```bash
 bundle install
 bundle exec jekyll serve
 ```
 
-Åpne den lokale adressen som vises i terminalen, vanligvis http://localhost:4000.
+Åpne deretter http://127.0.0.1:4000/ i nettleseren.
 
-## Legg til et nytt innlegg
+Legg til et nytt innlegg
+- Lag en ny fil i `_posts/` med formatet `YYYY-MM-DD-slug.md`.
+- Eksempel: `2026-07-15-uke_3_bali.md`
+- Front matter (minimalt):
 
-Opprett en ny fil i `_posts/` med navnet:
-
-```text
-YYYY-MM-DD-din-post-tittel.md
+```yaml
+---
+title: "Uke 3: Bali"
+description: "Kort beskrivelse"
+location: "Bali, Indonesia"
+tags: [reisedagbok, uke 3, Indonesia]
+week_label: "Uke 3"
+image: "/pictures/week-3/beach.jpg"
+gallery_images:
+	- image: "/pictures/week-3/beach.jpg"
+		caption: "Strandliv"
+---
 ```
 
-Eksempel:
+Bilder
+- Legg bilder i `pictures/` og referer til dem i front matter med full sti, f.eks. `/pictures/week-1/photo.jpg`.
 
-```text
-2026-08-15-tre-dager-i-roma.md
-```
+Kart og Galleri
+- Kartet er tilgjengelig på `/map/`.
+- Galleri samler `gallery_images` fra postene.
 
-## Hovedfiler
+Diverse
+- Jekyll bruker datoen fra filnavnet i `_posts/` som post-datoen. Du trenger ikke et `date:`-felt med mindre du vil overskrive den.
+- Kjør `bundle exec jekyll build` for å generere siden i `_site/`.
 
-- `_config.yml` — innstillinger for nettstedet
-- `_layouts/default.html` — grunnmal for sider
-- `_layouts/post.html` — mal for blogginnlegg
-- `_includes/header.html` — navigasjon
-- `_posts/` — publiserte innlegg
-- `assets/css/style.css` — stil og layout
+Hovedfiler
+- `_config.yml` — nettstedinnstillinger
+- `_layouts/` — sidemaler
+- `_includes/` — gjenbrukbare deler
+- `_posts/` — innlegg
+- `assets/` — CSS og andre statiske filer
+
+Kontakt
+- Gi beskjed hvis du vil at jeg skal automatisere bilder, perma-linker eller legge til deploy-oppsett.
