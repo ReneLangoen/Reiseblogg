@@ -20,6 +20,12 @@ locations:
 
 
 
+  - id: sendai
+    label: Sendai
+    country: Japan
+    lat: 38.2678
+    lng: 140.8691
+
 routes:
 
   - from: bergen
@@ -34,6 +40,10 @@ routes:
 
 
  
+
+  - from: tokyo
+    to: sendai
+    mode: "Bil"
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
