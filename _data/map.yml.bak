@@ -19,6 +19,27 @@ locations:
     lng: 139.6503
 
 
+  - id: sendai
+    label: Sendai
+    country: Japan
+    lat: 38.2678
+    lng: 140.8691
+
+
+
+
+  - id: kofu
+    label: Kofu
+    country: Japan
+    ghost: true
+    lat: 35.6652
+    lng: 138.5710
+
+  - id: osaka
+    label: Osaka
+    country: Japan
+    lat: 34.6938
+    lng: 135.5015
 
 routes:
 
@@ -33,7 +54,16 @@ routes:
     distance_km: 4598.9
 
 
- 
+  - from: tokyo
+    to: sendai
+    mode: "Bil"
+    distance_km: 369.5
+
+
+
+  - from: sendai
+    to: kofu
+    mode: "Bil"
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

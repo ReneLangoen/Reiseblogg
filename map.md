@@ -13,18 +13,18 @@ permalink: /map/
   <div class="map-legend">
     <div class="map-legend-title">Hvordan vi reiste</div>
     <div class="map-legend-items">
-      <div class="map-legend-item"><span class="map-legend-line" style="background:#1f78b4"></span>Fly</div>
-      <div class="map-legend-item"><span class="map-legend-line" style="background:#33a02c"></span>Bil</div>
-      <div class="map-legend-item"><span class="map-legend-line" style="background:#ff7f00"></span>Buss</div>
-      <div class="map-legend-item"><span class="map-legend-line" style="background:#6a3d9a"></span>Båt</div>
-      <div class="map-legend-item"><span class="map-legend-line" style="background:#e31a1c"></span>Tog</div>
+      <div class="map-legend-item" data-mode="Fly"><span class="map-legend-line" style="background:#1f78b4"></span>Fly</div>
+      <div class="map-legend-item" data-mode="Bil"><span class="map-legend-line" style="background:#33a02c"></span>Bil</div>
+      <div class="map-legend-item" data-mode="Buss"><span class="map-legend-line" style="background:#ff7f00"></span>Buss</div>
+      <div class="map-legend-item" data-mode="Båt"><span class="map-legend-line" style="background:#6a3d9a"></span>Båt</div>
+      <div class="map-legend-item" data-mode="Tog"><span class="map-legend-line" style="background:#e31a1c"></span>Tog</div>
     </div>
   </div>
   <div id="travel-map" class="travel-map"></div>
 </div>
 
 <script>
-  const mapData = {
+  window.mapData = {
     locations: {{ site.data.map.locations | jsonify }},
     routes: {{ site.data.map.routes | jsonify }}
   };
@@ -72,6 +72,12 @@ permalink: /map/
     });
 
     const locationById = Object.fromEntries(mapData.locations.map(loc => [loc.id, loc]));
+    const allLocations = mapData.locations || [];
+    const visibleLocations = allLocations.filter(l => !l.ghost);
+
+    // Norwegian number formatter used for tooltips and stats
+    const nbFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 0 });
+    const nf = v => (typeof v === 'number' && isFinite(v)) ? nbFmt.format(Math.round(v)) : v;
     const markerColor = '#4f7d76';
 
     const mapContainer = map.getContainer();
@@ -84,31 +90,145 @@ permalink: /map/
       }
     }, { passive: false });
 
-    mapData.routes.forEach(route => {
+    // Great-circle interpolation for geodesic routes
+    function interpolateGreatCircle(lat1, lon1, lat2, lon2, segments) {
+      const toRad = v => v * Math.PI / 180;
+      const toDeg = v => v * 180 / Math.PI;
+      const φ1 = toRad(lat1), λ1 = toRad(lon1);
+      const φ2 = toRad(lat2), λ2 = toRad(lon2);
+      const Δφ = φ2 - φ1;
+      const Δλ = λ2 - λ1;
+      const a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
+      const δ = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); // angular distance in radians
+      if (δ === 0) return [[lat1, lon1]];
+      const R = 6371; // km
+      // choose segments based on distance (approx 50 km per segment)
+      const approxKm = δ * R;
+      const segs = segments || Math.min(128, Math.max(2, Math.ceil(approxKm / 50)));
+      const points = [];
+      for (let i = 0; i <= segs; i++) {
+        const f = i / segs;
+        const A = Math.sin((1 - f) * δ) / Math.sin(δ);
+        const B = Math.sin(f * δ) / Math.sin(δ);
+        const x = A * Math.cos(φ1) * Math.cos(λ1) + B * Math.cos(φ2) * Math.cos(λ2);
+        const y = A * Math.cos(φ1) * Math.sin(λ1) + B * Math.cos(φ2) * Math.sin(λ2);
+        const z = A * Math.sin(φ1) + B * Math.sin(φ2);
+        const φ = Math.atan2(z, Math.sqrt(x * x + y * y));
+        const λ = Math.atan2(y, x);
+        points.push([toDeg(φ), toDeg(λ)]);
+      }
+      return points;
+    }
+
+    // helper: haversine distance (km)
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // km
+      const toRad = v => v * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // render routes; for car routes without explicit points we fetch a driving route from OSRM
+    async function renderRoute(route) {
       const from = locationById[route.from];
       const to = locationById[route.to];
       if (!from || !to) return;
+      // render routes even when endpoints are ghost; ghost locations are hidden
+      // as markers but should still be part of route sequences
 
-      L.polyline([[from.lat, from.lng], [to.lat, to.lng]], {
+      let linePoints = null;
+      let routeDist = 0;
+
+      // Special case: Bergen -> Bangkok should be drawn as two geodesic legs via Munich
+      if (route.from === 'bergen' && route.to === 'bangkok') {
+        const munich = { lat: 48.1351, lng: 11.5820 };
+        const part1 = interpolateGreatCircle(from.lat, from.lng, munich.lat, munich.lng);
+        const part2 = interpolateGreatCircle(munich.lat, munich.lng, to.lat, to.lng);
+        linePoints = part1.concat(part2.slice(1));
+      }
+
+      // prefer explicit points if provided
+      if (!linePoints && route.points && Array.isArray(route.points) && route.points.length) {
+        linePoints = route.points.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
+      } else if (!linePoints && route.mode && (String(route.mode).toLowerCase().includes('bil') || String(route.mode).toLowerCase().includes('car'))) {
+        // fetch driving route from OSRM between from and to
+        try {
+          const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
+          const resp = await fetch(url);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.routes && data.routes.length) {
+              const geom = data.routes[0].geometry;
+              if (geom && Array.isArray(geom.coordinates) && geom.coordinates.length) {
+                linePoints = geom.coordinates.map(c => [c[1], c[0]]); // convert [lon,lat] to [lat,lon]
+                // OSRM returns distance in meters
+                routeDist = (typeof route.distance_km === 'number' && isFinite(route.distance_km)) ? route.distance_km : (data.routes[0].distance / 1000);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('OSRM routing failed, falling back to great-circle', e);
+        }
+      }
+
+      // fallback: geodesic interpolation
+      if (!linePoints) {
+        linePoints = interpolateGreatCircle(from.lat, from.lng, to.lat, to.lng);
+      }
+
+      // if routeDist still zero and there are points, compute along-polyline distance
+      if (!routeDist) {
+        for (let i = 1; i < linePoints.length; i++) {
+          const a = linePoints[i-1];
+          const b = linePoints[i];
+          routeDist += haversine(a[0], a[1], b[0], b[1]);
+        }
+      }
+
+      const poly = L.polyline(linePoints, {
         color: route.color || modeColors[route.mode] || '#4f7d76',
         weight: 3,
         opacity: 0.8
       }).addTo(map);
-    });
 
-    mapData.locations.forEach((loc, index) => {
-      const weekLabel = loc.week ? (String(loc.week).match(/\d+/) || [loc.week])[0] : String(index + 1);
-      const labelText = loc.label || loc.name || loc.id.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const markerIcon = L.divIcon({
-        html: `
-          <div class="map-marker">
-            <span class="map-marker-dot" style="background:${markerColor}">${weekLabel}</span>
-          </div>
-        `,
-        className: 'map-marker-wrapper',
-        iconSize: [26, 26],
-        iconAnchor: [13, 13]
+      const displayDist = (typeof route.distance_km === 'number' && isFinite(route.distance_km)) ? route.distance_km : routeDist;
+
+      poly.bindTooltip(`${nf(displayDist)} km`, {
+        permanent: false,
+        direction: 'center',
+        className: 'route-tooltip'
       });
+      poly.on('mouseover', function(e) { this.openTooltip(e.latlng); });
+      poly.on('mousemove', function(e) { this.setTooltipLatLng(e.latlng); });
+      poly.on('mouseout', function() { this.closeTooltip(); });
+    }
+
+    // fire off rendering for all routes
+    for (const route of mapData.routes) {
+      renderRoute(route);
+    }
+
+    visibleLocations.forEach((loc, vindex) => {
+      // find index among all locations (for home detection) and among visible (for week numbering)
+      const indexAll = allLocations.findIndex(l => l.id === loc.id);
+      // Week number should be the position among non-ghost locations (visibleLocations)
+      const weekLabel = loc.week ? (String(loc.week).match(/\d+/) || [loc.week])[0] : String(vindex);
+      const labelText = loc.label || loc.name || loc.id.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      // consider home the very first entry in the full locations list
+      const isHome = indexAll === 0 || weekLabel === '0';
+      const markerIcon = L.divIcon({
+          html: `
+              <div class="map-marker">
+                <span class="map-marker-dot${isHome ? ' zero' : ''}" ${isHome ? '' : `style="background:${markerColor}"`}>${weekLabel}</span>
+              </div>
+            `,
+          className: 'map-marker-wrapper',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
 
       const marker = L.marker([loc.lat, loc.lng], {
         icon: markerIcon,
@@ -122,7 +242,201 @@ permalink: /map/
       marker.bindPopup(`<strong>${labelText}</strong><br>Uke ${weekLabel}`);
     });
 
-    const bounds = L.latLngBounds(mapData.locations.map(loc => [loc.lat, loc.lng]));
-    map.fitBounds(bounds.pad(0.2));
+    const bounds = L.latLngBounds(visibleLocations.map(loc => [loc.lat, loc.lng]));
+    if (visibleLocations.length) map.fitBounds(bounds.pad(0.2));
   });
+</script>
+
+<!-- Statistics panel (always visible) -->
+<style>
+  .map-stats { margin-top:1rem; display:block }
+  .map-stats table { width:100%; border-collapse:collapse }
+  .map-stats th, .map-stats td { text-align:left; padding:6px 8px; border-bottom:1px solid rgba(0,0,0,0.04) }
+</style>
+
+<div class="map-stats" id="mapStats">
+  <h3>Statistikk</h3>
+  <div id="statsSummary">Laster statistikk…</div>
+  <div id="statsList">Laster steder…</div>
+</div>
+
+<script>
+  (function () {
+    // compute stats once DOM and data available
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const locations = window.mapData && window.mapData.locations ? window.mapData.locations : [];
+        const routes = window.mapData && window.mapData.routes ? window.mapData.routes : [];
+
+        function haversine(lat1, lon1, lat2, lon2) {
+          const R = 6371; // km
+          const toRad = v => v * Math.PI / 180;
+          const dLat = toRad(lat2 - lat1);
+          const dLon = toRad(lon2 - lon1);
+          const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+          return R * c;
+        }
+
+        const summary = {};
+        // Exclude the first location (home) from city/country counts
+        const countedLocations = locations.slice(1);
+        summary.cities = Math.max(0, countedLocations.length);
+        summary.routes = routes.length;
+
+        // distance metrics over routes
+        const distances = [];
+        routes.forEach(r => {
+          const from = locations.find(l => l.id === r.from);
+          const to = locations.find(l => l.id === r.to);
+          if (!from || !to) return;
+          // prefer explicit override
+          if (typeof r.distance_km === 'number' && isFinite(r.distance_km)) {
+            distances.push({ d: r.distance_km, from: r.from, to: r.to, mode: r.mode });
+            return;
+          }
+          // special-case Bergen -> Bangkok to route via Munich geodesics
+          if (r.from === 'bergen' && r.to === 'bangkok') {
+            const munich = { lat: 48.1351, lng: 11.5820 };
+            const d1 = haversine(from.lat, from.lng, munich.lat, munich.lng);
+            const d2 = haversine(munich.lat, munich.lng, to.lat, to.lng);
+            distances.push({ d: d1 + d2, from: r.from, to: r.to, mode: r.mode });
+            return;
+          }
+          // if route.points exist, sum along them
+          if (r.points && Array.isArray(r.points) && r.points.length) {
+            const pts = r.points.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
+            let s = 0;
+            for (let i = 1; i < pts.length; i++) s += haversine(pts[i-1][0], pts[i-1][1], pts[i][0], pts[i][1]);
+            distances.push({ d: s, from: r.from, to: r.to, mode: r.mode });
+            return;
+          }
+          // fallback: straight haversine between endpoints
+          const d = haversine(from.lat, from.lng, to.lat, to.lng);
+          distances.push({ d, from: r.from, to: r.to, mode: r.mode });
+        });
+
+        const totalDistance = distances.reduce((s, x) => s + x.d, 0);
+        summary.totalDistanceKm = totalDistance;
+
+        // bounding box and centroid
+        if (locations.length) {
+          const lats = locations.map(l=>l.lat);
+          const lngs = locations.map(l=>l.lng);
+          summary.bounds = { minLat: Math.min(...lats), maxLat: Math.max(...lats), minLng: Math.min(...lngs), maxLng: Math.max(...lngs) };
+          summary.centroid = { lat: lats.reduce((a,b)=>a+b,0)/lats.length, lng: lngs.reduce((a,b)=>a+b,0)/lngs.length };
+        }
+
+        // estimate countries primarily from `country` field in map.yml, else fall back to parsing `label`
+        const countries = new Set();
+        let unknownCountries = 0;
+        countedLocations.forEach(l => {
+          if (l.country && String(l.country).trim()) {
+            countries.add(String(l.country).trim());
+            return;
+          }
+          if (l.label && l.label.includes(',')) {
+            const parts = l.label.split(',').map(s=>s.trim()).filter(Boolean);
+            if (parts.length) {
+              const country = parts[parts.length-1];
+              countries.add(country);
+            } else {
+              unknownCountries++;
+            }
+            return;
+          }
+          unknownCountries++;
+        });
+        summary.estimatedCountries = countries.size;
+        summary.unknownCountryLabels = unknownCountries;
+
+        // distances from home (first location)
+        const home = locations[0];
+        if (home) {
+          const distFromHome = locations.map(l => ({ id: l.id, label: l.label, d: haversine(home.lat, home.lng, l.lat, l.lng) }));
+          distFromHome.sort((a,b)=>b.d-a.d);
+          summary.farthest = distFromHome.slice(0,5);
+        }
+
+        // render simplified summary HTML (user requested only three labels)
+        const el = document.getElementById('statsSummary');
+        const nbFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 0 });
+        const nf = v => typeof v === 'number' ? nbFmt.format(Math.round(v)) : v;
+        const antalLand = summary.estimatedCountries;
+        const antalByer = summary.cities;
+        const distanseReist = summary.totalDistanceKm;
+
+        // compute per-mode distances
+        const modeSums = {};
+        distances.forEach(x => {
+          const m = x.mode ? String(x.mode).trim() : 'Annet';
+          modeSums[m] = (modeSums[m] || 0) + (Number(x.d) || 0);
+        });
+
+        // preferred display order
+        const order = ['Fly', 'Bil', 'Tog', 'Buss', 'Båt'];
+        const modesToShow = [];
+        // add known modes from order if present
+        order.forEach(m => { if (modeSums[m]) modesToShow.push(m); });
+        // add any other modes
+        Object.keys(modeSums).forEach(m => { if (!modesToShow.includes(m)) modesToShow.push(m); });
+
+        // build list of key/value pairs then render into table with two pairs per row
+        const pairs = [];
+        pairs.push(['Antall land', String(antalLand)]);
+        pairs.push(['Antall byer', String(antalByer)]);
+        modesToShow.forEach(m => pairs.push([`Distanse ${m}`, `${nf(modeSums[m])} km`]));
+        pairs.push(['Total distanse', `${nf(distanseReist)} km`]);
+
+        let html = `<table>`;
+        for (let i = 0; i < pairs.length; i += 2) {
+          const a = pairs[i];
+          const b = pairs[i+1];
+          html += '<tr>';
+          html += `<th>${a[0]}</th><td>${a[1]}</td>`;
+          if (b) html += `<th>${b[0]}</th><td>${b[1]}</td>`;
+          else html += `<th></th><td></td>`;
+          html += '</tr>';
+        }
+        html += `</table>`;
+        el.innerHTML = html;
+        // hide legend items for modes with zero distance
+        const legendItems = document.querySelectorAll('.map-legend-item[data-mode]');
+        legendItems.forEach(elm => {
+          const m = elm.getAttribute('data-mode');
+          if (!m) return;
+          if (!modeSums[m] || modeSums[m] === 0) elm.style.display = 'none';
+          else elm.style.display = '';
+        });
+        // Render full grouped list of countries -> cities (excluding first/home)
+        try {
+          const listEl = document.getElementById('statsList');
+          const groups = {};
+          countedLocations.forEach(l => {
+            const country = (l.country && String(l.country).trim()) || (l.label && l.label.split(',').pop().trim()) || 'Ukjent';
+            if (!groups[country]) groups[country] = new Set();
+            const cityLabel = l.label || l.id;
+            groups[country].add(cityLabel);
+          });
+          // Convert to sorted arrays
+          const countryNames = Object.keys(groups).sort((a,b)=>a.localeCompare(b, 'nb') );
+          let listHtml = '<h4>Steder etter land</h4>';
+          listHtml += '<div class="places-list">';
+          countryNames.forEach(cn => {
+            const cities = Array.from(groups[cn]).sort((a,b)=>a.localeCompare(b, 'nb'));
+            listHtml += `<div class="country-group"><strong>${cn}</strong><ul>`;
+            cities.forEach(ct => { listHtml += `<li>${ct}</li>`; });
+            listHtml += '</ul></div>';
+          });
+          listHtml += '</div>';
+          listEl.innerHTML = listHtml;
+        } catch (e) {
+          console.warn('Failed to render places list', e);
+        }
+      } catch (e) {
+        const el = document.getElementById('statsSummary');
+        el.textContent = 'Kunne ikke beregne statistikk: ' + e.message;
+      }
+    });
+  })();
 </script>

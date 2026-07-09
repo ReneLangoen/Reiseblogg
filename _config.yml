@@ -1,7 +1,7 @@
 title: "Thea og Renés reiseblogg"
 description: "Ukentlige oppdateringer fra vårt østlige eventyr, skrevet for venner, familie og oss selv i fremtiden."
-url: "https://renelangoen.github.io" # Add your live URL later, e.g. https://username.github.io
-baseurl: "/Reiseblogg" # Add /repo-name if publishing to a project GitHub Pages site
+url: "https://renelangoen.github.io"
+baseurl: "/Reiseblogg" # Production baseurl for GitHub Pages (change back to "" for local dev)
 lang: nb
 timezone: Europe/Oslo
 
