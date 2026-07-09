@@ -263,7 +263,7 @@ permalink: /map/
 <script>
   (function () {
     // compute stats once DOM and data available
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       try {
         const locations = window.mapData && window.mapData.locations ? window.mapData.locations : [];
         const routes = window.mapData && window.mapData.routes ? window.mapData.routes : [];
@@ -278,14 +278,30 @@ permalink: /map/
           return R * c;
         }
 
+        async function fetchOsrmDistance(from, to) {
+          try {
+            const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=false`;
+            const resp = await fetch(url);
+            if (!resp.ok) return null;
+            const data = await resp.json();
+            if (data && data.routes && data.routes.length) {
+              return data.routes[0].distance / 1000;
+            }
+          } catch (e) {
+            console.warn('OSRM distance fetch failed', e);
+          }
+          return null;
+        }
+
         const summary = {};
         // Exclude the first location (home) from city/country counts
         const countedLocations = locations.slice(1);
         summary.cities = Math.max(0, countedLocations.length);
         summary.routes = routes.length;
 
-        // distance metrics over routes
+        // distance metrics over routes — we may need to asynchronously fetch OSRM distances for driving legs
         const distances = [];
+        const pending = [];
         routes.forEach(r => {
           const from = locations.find(l => l.id === r.from);
           const to = locations.find(l => l.id === r.to);
@@ -311,10 +327,22 @@ permalink: /map/
             distances.push({ d: s, from: r.from, to: r.to, mode: r.mode });
             return;
           }
+          // For driving modes without explicit distance, fetch OSRM distance asynchronously
+          if (r.mode && (String(r.mode).toLowerCase().includes('bil') || String(r.mode).toLowerCase().includes('car'))) {
+            const p = fetchOsrmDistance(from, to).then(d => {
+              const val = (d !== null) ? d : haversine(from.lat, from.lng, to.lat, to.lng);
+              distances.push({ d: val, from: r.from, to: r.to, mode: r.mode });
+            });
+            pending.push(p);
+            return;
+          }
           // fallback: straight haversine between endpoints
           const d = haversine(from.lat, from.lng, to.lat, to.lng);
           distances.push({ d, from: r.from, to: r.to, mode: r.mode });
         });
+
+        // wait for any pending OSRM fetches
+        if (pending.length) await Promise.all(pending);
 
         const totalDistance = distances.reduce((s, x) => s + x.d, 0);
         summary.totalDistanceKm = totalDistance;

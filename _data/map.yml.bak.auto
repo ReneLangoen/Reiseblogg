@@ -44,7 +44,6 @@ routes:
   - from: tokyo
     to: sendai
     mode: "Bil"
-    distance_km: 369.5
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

@@ -197,11 +197,28 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
     backup.write_text(text, encoding="utf-8")
     routes_match = re.search(r"^routes:\s*", text, flags=re.M)
     # include computed distance_km when provided
-    route_block = f"  - from: {from_id}\n    to: {to_id}\n    mode: \"{mode}\"\n"
+    # normalize mode display
+    mode_str = (mode or "").strip()
+    mode_display = mode_str.title() if mode_str else "Annet"
+
+    # compute distance if not provided
+    dk_val = None
     if distance_km is not None:
         try:
-            dk = float(distance_km)
-            route_block += f"    distance_km: {round(dk, 1)}\n"
+            dk_val = float(distance_km)
+        except Exception:
+            dk_val = None
+    if dk_val is None:
+        # attempt to compute using existing helper
+        try:
+            dk_val = compute_route_distance(from_id, to_id, mode_str)
+        except Exception:
+            dk_val = None
+
+    route_block = f"  - from: {from_id}\n    to: {to_id}\n    mode: \"{mode_display}\"\n"
+    if dk_val is not None:
+        try:
+            route_block += f"    distance_km: {round(float(dk_val), 1)}\n"
         except Exception:
             pass
     route_block += "\n"

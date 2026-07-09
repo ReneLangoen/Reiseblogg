@@ -6,3 +6,4 @@ _site/
 **/.DS_Store
 .bundle/
 vendor/
+_config_dev.yml
