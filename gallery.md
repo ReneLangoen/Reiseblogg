@@ -11,10 +11,10 @@ En liten samling av bilder fra reisen, gruppert etter hvilken uke de hører til.
 <!-- Gallery filter UI -->
 <link rel="stylesheet" href="{{ '/assets/css/gallery-filter.css' | relative_url }}">
 <div class="gallery-controls">
-  <label>Country: <select id="gf-country"><option value="">All</option></select></label>
-  <label>City: <select id="gf-city"><option value="">All</option></select></label>
-  <label>Week: <select id="gf-week"><option value="">All</option></select></label>
-  <label>Sort: <select id="gf-sort"><option value="original">Original</option><option value="caption">Caption</option><option value="city">City</option><option value="country">Country</option></select></label>
+  <label>Land: <select id="gf-country"><option value="">Alle</option></select></label>
+  <label>By: <select id="gf-city"><option value="">Alle</option></select></label>
+  <label>Uke: <select id="gf-week"><option value="">Alle</option></select></label>
+  <label>Sorter etter: <select id="gf-sort"><option value="original">Original</option><option value="caption">Bildetekst</option><option value="city">By</option><option value="country">Land</option></select></label>
 </div>
 <script src="{{ '/assets/js/gallery-filter.js' | relative_url }}" defer></script>
 

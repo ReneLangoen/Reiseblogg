@@ -7,7 +7,7 @@
   --accent: #4f7d76;
   --accent-soft: #dfeee8;
   --accent-alt: #5b7ca8;
-  --max: 760px;
+  --max: 1040px;
 }
 
 * { box-sizing: border-box; }
@@ -265,7 +265,7 @@ h3 { font-size: 1.25rem; }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
   margin: 1rem 0 0;
 }
