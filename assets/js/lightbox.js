@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const images = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img'));
-  if (!images.length) return;
+  const allImages = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img'));
+  if (!allImages.length) return;
 
   // create overlay
   const overlay = document.createElement('div');
@@ -23,17 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnNext = overlay.querySelector('.lb-next');
 
   let currentIndex = 0;
+  let currentList = allImages;
 
   function show(index) {
-    index = (index + images.length) % images.length;
+    // ensure currentList reflects only visible images in DOM order
+    currentList = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img')).filter(i => {
+      const fig = i.closest('.gallery-card');
+      return fig && (fig.style.display !== 'none');
+    });
+    if (!currentList.length) return;
+    index = ((index % currentList.length) + currentList.length) % currentList.length;
     currentIndex = index;
-    const src = images[index].getAttribute('data-large') || images[index].src;
+    const imgEl = currentList[index];
+    const src = imgEl.getAttribute('data-large') || imgEl.src;
     lbImage.src = src;
-    lbImage.alt = images[index].alt || '';
-    const cap = images[index].closest('figure')?.querySelector('figcaption')?.innerText || '';
+    lbImage.alt = imgEl.alt || '';
+    const cap = imgEl.closest('figure')?.querySelector('figcaption')?.innerText || '';
     lbCaption.textContent = cap;
     overlay.classList.add('open');
-    // focus for keyboard events
     btnClose.focus();
   }
 
@@ -42,12 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
     lbImage.src = '';
   }
 
-  images.forEach((img, i) => {
+  allImages.forEach((img, i) => {
     img.setAttribute('data-lb-index', i);
     img.style.cursor = 'zoom-in';
     img.addEventListener('click', (e) => {
       e.preventDefault();
-      show(i);
+      // compute visible list and determine index within it
+      const visible = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img')).filter(i => i.closest('.gallery-card') && i.closest('.gallery-card').style.display !== 'none');
+      const idx = visible.indexOf(img);
+      show(idx >= 0 ? idx : 0);
     });
   });
 
