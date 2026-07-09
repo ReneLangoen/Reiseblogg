@@ -7,10 +7,16 @@ week_label: "Uke 1"
 gallery_images:
   - image: "/pictures/week-1/lisbon-street.svg"
     caption: "Gater i Bangkok"
+    city: "Bangkok"
+    country: "Thailand"
   - image: "/pictures/week-1/sea-view.svg"
     caption: "Morgen ved vann"
+    city: "Bangkok"
+    country: "Thailand"
   - image: "/pictures/week-1/road-scene.svg"
     caption: "På veien"
+    city: "Bangkok"
+    country: "Thailand"
 image: "/pictures/week-1/lisbon-street.svg"
 ---
 

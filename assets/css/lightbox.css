@@ -1,0 +1,28 @@
+.lb-overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.85);
+  z-index:9999;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+.lb-overlay.open{opacity:1;pointer-events:auto}
+.lb-frame{max-width:92vw;max-height:86vh;display:flex;flex-direction:column;align-items:center}
+.lb-image{max-width:100%;max-height:80vh;box-shadow:0 8px 30px rgba(0,0,0,0.6);border-radius:4px}
+.lb-caption{color:#fff;margin-top:0.5rem;font-size:0.95rem;text-align:center;max-width:80vw}
+.lb-close,.lb-prev,.lb-next{position:absolute;background:transparent;border:0;color:#fff;font-size:2.2rem;cursor:pointer;padding:0.25rem 0.6rem}
+.lb-close{right:18px;top:12px;font-size:2.6rem}
+.lb-prev{left:12px;top:50%;transform:translateY(-50%)}
+.lb-next{right:12px;top:50%;transform:translateY(-50%)}
+.lb-close:focus,.lb-prev:focus,.lb-next:focus{outline:2px solid rgba(255,255,255,0.25);outline-offset:4px}
+@media (max-width:600px){
+  .lb-prev,.lb-next{font-size:1.8rem}
+  .lb-close{font-size:2rem}
+}
+/* small styling for gallery thumbnails to indicate interactivity */
+.gallery-card img{transition:transform .18s ease,filter .18s ease}
+.gallery-card img:hover{transform:scale(1.03);filter:brightness(0.95)}
