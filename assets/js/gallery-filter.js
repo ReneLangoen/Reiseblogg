@@ -6,9 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const figures = Array.from(document.querySelectorAll('.gallery-card'));
   if (!figures.length) return;
+  const sections = Array.from(document.querySelectorAll('.gallery-week'));
+  const originalGrids = sections
+    .map(section => section.querySelector('.gallery-grid'))
+    .filter(Boolean);
+
+  const mergedSection = document.createElement('section');
+  mergedSection.className = 'gallery-week gallery-week--merged';
+  mergedSection.style.display = 'none';
+
+  const mergedGrid = document.createElement('div');
+  mergedGrid.className = 'gallery-grid';
+  mergedSection.appendChild(mergedGrid);
+
+  if (sections.length) {
+    sections[0].parentNode.insertBefore(mergedSection, sections[0]);
+  }
 
   // annotate original index
-  figures.forEach((fig, i) => fig.setAttribute('data-original-index', i));
+  figures.forEach((fig, i) => {
+    fig.setAttribute('data-original-index', i);
+    fig._originalGrid = fig.parentElement;
+    fig._originalSection = fig.closest('.gallery-week');
+  });
 
   // collect unique values
   const countries = new Set();
@@ -46,46 +66,75 @@ document.addEventListener('DOMContentLoaded', () => {
     return true;
   }
 
+  function compareFigures(a, b, key) {
+    if (key === 'original') return a.dataset.originalIndex - b.dataset.originalIndex;
+
+    const ai = a.querySelector('img');
+    const bi = b.querySelector('img');
+    let av = '';
+    let bv = '';
+
+    if (key === 'caption') {
+      av = a.querySelector('figcaption')?.innerText || '';
+      bv = b.querySelector('figcaption')?.innerText || '';
+    } else if (key === 'city') {
+      av = ai?.dataset.city || '';
+      bv = bi?.dataset.city || '';
+    } else if (key === 'country') {
+      av = ai?.dataset.country || '';
+      bv = bi?.dataset.country || '';
+    } else if (key === 'week') {
+      av = ai?.dataset.week || '';
+      bv = bi?.dataset.week || '';
+    }
+
+    return av.localeCompare(bv, 'nb') || (a.dataset.originalIndex - b.dataset.originalIndex);
+  }
+
+  function restoreOriginalLayout() {
+    originalGrids.forEach(grid => {
+      figures
+        .filter(fig => fig._originalGrid === grid)
+        .sort((a, b) => a.dataset.originalIndex - b.dataset.originalIndex)
+        .forEach(fig => grid.appendChild(fig));
+    });
+  }
+
+  function updateSectionVisibility() {
+    sections.forEach(section => {
+      const hasVisibleCards = Array.from(section.querySelectorAll('.gallery-card'))
+        .some(fig => fig.style.display !== 'none');
+      section.style.display = hasVisibleCards ? '' : 'none';
+    });
+  }
+
   function applySortAndFilter() {
-    // For each gallery-grid container, reorder its child figures
-    const grids = document.querySelectorAll('.gallery-grid');
-    grids.forEach(grid => {
-      const figs = Array.from(grid.querySelectorAll('.gallery-card'));
-      // filter
-      const visible = figs.filter(f => matchesFilters(f));
-      const hidden = figs.filter(f => !matchesFilters(f));
+    const key = sortSel.value || 'original';
+    const visible = figures.filter(matchesFilters).sort((a, b) => compareFigures(a, b, key));
+    const hidden = figures
+      .filter(fig => !matchesFilters(fig))
+      .sort((a, b) => a.dataset.originalIndex - b.dataset.originalIndex);
 
-      // sort visible according to sortSel
-      const key = sortSel.value || 'original';
-      visible.sort((a,b) => {
-        if (key === 'original') return (a.dataset.originalIndex - b.dataset.originalIndex);
-        const ai = a.querySelector('img');
-        const bi = b.querySelector('img');
-        let av = '';
-        let bv = '';
-        if (key === 'caption') {
-          av = a.querySelector('figcaption')?.innerText || '';
-          bv = b.querySelector('figcaption')?.innerText || '';
-        } else if (key === 'city') {
-          av = ai?.dataset.city || '';
-          bv = bi?.dataset.city || '';
-        } else if (key === 'country') {
-          av = ai?.dataset.country || '';
-          bv = bi?.dataset.country || '';
-        } else if (key === 'week') {
-          av = ai?.dataset.week || '';
-          bv = bi?.dataset.week || '';
-        }
-        return av.localeCompare(bv, 'nb');
-      });
+    if (key === 'original') {
+      restoreOriginalLayout();
+      mergedSection.style.display = 'none';
 
-      // reattach: first visible in sorted order, then hidden in original order
-      visible.forEach(f => grid.appendChild(f));
-      hidden.forEach(f => grid.appendChild(f));
+      visible.forEach(fig => { fig.style.display = 'block'; });
+      hidden.forEach(fig => { fig.style.display = 'none'; });
+      updateSectionVisibility();
+      return;
+    }
 
-      // set display: show visible, hide hidden
-      visible.forEach(f => f.style.display = 'block');
-      hidden.forEach(f => f.style.display = 'none');
+    sections.forEach(section => { section.style.display = 'none'; });
+    mergedSection.style.display = visible.length ? '' : 'none';
+
+    visible.forEach(fig => {
+      mergedGrid.appendChild(fig);
+      fig.style.display = 'block';
+    });
+    hidden.forEach(fig => {
+      mergedGrid.appendChild(fig);
+      fig.style.display = 'none';
     });
   }
 
