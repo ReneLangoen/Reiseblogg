@@ -6,8 +6,8 @@ Supports inserting ordered ghost intermediates between the previous location and
 the newly added main location; routes and distances will be computed and written
 after the user confirms the planned sequence.
 """
-import sys
 import os
+import argparse
 import urllib.parse
 import urllib.request
 import json
@@ -21,6 +21,16 @@ HEADERS = {
     "User-Agent": f"add_location/1.0 ({CONTACT_EMAIL})",
     "From": CONTACT_EMAIL,
 }
+
+# runtime flags
+DRY_RUN = False
+AUTO_YES = False
+
+def _backup(p: Path, text: str):
+    bak = p.with_name(p.name + ".bak")
+    bak.write_text(text, encoding='utf-8')
+    print(f"Backup written to {bak}")
+    return bak
 
 
 def geocode(query: str):
@@ -87,12 +97,64 @@ def append_to_map(block: str, force: bool = False):
         print("Could not determine id from generated block.")
         return False
     id_ = m_id.group(1)
+    new_is_ghost = bool(re.search(r"ghost:\s*true", block))
     exists = re.search(r"^\s*-\s*id:\s*" + re.escape(id_) + r"\b", text, flags=re.M)
     if exists and not force:
-        print(f"Entry with id '{id_}' already exists in _data/map.yml. Use --force to replace.")
-        return False
-    backup = p.with_name(p.name + ".bak")
-    backup.write_text(text, encoding="utf-8")
+        m_existing = re.search(r"(^\s*-\s*id:\s*" + re.escape(id_) + r"\b[\s\S]*?)(?=^\s*-\s*id:|^routes:|\Z)", text, flags=re.M)
+        existing_block = m_existing.group(1) if m_existing else ''
+        existing_is_ghost = bool(re.search(r"ghost:\s*true", existing_block))
+        new_is_ghost = bool(re.search(r"ghost:\s*true", block))
+        # If existing is ghost but new is non-ghost, allow replacement (upgrade)
+        if existing_is_ghost and not new_is_ghost:
+            print(f"Upgrading existing ghost entry '{id_}' to non-ghost")
+            force = True
+        # If existing is non-ghost and new is non-ghost, reuse the existing
+        # entry instead of inserting a duplicate. In that case, append the
+        # upcoming week number to a `weeks` list on the existing block.
+        elif (not existing_is_ghost) and (not new_is_ghost):
+            # compute next week number as count of current non-ghost locations + 1
+            blocks = re.findall(r"(^\s*-\s*id:\s*[a-z0-9-]+[\s\S]*?)(?=^\s*-\s*id:|^routes:|\Z)", text, flags=re.M)
+            non_ghost_count = sum(1 for b in blocks if not re.search(r"ghost:\s*true", b))
+            week_num = non_ghost_count + 1
+            existing = existing_block
+            # try inline weeks: [1,2] form
+            m_inline = re.search(r"weeks:\s*\[([^\]]*)\]", existing)
+            if m_inline:
+                nums = [int(n) for n in re.findall(r"\d+", m_inline.group(1))]
+                if week_num not in nums:
+                    nums.append(week_num)
+                    nums = sorted(set(nums))
+                    new_inline = f"weeks: [{', '.join(str(n) for n in nums)}]"
+                    existing = existing[:m_inline.start()] + new_inline + existing[m_inline.end():]
+            else:
+                # try block form: weeks:\n      - 3\n      - 5
+                m_block = re.search(r"(weeks:\s*(?:\n\s*-\s*\d+\s*)+)", existing)
+                if m_block:
+                    nums = [int(n) for n in re.findall(r"-\s*(\d+)", m_block.group(0))]
+                    if week_num not in nums:
+                        nums.append(week_num)
+                        nums = sorted(set(nums))
+                        # replace with inline form for simplicity
+                        indent = re.search(r"^(\s*)weeks:", m_block.group(0))
+                        ind = indent.group(1) if indent else '    '
+                        new_inline = ind + f"weeks: [{', '.join(str(n) for n in nums)}]\n"
+                        existing = existing[:m_block.start()] + new_inline + existing[m_block.end():]
+                else:
+                    # insert inline weeks after the label line
+                    m_label = re.search(r"(label:\s*.+\n)", existing)
+                    insert_after = m_label.end() if m_label else 0
+                    ins = f"    weeks: [{week_num}]\n"
+                    existing = existing[:insert_after] + ins + existing[insert_after:]
+
+            # replace the existing block in the file text
+            new_text = text[:m_existing.start(1)] + existing + text[m_existing.end(1):]
+            p.write_text(new_text, encoding="utf-8")
+            print(f"Reused existing location '{id_}' and recorded week {week_num}.")
+            return True
+        else:
+            print(f"Entry with id '{id_}' already exists in _data/map.yml. Use --force to replace.")
+            return False
+    _backup(p, text)
     if exists and force:
         m = re.search(r"^\s*-\s*id:\s*" + re.escape(id_) + r"\b", text, flags=re.M)
         start = m.start()
@@ -111,6 +173,179 @@ def append_to_map(block: str, force: bool = False):
         else:
             new_text = text + block if text.endswith("\n") else text + "\n" + block
     p.write_text(new_text, encoding="utf-8")
+    # If we added or replaced a non-ghost location, ensure its `weeks` entry
+    # includes the current week number.
+    try:
+        # If the id already existed and was non-ghost, append next week
+        if exists and not new_is_ghost and 'existing_block' in locals() and not existing_is_ghost:
+            max_w = _get_max_week(p)
+            _append_week_to_existing_block(p, id_, max_w + 1)
+        else:
+            # For newly inserted locations, append next week based on current max
+            if not new_is_ghost:
+                max_w = _get_max_week(p)
+                _append_week_to_existing_block(p, id_, max_w)
+    except Exception:
+        pass
+    return True
+
+
+def _record_week_for_id(p: Path, id_: str):
+    """Ensure the location block for `id_` contains a `weeks:` list
+    and append the next week number if not already present.
+    """
+    text = p.read_text(encoding='utf-8')
+    m_existing = re.search(r"(^\s*-\s*id:\s*" + re.escape(id_) + r"\b[\s\S]*?)(?=^\s*-\s*id:|^routes:|\Z)", text, flags=re.M)
+    if not m_existing:
+        return False
+    existing = m_existing.group(1)
+    # only operate on non-ghost blocks
+    if re.search(r"ghost:\s*true", existing):
+        # if it's still ghost, do not record week
+        return False
+    # compute next week number as count of current non-ghost locations + 1
+    blocks = re.findall(r"(^\s*-\s*id:\s*[a-z0-9-]+[\s\S]*?)(?=^\s*-\s*id:|^routes:|\Z)", text, flags=re.M)
+    non_ghost_count = sum(1 for b in blocks if not re.search(r"ghost:\s*true", b))
+    week_num = non_ghost_count + 1
+    # prefer adding week only if not present
+    m_inline = re.search(r"weeks:\s*\[([^\]]*)\]", existing)
+    if m_inline:
+        nums = [int(n) for n in re.findall(r"\d+", m_inline.group(1))]
+        if week_num in nums:
+            return True
+        nums.append(week_num)
+        nums = sorted(set(nums))
+        new_inline = f"weeks: [{', '.join(str(n) for n in nums)}]"
+        new_block = existing[:m_inline.start()] + new_inline + existing[m_inline.end():]
+    else:
+        m_block = re.search(r"(weeks:\s*(?:\n\s*-\s*\d+\s*)+)", existing)
+        if m_block:
+            nums = [int(n) for n in re.findall(r"-\s*(\d+)", m_block.group(0))]
+            if week_num in nums:
+                return True
+            nums.append(week_num)
+            nums = sorted(set(nums))
+            indent = re.search(r"^(\s*)weeks:", m_block.group(0))
+            ind = indent.group(1) if indent else '    '
+            new_inline = ind + f"weeks: [{', '.join(str(n) for n in nums)}]\n"
+            new_block = existing[:m_block.start()] + new_inline + existing[m_block.end():]
+        else:
+            m_label = re.search(r"(label:\s*.+\n)", existing)
+            insert_after = m_label.end() if m_label else 0
+            ins = f"    weeks: [{week_num}]\n"
+            new_block = existing[:insert_after] + ins + existing[insert_after:]
+
+    new_text = text[:m_existing.start(1)] + new_block + text[m_existing.end(1):]
+    p.write_text(new_text, encoding='utf-8')
+    return True
+
+
+def _recompute_weeks(p: Path):
+    """Recompute and write `weeks` for all non-ghost locations based on
+    their final order in the file. Ensures consistent numbering.
+    """
+    text = p.read_text(encoding='utf-8')
+    locs_m = re.search(r"^locations:\s*", text, flags=re.M)
+    if not locs_m:
+        return False
+    routes_m = re.search(r"^routes:\s*", text, flags=re.M)
+    start = locs_m.end()
+    end = routes_m.start() if routes_m else len(text)
+    locs_text = text[start:end]
+    blocks = re.findall(r"(\s*-\s*id:\s*[a-z0-9-]+[\s\S]*?)(?=^\s*-\s*id:|\Z)", locs_text, flags=re.M)
+
+    new_blocks = []
+    week_idx = 0
+    for b in blocks:
+        is_ghost = bool(re.search(r"^\s*ghost:\s*true\b", b, flags=re.M))
+        # remove existing weeks entries
+        b_clean = re.sub(r"^\s*weeks:\s*\[[^\]]*\]\s*$\n", '', b, flags=re.M)
+        b_clean = re.sub(r"^\s*weeks:\s*(?:\n\s*-\s*\d+\s*)+", '', b_clean, flags=re.M)
+        if not is_ghost:
+            week_idx += 1
+            # collect existing week numbers only from explicit `weeks:` entries
+            existing_nums = []
+            m_inline_old = re.search(r"weeks:\s*\[([^\]]*)\]", b)
+            if m_inline_old:
+                existing_nums = [int(n) for n in re.findall(r"\d+", m_inline_old.group(1))]
+            else:
+                m_block_old = re.search(r"weeks:\s*(?:\n\s*-\s*\d+\s*)+", b)
+                if m_block_old:
+                    existing_nums = [int(n) for n in re.findall(r"-\s*(\d+)", m_block_old.group(0))]
+            # keep only existing numbers that are <= current week_idx (discard spurious larger numbers)
+            nums = sorted(set([n for n in existing_nums if n>0 and n <= week_idx] + [week_idx]))
+            # insert after label line
+            m_label = re.search(r"(label:\s*.+\n)", b_clean)
+            insert_after = m_label.end() if m_label else 0
+            ins = f"    weeks: [{', '.join(str(n) for n in nums)}]\n"
+            b_new = b_clean[:insert_after] + ins + b_clean[insert_after:]
+        else:
+            b_new = b_clean
+        new_blocks.append(b_new.rstrip() + "\n\n")
+
+    new_locs_text = ''.join(new_blocks)
+    new_text = text[:start] + new_locs_text + text[end:]
+    if DRY_RUN:
+        print('DRY RUN: would recompute weeks in _data/map.yml (skipped)')
+        return True
+    p.write_text(new_text, encoding='utf-8')
+    return True
+
+
+def _get_max_week_from_text(text: str) -> int:
+    nums = []
+    for m in re.finditer(r"weeks:\s*\[([^\]]*)\]", text):
+        nums.extend([int(n) for n in re.findall(r"\d+", m.group(1))])
+    for m in re.finditer(r"weeks:\s*(?:\n\s*-\s*\d+\s*)+", text):
+        nums.extend([int(n) for n in re.findall(r"-\s*(\d+)", m.group(0))])
+    return max(nums) if nums else 0
+
+
+def _get_max_week(p: Path) -> int:
+    if not p.exists():
+        return 0
+    return _get_max_week_from_text(p.read_text(encoding='utf-8'))
+
+
+def _append_week_to_existing_block(p: Path, id_: str, week: int) -> bool:
+    text = p.read_text(encoding='utf-8')
+    m_existing = re.search(r"(^\s*-\s*id:\s*" + re.escape(id_) + r"\b[\s\S]*?)(?=^\s*-\s*id:|^routes:|\Z)", text, flags=re.M)
+    if not m_existing:
+        return False
+    existing = m_existing.group(1)
+    # do not add week to ghost
+    if re.search(r"ghost:\s*true", existing):
+        return False
+    # check inline form
+    m_inline = re.search(r"weeks:\s*\[([^\]]*)\]", existing)
+    if m_inline:
+        nums = [int(n) for n in re.findall(r"\d+", m_inline.group(1))]
+        if week in nums:
+            return True
+        nums.append(week)
+        nums = sorted(set(nums))
+        new_inline = f"weeks: [{', '.join(str(n) for n in nums)}]"
+        new_block = existing[:m_inline.start()] + new_inline + existing[m_inline.end():]
+    else:
+        m_block = re.search(r"(weeks:\s*(?:\n\s*-\s*\d+\s*)+)", existing)
+        if m_block:
+            nums = [int(n) for n in re.findall(r"-\s*(\d+)", m_block.group(0))]
+            if week in nums:
+                return True
+            nums.append(week)
+            nums = sorted(set(nums))
+            indent = re.search(r"^(\s*)weeks:", m_block.group(0))
+            ind = indent.group(1) if indent else '    '
+            new_inline = ind + f"weeks: [{', '.join(str(n) for n in nums)}]\n"
+            new_block = existing[:m_block.start()] + new_inline + existing[m_block.end():]
+        else:
+            m_label = re.search(r"(label:\s*.+\n)", existing)
+            insert_after = m_label.end() if m_label else 0
+            ins = f"    weeks: [{week}]\n"
+            new_block = existing[:insert_after] + ins + existing[insert_after:]
+
+    new_text = text[:m_existing.start(1)] + new_block + text[m_existing.end(1):]
+    p.write_text(new_text, encoding='utf-8')
     return True
 
 
@@ -193,25 +428,42 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
         print("Error: _data/map.yml not found; cannot add route.")
         return False
     text = p.read_text(encoding="utf-8")
-    backup = p.with_name(p.name + ".bak")
-    backup.write_text(text, encoding="utf-8")
+    _backup(p, text)
     routes_match = re.search(r"^routes:\s*", text, flags=re.M)
     # include computed distance_km when provided
     # normalize mode display
     mode_str = (mode or "").strip()
     mode_display = mode_str.title() if mode_str else "Annet"
 
-    # compute distance if not provided
+    # compute distance (and optionally path) if not provided
     dk_val = None
+    route_path = None
     if distance_km is not None:
         try:
             dk_val = float(distance_km)
         except Exception:
             dk_val = None
     if dk_val is None:
-        # attempt to compute using existing helper
+        # If transport mode indicates train, attempt OSM-based railway routing
         try:
-            dk_val = compute_route_distance(from_id, to_id, mode_str)
+            mode_low = mode_str.lower()
+            if 'tog' in mode_low or 'train' in mode_low:
+                try:
+                    # lazy import to avoid hard dependency unless needed
+                    from scripts.compute_train_distance import compute_distance_and_path
+                    coords_a = get_location_coords(from_id)
+                    coords_b = get_location_coords(to_id)
+                    if coords_a and coords_b:
+                        # compute meters and node coords
+                        meters, coords = compute_distance_and_path((coords_a[0], coords_a[1]), (coords_b[0], coords_b[1]), padding_deg=0.5)
+                        dk_val = meters / 1000.0
+                        route_path = coords
+                except Exception:
+                    # fall back to existing helper below
+                    dk_val = None
+            if dk_val is None:
+                # attempt to compute using existing helper (OSRM or haversine)
+                dk_val = compute_route_distance(from_id, to_id, mode_str)
         except Exception:
             dk_val = None
 
@@ -221,6 +473,11 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             route_block += f"    distance_km: {round(float(dk_val), 1)}\n"
         except Exception:
             pass
+    # include geometry points if available (map expects `points`)
+    if route_path:
+        route_block += "    points:\n"
+        for lat, lon in route_path:
+            route_block += f"      - [{lat:.6f}, {lon:.6f}]\n"
     route_block += "\n"
     if routes_match:
         m_comment = re.search(r"^# .*$", text[routes_match.end():], flags=re.M)
@@ -228,7 +485,13 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
         new_text = text[:end_idx] + route_block + text[end_idx:]
     else:
         new_text = text + "routes:\n" + route_block if text.endswith("\n") else text + "\n" + "routes:\n" + route_block
-    p.write_text(new_text, encoding="utf-8")
+    if DRY_RUN:
+        print("DRY RUN: would write updated _data/map.yml (skipped)")
+    else:
+        if DRY_RUN:
+            print("DRY RUN: would write routes to _data/map.yml (skipped)")
+        else:
+            p.write_text(new_text, encoding="utf-8")
     return True
 
 
@@ -249,7 +512,7 @@ def list_locations():
 
 
 def interactive_additional_ghosts(append: bool, force: bool):
-    # Deprecated: use interactive insertion of intermediates when adding routes.
+    # Removed — kept for compatibility but no-op.
     return
 
 
@@ -269,15 +532,24 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
     # If the main location already exists in the file, capture its block so we
     # can re-insert it after the intermediates. Do NOT remove it yet; wait for
     # user confirmation.
+    existing_block = None
+    existing_is_ghost = False
     if append:
         p = Path("_data/map.yml")
         txt = p.read_text(encoding='utf-8')
         m_main = re.search(r"(^\s*-\s*id:\s*" + re.escape(new_id) + r"\b[\s\S]*?)(?=^\s*-\s*id:|^routes:|\Z)", txt, flags=re.M)
         if m_main:
-            extracted = m_main.group(1)
-            if not main_block:
-                # normalize extracted main block to ensure a blank line after it
-                main_block = extracted.rstrip() + "\n\n"
+            existing_block = m_main.group(1)
+            existing_is_ghost = bool(re.search(r"ghost:\s*true", existing_block))
+            # If a non-ghost already exists, do not re-insert the main block; use
+            # the existing non-ghost entry instead. If existing is a ghost and
+            # we have a non-ghost main_block, we'll replace/upgrade it below.
+            if not existing_is_ghost and main_block:
+                main_block = None
+            elif existing_is_ghost and not main_block:
+                # if existing is ghost and no main_block provided, capture
+                # existing block so we can replace it later if needed
+                main_block = existing_block.rstrip() + "\n\n"
 
     current_from = prev_id
     planned_routes = []
@@ -339,13 +611,19 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
         except KeyboardInterrupt:
             break
 
-    # Always ask for the final leg (from current_from — which may be last ghost — to the new main)
-    try:
-        mode_last = input(f"Transport mode from '{current_from}' to '{new_id}': ").strip() or default_mode
-    except KeyboardInterrupt:
+    # If no ghosts were added, use the already-provided default_mode
+    if not ghost_ids:
         mode_last = default_mode
-    dk = compute_route_distance(current_from, new_id, mode_last)
-    planned_routes.append((current_from, new_id, mode_last, dk))
+        dk = compute_route_distance(current_from, new_id, mode_last)
+        planned_routes.append((current_from, new_id, mode_last, dk))
+    else:
+        # Ask for the final leg mode when there were intermediates
+        try:
+            mode_last = input(f"Transport mode from '{current_from}' to '{new_id}': ").strip() or default_mode
+        except KeyboardInterrupt:
+            mode_last = default_mode
+        dk = compute_route_distance(current_from, new_id, mode_last)
+        planned_routes.append((current_from, new_id, mode_last, dk))
 
     # show planned sequence and ask for confirmation before writing
     seq_ids = [prev_id] + ghost_ids + [new_id]
@@ -363,10 +641,13 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
         if lb: labels[new_id] = lb.group(1).strip()
 
     seq_display = ' → '.join([f"{sid} ({labels.get(sid, sid)})" for sid in seq_ids])
-    try:
-        ok = input(f"Planned sequence: {seq_display}\nConfirm write to _data/map.yml? [y/N]: ").strip().lower()
-    except KeyboardInterrupt:
-        ok = 'n'
+    if AUTO_YES:
+        ok = 'y'
+    else:
+        try:
+            ok = input(f"Planned sequence: {seq_display}\nConfirm write to _data/map.yml? [y/N]: ").strip().lower()
+        except KeyboardInterrupt:
+            ok = 'n'
     if ok not in ('y', 'yes'):
         print('Aborted — no changes written.')
         return
@@ -386,8 +667,16 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
         bid = re.search(r"id:\s*([a-z0-9-]+)", b).group(1)
         if bid in ghost_ids:
             continue
-        if main_block and bid == new_id:
-            continue
+        # Only remove an existing main block if we're explicitly replacing it
+        # (i.e., we have a non-None main_block and either there was no
+        # existing block or the existing block was a ghost), or if force is set.
+        if bid == new_id:
+            if main_block is not None and (existing_block is None or existing_is_ghost or force):
+                continue
+            # otherwise keep the existing non-ghost main block and do not
+            # re-insert the provided main_block later
+            if main_block is not None and not (existing_block is None or existing_is_ghost):
+                main_block = None
         kept.append(b)
     kept_ids = [re.search(r"id:\s*([a-z0-9-]+)", b).group(1) for b in kept]
     try:
@@ -404,6 +693,12 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
     print(f"DEBUG: found {len(blocks)} existing blocks, kept_ids={kept_ids}, ghost_ids={ghost_ids}, ghost_blocks={len(ghost_blocks)}")
     new_txt = txt[:start_idx] + new_locs_text + txt[end_idx:]
     p.write_text(new_txt, encoding='utf-8')
+    try:
+        # append next week for main destination based on pre-write file content
+        max_before = _get_max_week_from_text(txt)
+        _append_week_to_existing_block(p, new_id, max_before + 1)
+    except Exception:
+        pass
     print(f"Inserted intermediates and main location into _data/map.yml in order.")
 
     # append planned routes now
@@ -438,6 +733,14 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
 
 def main():
     # Interactive-only entry point
+    global DRY_RUN, AUTO_YES
+    parser = argparse.ArgumentParser(description='Add a location to _data/map.yml')
+    parser.add_argument('--dry-run', action='store_true', help='Show changes without writing files')
+    parser.add_argument('-y', '--yes', action='store_true', help='Automatic yes to prompts')
+    args = parser.parse_args()
+    DRY_RUN = bool(args.dry_run)
+    AUTO_YES = bool(args.yes)
+
     append = True
     force = False
     try:
@@ -477,10 +780,13 @@ def main():
         if append:
             prev_id = get_last_location_id()
             new_id = re.search(r"id:\s*([a-z0-9-]+)", block).group(1)
-            try:
-                ans = input(f"Add a route from last location '{prev_id}' to '{new_id}'? [y/N]: ").strip().lower()
-            except KeyboardInterrupt:
-                ans = ""
+            if AUTO_YES:
+                ans = 'y'
+            else:
+                try:
+                    ans = input(f"Add a route from last location '{prev_id}' to '{new_id}'? [y/N]: ").strip().lower()
+                except KeyboardInterrupt:
+                    ans = ""
             if ans in ("y", "yes"):
                 mode = input("Transport mode (Fly/Tog/Bil/etc.): ").strip() or "Fly"
                 if prev_id:
@@ -514,10 +820,13 @@ def main():
         if prev_id and new_id and prev_id == new_id:
             print(f"Location '{new_id}' is already the last location; nothing to link.")
             return
-        try:
-            ans = input(f"Add a route from last location '{prev_id}' to '{new_id}'? [y/N]: ").strip().lower()
-        except KeyboardInterrupt:
-            ans = ""
+        if AUTO_YES:
+            ans = 'y'
+        else:
+            try:
+                ans = input(f"Add a route from last location '{prev_id}' to '{new_id}'? [y/N]: ").strip().lower()
+            except KeyboardInterrupt:
+                ans = ""
         if ans in ("y", "yes"):
             mode = input("Transport mode (Fly/Tog/Bil/etc.): ").strip() or "Fly"
             if prev_id:

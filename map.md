@@ -71,9 +71,33 @@ permalink: /map/
       });
     });
 
-    const locationById = Object.fromEntries(mapData.locations.map(loc => [loc.id, loc]));
+    // Build a map of preferred location objects by id, preferring any non-ghost
+    // occurrence when a location appears multiple times. Preserve the original
+    // ordering based on first appearance in `mapData.locations`.
     const allLocations = mapData.locations || [];
-    const visibleLocations = allLocations.filter(l => !l.ghost);
+    const preferredById = {};
+    for (const loc of allLocations) {
+      if (!loc || !loc.id) continue;
+      if (!preferredById[loc.id]) {
+        preferredById[loc.id] = loc;
+      } else if (preferredById[loc.id].ghost && !loc.ghost) {
+        // replace a previously-seen ghost with a later non-ghost
+        preferredById[loc.id] = loc;
+      }
+    }
+    const locationById = preferredById;
+
+    // visibleLocations: iterate original list order, include each id once and
+    // use the preferred (non-ghost when available) instance for visibility.
+    const seenIds = new Set();
+    const visibleLocations = [];
+    for (const loc of allLocations) {
+      if (!loc || !loc.id) continue;
+      if (seenIds.has(loc.id)) continue;
+      seenIds.add(loc.id);
+      const preferred = preferredById[loc.id] || loc;
+      if (!preferred.ghost) visibleLocations.push(preferred);
+    }
 
     // Norwegian number formatter used for tooltips and stats
     const nbFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 0 });
@@ -196,7 +220,7 @@ permalink: /map/
 
       const displayDist = (typeof route.distance_km === 'number' && isFinite(route.distance_km)) ? route.distance_km : routeDist;
 
-      poly.bindTooltip(`${nf(displayDist)} km`, {
+        poly.bindTooltip(`${nf(displayDist)} km`, {
         permanent: false,
         direction: 'center',
         className: 'route-tooltip'
@@ -204,6 +228,21 @@ permalink: /map/
       poly.on('mouseover', function(e) { this.openTooltip(e.latlng); });
       poly.on('mousemove', function(e) { this.setTooltipLatLng(e.latlng); });
       poly.on('mouseout', function() { this.closeTooltip(); });
+          // add a small directional arrow along the route
+          try {
+            if (linePoints && linePoints.length >= 2) {
+              const midIndex = Math.max(1, Math.floor(linePoints.length * 0.5));
+              const pA = linePoints[midIndex - 1];
+              const pB = linePoints[midIndex];
+              const angle = Math.atan2(pB[1] - pA[1], pB[0] - pA[0]) * 180 / Math.PI;
+              const arrowColor = route.color || modeColors[route.mode] || '#4f7d76';
+              const arrowHtml = `<div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid ${arrowColor};transform:rotate(${angle}deg);"></div>`;
+              const arrowIcon = L.divIcon({ className: 'route-arrow-icon', html: arrowHtml, iconSize: [12, 12], iconAnchor: [6, 6] });
+              L.marker([(pA[0] + pB[0]) / 2, (pA[1] + pB[1]) / 2], { icon: arrowIcon, interactive: false }).addTo(map);
+            }
+          } catch (e) {
+            console.warn('Failed to render route arrow', e);
+          }
     }
 
     // fire off rendering for all routes
@@ -214,8 +253,16 @@ permalink: /map/
     visibleLocations.forEach((loc, vindex) => {
       // find index among all locations (for home detection) and among visible (for week numbering)
       const indexAll = allLocations.findIndex(l => l.id === loc.id);
-      // Week number should be the position among non-ghost locations (visibleLocations)
-      const weekLabel = loc.week ? (String(loc.week).match(/\d+/) || [loc.week])[0] : String(vindex);
+      // Week label: prefer an explicit `weeks` array (may contain multiple weeks),
+      // fall back to a singular `week` property, else use the visible index.
+      let weekLabel;
+      if (Array.isArray(loc.weeks) && loc.weeks.length) {
+        weekLabel = loc.weeks.join(', ');
+      } else if (loc.week) {
+        weekLabel = (String(loc.week).match(/\d+/) || [loc.week])[0];
+      } else {
+        weekLabel = String(vindex);
+      }
       const labelText = loc.label || loc.name || loc.id.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       // consider home the very first entry in the full locations list
       const isHome = indexAll === 0 || weekLabel === '0';
@@ -252,6 +299,8 @@ permalink: /map/
   .map-stats { margin-top:1rem; display:block }
   .map-stats table { width:100%; border-collapse:collapse }
   .map-stats th, .map-stats td { text-align:left; padding:6px 8px; border-bottom:1px solid rgba(0,0,0,0.04) }
+  .route-arrow-icon { pointer-events: none; }
+  .route-arrow-icon div { transform-origin: center; }
 </style>
 
 <div class="map-stats" id="mapStats">
