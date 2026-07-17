@@ -1,5 +1,4 @@
 title: "Thea og Renés reiseblogg"
-theme: Cayman
 description: "Ukentlige oppdateringer fra vårt østlige eventyr, skrevet for venner, familie og oss selv i fremtiden."
 url: "https://renelangoen.github.io"
 baseurl: "/Reiseblogg" # Production baseurl for GitHub Pages (change back to "" for local dev)
