@@ -1,7 +1,7 @@
 locations:
   - id: bergen
     label: Bergen
-    weeks: [1]
+    weeks: [0]
     country: Norway
     lat: 60.3943
     lng: 5.3259
@@ -9,7 +9,7 @@ locations:
 
   - id: bangkok
     label: Bangkok
-    weeks: [2]
+    weeks: [1]
     country: Thailand
     lat: 13.7563
     lng: 100.5018
@@ -17,7 +17,7 @@ locations:
 
   - id: tokyo
     label: Tokyo
-    weeks: [3, 5]
+    weeks: [2, 4]
     country: Japan
     lat: 35.6769
     lng: 139.7639
@@ -26,7 +26,7 @@ locations:
 
   - id: osaka
     label: Osaka
-    weeks: [4]
+    weeks: [3]
     country: Japan
     lat: 34.6938
     lng: 135.5015
