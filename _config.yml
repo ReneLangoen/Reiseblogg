@@ -1,7 +1,7 @@
 title: "Thea og Renés reiseblogg"
 description: "Ukentlige oppdateringer fra vårt østlige eventyr, skrevet for venner, familie og oss selv i fremtiden."
-url: "https://renelangoen.github.io"
-baseurl: "/Reiseblogg" # Production baseurl for GitHub Pages (change back to "" for local dev)
+url: "https://theaogrene.no"
+baseurl: "" # Custom domain (theaogrene.no via CNAME) serves from root, so no baseurl
 lang: nb
 timezone: Europe/Oslo
 
