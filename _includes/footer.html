@@ -1,3 +1,14 @@
 <footer class="site-footer">
-  <p>© {{ site.time | date: '%Y' }} {{ site.title }}. Built with Jekyll.</p>
+  <section class="subscribe">
+    <h4>Få mail om nye innlegg</h4>
+    <form name="subscribe" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="subscribe">
+      <label for="email">E-post</label>
+      <input id="email" name="email" type="email" placeholder="din@epost.no" required>
+      <button type="submit">Meld på</button>
+    </form>
+  </section>
+
+  <p>© {{ site.time | date: '%Y' }} {{ site.title }}. Laget med Jekyll.</p>
+  <script src="/assets/js/subscribe.js"></script>
 </footer>
