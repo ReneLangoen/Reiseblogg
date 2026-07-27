@@ -1,9 +1,30 @@
 <footer class="site-footer">
   <section class="subscribe">
     <h4>Få mail om nye innlegg</h4>
-    <form name="subscribe" method="POST" action="https://eot4wtb5sapqr7w.m.pipedream.net">
-      <label for="email">E-post</label>
-      <input id="email" name="email" type="email" placeholder="din@epost.no" required>
+    <form
+      name="subscribe"
+      method="post"
+      action="https://eot4wtb5sapqr7w.m.pipedream.net"
+    >
+      <label for="signup-email">E-postadresse</label>
+
+      <input
+        id="signup-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      >
+
+      <input
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+        style="position: absolute; left: -9999px;"
+      >
+
       <button type="submit">Meld på</button>
     </form>
   </section>

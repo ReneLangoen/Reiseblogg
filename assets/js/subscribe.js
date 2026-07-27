@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       msg.textContent = 'Sender...';
       const fd = new FormData(form);
+        // Honeypot anti-spam: if filled, treat as success but don't send
+        const honeypot = fd.get('website');
+        if (honeypot && honeypot.trim() !== '') {
+          msg.textContent = 'Takk!';
+          form.reset();
+          return;
+        }
       // Netlify expects form-name in payload; FormData includes it
       const body = new URLSearchParams();
       for (const pair of fd.entries()) body.append(pair[0], pair[1]);
