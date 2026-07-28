@@ -1,14 +1,33 @@
 <footer class="site-footer">
   <section class="subscribe">
     <h4>Få mail om nye innlegg</h4>
-    <form name="subscribe" method="POST" data-netlify="true" action="/">
-      <input type="hidden" name="form-name" value="subscribe">
-      <label for="email">E-post</label>
-      <input id="email" name="email" type="email" placeholder="din@epost.no" required>
+    <form
+      name="subscribe"
+      method="post"
+      action="https://eot4wtb5sapqr7w.m.pipedream.net"
+    >
+      <label for="signup-email">E-postadresse</label>
+
+      <input
+        id="signup-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      >
+
+      <input
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+        style="position: absolute; left: -9999px;"
+      >
+
       <button type="submit">Meld på</button>
     </form>
   </section>
 
   <p>© {{ site.time | date: '%Y' }} {{ site.title }}. Laget med Jekyll.</p>
-  <script src="/assets/js/subscribe.js?v=2"></script>
 </footer>
