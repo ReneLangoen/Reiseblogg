@@ -16,9 +16,11 @@ layout: default
     {% endif %}
   </header>
 
-  {% if page.image %}
+  {% assign hero_id = page.hero_image | default: page.images.first.id %}
+  {% assign hero = page.images | where: "id", hero_id | first %}
+  {% if hero %}
     <div class="hero-image-wrap">
-      <img class="hero-image" src="{{ page.image | relative_url }}" alt="{{ page.image_alt | default: page.title }}">
+      <img class="hero-image" src="{{ hero.src | relative_url }}" alt="{{ hero.caption | default: page.title }}">
     </div>
   {% endif %}
 
@@ -26,7 +28,7 @@ layout: default
     {{ content }}
   </div>
 
-  {% if page.gallery_images %}
+  {% if page.images %}
     <div class="post-footer-link">
       <a href="{{ '/gallery/' | relative_url }}">Se flere bilder fra denne uken</a>
     </div>

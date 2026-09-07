@@ -18,14 +18,14 @@ En liten samling av bilder fra reisen, gruppert etter hvilken uke de hører til.
 </div>
 <script src="{{ '/assets/js/gallery-filter.js' | relative_url }}" defer></script>
 
-{% assign posts_with_gallery = site.posts | where_exp: "post", "post.gallery_images" %}
-{% for post in posts_with_gallery %}
+{% assign posts_with_images = site.posts | where_exp: "post", "post.images" %}
+{% for post in posts_with_images %}
 <section class="gallery-week">
   <h2>{{ post.week_label | default: post.title }}</h2>
   <div class="gallery-grid">
-    {% for photo in post.gallery_images %}
+    {% for photo in post.images %}
     <figure class="gallery-card">
-      <img src="{{ photo.image | relative_url }}" alt="{{ photo.caption | default: post.title }}" loading="lazy"
+      <img src="{{ photo.src | relative_url }}" alt="{{ photo.alt | default: post.title }}" loading="lazy"
            data-city="{{ photo.city | default: post.location | split: "," | first | strip }}"
            data-country="{{ photo.country | default: post.location | split: "," | last | strip }}"
            data-week="{{ post.week_label | default: post.title }}">

@@ -1,0 +1,12 @@
+{% assign photo = page.images | where: "id", include.id | first %}
+{% assign image_src = photo.src | default: include.src %}
+{% assign image_caption = photo.caption | default: include.caption %}
+{% assign image_alt = photo.alt | default: include.alt | default: image_caption | default: page.title %}
+{% if image_src %}
+<figure class="side-image">
+  <img src="{{ image_src | relative_url }}" alt="{{ image_alt }}">
+  {% if image_caption %}
+    <figcaption>{{ image_caption }}</figcaption>
+  {% endif %}
+</figure>
+{% endif %}
