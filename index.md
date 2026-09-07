@@ -8,7 +8,11 @@ title: Hjem
   {% for post in site.posts limit:6 %}
     <article class="post-card">
       <a class="post-card-link" href="{{ post.url | relative_url }}">
-        {% if post.image %}
+        {% assign hero_id = post.hero_image | default: post.images.first.id %}
+        {% assign hero = post.images | where: "id", hero_id | first %}
+        {% if hero %}
+          <img class="post-card-image" src="{{ hero.src | relative_url }}" alt="{{ hero.caption | default: post.title }}">
+        {% elsif post.image %}
           <img class="post-card-image" src="{{ post.image | relative_url }}" alt="{{ post.image_alt | default: post.title }}">
         {% else %}
           <div class="post-card-image placeholder"></div>

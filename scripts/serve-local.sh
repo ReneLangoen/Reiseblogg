@@ -8,4 +8,4 @@ echo "Installing gems if needed..."
 bundle install
 
 echo "Starting Jekyll (dev config) with livereload..."
-bundle exec jekyll serve --config _config.yml,_config_dev.yml --livereload
+bundle exec jekyll serve --config _config.yml,_config_dev.yml --livereload --force_polling
