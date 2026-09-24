@@ -231,16 +231,13 @@ Turens første høydepunkt var Bergen Lounge på flesland før avreise. Deilig m
 
 Thea hadde forlagt Amex kortet hjemme, og til vår store skuffelse forhindret dette oss tilgang til Lufthansas Senatorlounge i Munchen. :disappointed: 
 
-## Hvor vi er
 
 
 
-## Hvordan uka ser ut
-
-{% include side-image.html id="hotel-pool" %}
+{% include side-image.html id="basseng" %}
 
 
 
-## Notater for oss selv
-{% include side-image.html id="street" %}
+{% include side-image.html id="bronze-hermit" %}
 
+##Mer innhold kommer snart
