@@ -9,6 +9,7 @@ permalink: /:categories/:title/
 
 plugins:
   - jekyll-feed
+  - jemoji
   - jekyll-seo-tag
 
 collections:

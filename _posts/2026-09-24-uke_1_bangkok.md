@@ -1,6 +1,6 @@
 ---
 title: "Uke 1: Avreise til Bangkok"
-description: "Vi ankom Bangkok og planlegger å bli der i en uke mens vi finner rytmen på reisen."
+description: "Mandag 21. september satt vi kursen mot Bangkok. Her skal vi være i én uke for å avklimatiseres før turen går videre til Japan"
 location: "Bangkok, Thailand"
 tags: [avreise, uke 1, Bangkok, fly]
 week_label: "Uke 1"
@@ -224,20 +224,24 @@ images:
 hero_image: avreise
 ---
 
-Avreise fra Bergen, via Munchen til Bangkok. 
 
 Turens første høydepunkt var Bergen Lounge på flesland før avreise. Deilig med et rolig lokale med god mat og drikke. AMEX Platinum kredittkortet gir tilgang til lounger over hele verden. Dette gjør flyplasstilværelsen flere hakk mer behagelig. Månedsprisen til kortet er på 650 kr, som tilsvarer to hamburgere på en norsk flyplass. 
-{% include side-image.html id="lounge" %}
-
-Thea hadde forlagt Amex kortet hjemme, og til vår store skuffelse forhindret dette oss tilgang til Lufthansas Senatorlounge i Munchen. :disappointed: 
 
 
-
-
+## Flyreise og hotellet
 {% include side-image.html id="basseng" %}
+Flyreisen besto av en 2 timers flytur Bergen-Munchen og en 10 timers flytur Munchen-Bangkok, totalt 14 timer med mellomlandingen. Vi landet i Bangkok kl. 13 lokal tid, den 22. september. Da var det rett til hotellet og hvile seg. 
+
+Vi bor på Aira Hotel mellom områdene Sukhumvit og Siam, sentralt i Bangkok. Her er det et nydelig moderne basseng, stor og variert frokost, og god service. I håp om å få en romoppgradering informerte vi hotellet på forhånd om at vi har på bryllupsreise. Om vi fikk romoppgradering er under tvil, men hotellet leverte i hvert fall med flotte brettede håndklær og en tropisk Crème brûlée. 
+
+
+
+## Velvære og hard hud
+{% include side-image.html id="pedikyr" %}
+Første skikkelige dag i Thailand var en velvære dag. En tur i gymmen, en tur i bassenget og deretter pedikyr på oss begge. René har lenge vært stolt over sin harde hud under beina, som har gjort det mulig å løpe på grus uten å få vondt. I anledningen sandalferie, med fotmassasje, barfot i templer, og den slags, måtte huden vekk. Den stakkars fotpleieren forsøkte forsiktig med en grov fil, men måtte raskt gi opp. Hun leitet febrilsk rundt i lokalet etter hardere skyts, før hun kom tilbake med noe som kan beskrives som en grov rasp. Den gjorde susen, og tottelottene til René er nå myke som barneføtter. 
 
 
 
 {% include side-image.html id="bronze-hermit" %}
 
-##Mer innhold kommer snart
+## Mer innhold kommer snart

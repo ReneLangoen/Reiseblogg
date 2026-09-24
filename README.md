@@ -60,6 +60,8 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
   til nye filer.
 3. Legg til lokasjon og rute i `_data/map.yml`, se under.
 
+Emoji kan skrives med GitHub-syntaks i innlegg, for eksempel `:disappointed:`.
+
 ## Kartdata (`_data/map.yml`)
 
 `map.md` leser `site.data.map` og tegner kartet klient-side.
