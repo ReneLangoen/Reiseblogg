@@ -101,7 +101,7 @@ images:
 
   - id: bronze-hermit
     src: "/pictures/week-1/bronze_hermit.jpeg"
-    caption: "Bronseeremitt"
+    caption: "Bronseeremitten"
     city: "Bangkok"
     country: "Thailand"
 
