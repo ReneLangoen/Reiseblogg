@@ -41,6 +41,23 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
 
 1. Opprett `_posts/YYYY-MM-DD-uke_N_sted.md` etter mønsteret i eksisterende innlegg.
 2. Legg bilder i `pictures/week-N/` og referer til dem som `/pictures/week-N/bilde.jpg`.
+  Du kan automatisk legge nye bilder til i innleggets `images`-liste:
+
+  ```bash
+  python3 scripts/add_photos.py
+  ```
+
+  Scriptet spør etter post, bildemappe, by og land. Du kan også oppgi alle fire
+  argumentene direkte hvis du ønsker:
+
+  ```bash
+  python3 scripts/add_photos.py _posts/2026-09-25-uke_1_bangkok.md pictures/week-1 Bangkok Thailand
+  ```
+
+  Bildene sorteres etter opptakstidspunkt fra EXIF-metadata, med nyeste bilde øverst.
+  Filnavnet brukes som `id`, bildeteksten blir tom, og by/land hentes fra de siste
+  argumentene. Kommandoen krever `exiftool`, er trygg å kjøre flere ganger og legger bare
+  til nye filer.
 3. Legg til lokasjon og rute i `_data/map.yml`, se under.
 
 ## Kartdata (`_data/map.yml`)

@@ -7,13 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
   overlay.className = 'lb-overlay';
   overlay.innerHTML = `
     <button class="lb-close" aria-label="Lukk">×</button>
-    <button class="lb-prev" aria-label="Forrige">‹<img class="lb-thumb lb-thumb-prev" src="" alt="Forrige bilde"/></button>
+    <button class="lb-prev" aria-label="Forrige">‹</button>
     <div class="lb-frame">
       <img class="lb-image" src="" alt="">
       <div class="lb-caption"></div>
       <div class="lb-metadata"></div>
     </div>
-    <button class="lb-next" aria-label="Neste">›<img class="lb-thumb lb-thumb-next" src="" alt="Neste bilde"/></button>
+    <button class="lb-next" aria-label="Neste">›</button>
   `;
   document.body.appendChild(overlay);
 
@@ -22,8 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnClose = overlay.querySelector('.lb-close');
   const btnPrev = overlay.querySelector('.lb-prev');
   const btnNext = overlay.querySelector('.lb-next');
-  const lbThumbPrev = overlay.querySelector('.lb-thumb-prev');
-  const lbThumbNext = overlay.querySelector('.lb-thumb-next');
   const lbMetadata = overlay.querySelector('.lb-metadata');
 
   let currentIndex = 0;
@@ -54,24 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (week) metaParts.push(week);
     lbMetadata.textContent = metaParts.join(' — ');
 
-    // set prev/next thumbnails
-    if (currentList.length > 1) {
-      const prevIdx = ((index - 1) % currentList.length + currentList.length) % currentList.length;
-      const nextIdx = (index + 1) % currentList.length;
-      const prevEl = currentList[prevIdx];
-      const nextEl = currentList[nextIdx];
-      const prevSrc = prevEl.getAttribute('data-large') || prevEl.src;
-      const nextSrc = nextEl.getAttribute('data-large') || nextEl.src;
-      lbThumbPrev.src = prevSrc;
-      lbThumbNext.src = nextSrc;
-      lbThumbPrev.style.display = '';
-      lbThumbNext.style.display = '';
-    } else {
-      lbThumbPrev.style.display = 'none';
-      lbThumbNext.style.display = 'none';
-      lbThumbPrev.src = '';
-      lbThumbNext.src = '';
-    }
     overlay.classList.add('open');
     btnClose.focus();
   }
@@ -79,8 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function hide() {
     overlay.classList.remove('open');
     lbImage.src = '';
-    lbThumbPrev.src = '';
-    lbThumbNext.src = '';
     lbMetadata.textContent = '';
   }
 
@@ -106,8 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', (e) => {
     if (!overlay.classList.contains('open')) return;
-    if (e.key === 'Escape') hide();
-    if (e.key === 'ArrowLeft') show(currentIndex - 1);
-    if (e.key === 'ArrowRight') show(currentIndex + 1);
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      hide();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      show(currentIndex - 1);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      show(currentIndex + 1);
+    }
   });
 });
