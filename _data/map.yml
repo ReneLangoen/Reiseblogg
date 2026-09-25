@@ -17,26 +17,11 @@ locations:
 
   - id: tokyo
     label: Tokyo
-    weeks: [2, 4]
+    weeks: [2]
     country: Japan
     lat: 35.6769
     lng: 139.7639
 
-
-
-  - id: osaka
-    label: Osaka
-    weeks: [3]
-    country: Japan
-    lat: 34.6938
-    lng: 135.5015
-
-  - id: kofu
-    label: Kofu
-    country: Japan
-    ghost: true
-    lat: 35.6652
-    lng: 138.5710
 
 routes:
 
@@ -52,26 +37,6 @@ routes:
 
 
 
-
-  - from: tokyo
-    to: osaka
-    mode: "Bil"
-    distance_km: 492.9
-
-  - from: tokyo
-    to: osaka
-    mode: "Bil"
-    distance_km: 492.9
-
-  - from: osaka
-    to: kofu
-    mode: "Fly"
-    distance_km: 299.1
-
-  - from: kofu
-    to: tokyo
-    mode: "Bil"
-    distance_km: 124.1
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

@@ -2,7 +2,7 @@
 title: "Uke 1: Avreise til Bangkok"
 description: "Mandag 21. september satt vi kursen mot Bangkok. Her skal vi være i én uke for å avklimatiseres før turen går videre til Japan"
 location: "Bangkok, Thailand"
-tags: [avreise, uke 1, Bangkok, fly]
+tags: [avreise, uke 1, Bangkok]
 week_label: "Uke 1"
 images:
 
@@ -225,7 +225,10 @@ hero_image: avreise
 ---
 
 
-Turens første høydepunkt var Bergen Lounge på flesland før avreise. Deilig med et rolig lokale med god mat og drikke. AMEX Platinum kredittkortet gir tilgang til lounger over hele verden. Dette gjør flyplasstilværelsen flere hakk mer behagelig. Månedsprisen til kortet er på 650 kr, som tilsvarer to hamburgere på en norsk flyplass. 
+Turens første høydepunkt var Bergen Lounge på flesland før avreise. Deilig med et rolig lokale med god mat og drikke. 
+
+<!-- AMEX Platinum kredittkortet gir tilgang til lounger over hele verden. Dette gjør flyplasstilværelsen flere hakk mer behagelig. Månedsprisen til kortet er på 650 kr, som tilsvarer to hamburgere på en norsk flyplass. -->
+
 
 
 ## Flyreise og hotellet
@@ -238,10 +241,22 @@ Vi bor på Aira Hotel mellom områdene Sukhumvit og Siam, sentralt i Bangkok. He
 
 ## Velvære og hard hud
 {% include side-image.html id="pedikyr" %}
-Første skikkelige dag i Thailand var en velvære dag. En tur i gymmen, en tur i bassenget og deretter pedikyr på oss begge. René har lenge vært stolt over sin harde hud under beina, som har gjort det mulig å løpe på grus uten å få vondt. I anledningen sandalferie, med fotmassasje, barfot i templer, og den slags, måtte huden vekk. Den stakkars fotpleieren forsøkte forsiktig med en grov fil, men måtte raskt gi opp. Hun leitet febrilsk rundt i lokalet etter hardere skyts, før hun kom tilbake med noe som kan beskrives som en grov rasp. Den gjorde susen, og tottelottene til René er nå myke som barneføtter. 
+Første skikkelige dag i Thailand var en velvære dag. En tur i gymmen, en tur i bassenget og deretter pedikyr på oss begge. René har lenge vært stolt over sin harde hud under beina, *som har gjort det mulig å løpe på grus uten å få vondt*. I anledningen sandalferie, med fotmassasje, barfot i templer, og den slags, måtte huden vekk. Den stakkars fotpleieren forsøkte forsiktig med en grov fil, men måtte raskt gi opp. Hun leitet febrilsk rundt i lokalet etter hardere skyts, før hun kom tilbake med noe som kan beskrives som en grov rasp. Den gjorde susen, og tottelottene til René er nå myke som barneføtter. 
+
+Etter en sen middag dro vi til en lokal thai-massaje. Klokken var elleve og vi var litt forlegen over at vi var så sen og at de stakkars damene måtte jobbe så sent på kvelden. Etter en knallhard 90 minutters massasje satt vi og drakk te i resepsjonen. Til vår store forskrekkelse kom det rullende inn en familie klar for massasje kl halv ett på natten. 
+
+## Priser og transport
+
+{% include side-image.html id="som-hjemme" %}
+
+Den lokale valuaten er Thailandsk Baht (THB), hvor 100 THB tilsvarer 28,5 NOK. Valutaregning i hodet gjøres altså ved å dele på 3 og trekke fra litt til. Eller  dele på 4 og legge til litt. Prisnvået i Thailand er generelt lavere enn i Norge, spesielt for mat, losji og transport. Alkohol er ikke spesielt billig sammenlignet med europeiske priser som i Tyskland og Italia. Vin er stort sett norsk pris, hvor en vinflaske på en restaurant begynner på 400-500 NOK. 
+
+Bangkok er en by med et veldig stort bylandskap og hvor det alltid er kø. til gjengjeld er taxiturer skammelig billig. En times taxitur på rundt en mil koster 100 THB, altså under 30 NOK. Det er så billig at man lurer på hvordan de å få det til å gå rundt. Bensinprisen (95 oktan) er på 40 THB per liter, som tilsvarer rundt 11 NOK. Med norske øyne er dette billig, men for en lokal er dette en dyr vare. 
+
+I Bangkok er det både undergrunnsbane, overgrunnsbane (BTS Skytrain) og et omfattende bussnettverk. Dette gjør kollektivtransport til et lukrativt alternativ sammenlignet med taxi, ofte raskere og mer politlig. Vår uvitenhet gjorde oss litt skeptisk til undergrunnsbanen, men etter å ha tatt den kan vi ærlig si at den har den høyeste standarden av noen undergrunnsbane vi begge har tatt. Rent, oversiktlig, høy standard på tog, enkel å bruke og høy sikkerhet er noen beskrivende stikkord. 
 
 
-
+## Noen severdigheter
 {% include side-image.html id="bronze-hermit" %}
+I Bangkok er det over 400 templer, så det er nok å velge mellom. Noen av de mest kjente er Wat Phra Kaew, Wat Arun og Wat Pho. Et kjennetegn for de buddistiske templene er kjegleformede tårn og overdådig utsmykking med gull, mosaikkfliser og glinsende steiner. Vi traff og på Bronseeremitten. Statuen er en heder til eremitter med dyp kunnskap i blant annet naturmedisin. Foran statuen er en malestein for som er brukt for å knuse og finmale urter. 
 
-## Mer innhold kommer snart
