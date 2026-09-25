@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function populate(sel, items) {
     // clear (keep first 'All' option)
     while (sel.children.length > 1) sel.removeChild(sel.lastChild);
-    Array.from(items).sort((a,b)=>a.localeCompare(b,'nb')).forEach(it => {
+    Array.from(items).sort((a, b) => a.localeCompare(b, 'nb')).forEach(it => {
       const opt = document.createElement('option'); opt.value = it; opt.textContent = it; sel.appendChild(opt);
     });
   }
@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function compareFigures(a, b, key) {
     if (key === 'original') return a.dataset.originalIndex - b.dataset.originalIndex;
+    if (key === 'original-reverse') return b.dataset.originalIndex - a.dataset.originalIndex;
 
     const ai = a.querySelector('img');
     const bi = b.querySelector('img');
@@ -125,6 +126,30 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    if (key === 'original-reverse') {
+      restoreOriginalLayout();
+      mergedSection.style.display = 'none';
+
+      originalGrids.forEach(grid => {
+        figures
+          .filter(fig => fig._originalGrid === grid && matchesFilters(fig))
+          .sort((a, b) => b.dataset.originalIndex - a.dataset.originalIndex)
+          .forEach(fig => {
+            grid.appendChild(fig);
+            fig.style.display = 'block';
+          });
+        figures
+          .filter(fig => fig._originalGrid === grid && !matchesFilters(fig))
+          .sort((a, b) => a.dataset.originalIndex - b.dataset.originalIndex)
+          .forEach(fig => {
+            grid.appendChild(fig);
+            fig.style.display = 'none';
+          });
+      });
+      updateSectionVisibility();
+      return;
+    }
+
     sections.forEach(section => { section.style.display = 'none'; });
     mergedSection.style.display = visible.length ? '' : 'none';
 
@@ -138,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  countrySel.addEventListener('change', () => { populate(citySel, new Set(figures.filter(f=>{const i=f.querySelector('img'); return !countrySel.value || (i.dataset.country||'')===countrySel.value}).map(f=>f.querySelector('img')?.dataset.city).filter(Boolean))); applySortAndFilter(); });
+  countrySel.addEventListener('change', () => { populate(citySel, new Set(figures.filter(f => { const i = f.querySelector('img'); return !countrySel.value || (i.dataset.country || '') === countrySel.value }).map(f => f.querySelector('img')?.dataset.city).filter(Boolean))); applySortAndFilter(); });
   citySel.addEventListener('change', applySortAndFilter);
   weekSel.addEventListener('change', applySortAndFilter);
   sortSel.addEventListener('change', applySortAndFilter);

@@ -14,7 +14,7 @@ En liten samling av bilder fra reisen, gruppert etter hvilken uke de hører til.
   <label>Land: <select id="gf-country"><option value="">Alle</option></select></label>
   <label>By: <select id="gf-city"><option value="">Alle</option></select></label>
   <label>Uke: <select id="gf-week"><option value="">Alle</option></select></label>
-  <label>Sorter etter: <select id="gf-sort"><option value="original">Original</option><option value="caption">Bildetekst</option><option value="city">By</option><option value="country">Land</option></select></label>
+  <label>Sorter etter: <select id="gf-sort"><option value="original">Original</option><option value="original-reverse">Omvendt rekkefølge</option><option value="caption">Bildetekst</option><option value="city">By</option><option value="country">Land</option></select></label>
 </div>
 <script src="{{ '/assets/js/gallery-filter.js' | relative_url }}" defer></script>
 

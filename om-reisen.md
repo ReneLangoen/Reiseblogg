@@ -21,7 +21,7 @@ $$\mathcal{R}^{\widetilde{\nabla}} = (\nabla\circ \gamma)^* \mathcal{R}^g + g\ci
 som har surret rundt i hodet hans de siste årene, og Thea skal bli masert i 98% av sine våkne timer. 
 
 ### Reiseperiode
-- **Utreise:** fredag 21. september 2026
+- **Utreise:** mandag 21. september 2026
 - **Hjemreise:** innen 21. juni 2027
 
 
@@ -30,19 +30,15 @@ som har surret rundt i hodet hans de siste årene, og Thea skal bli masert i 98%
 
 - Første uke er i Bangkok på avklimatisering
 - I månedsskifte september-oktober starter vi på en to ukers bobilferie i Japan i en snerten Toyota Camroad
-- Etter dette venter kanskje Seoul og kanskje Beijing. 
+- Etter dette venter Sør-Korea og kanskje Beijing. 
 
+## Galleri
 
+Her kommer bilder fra reisen vår.
 
 ## Kart og ukesnummer
 
 Kartet på siden `Kart` viser hvor vi har reist og transportmiddlene vi har brukt. 
 Kartet vil bli oppdatert underveis.
 
-## Kontakt
 
-Hvis du vil bidra med forslag eller hjelpe med planlegging, send en e-post til oss eller åpne en issue i repoet.
-
----
-
-Rediger denne siden for å fylle inn de konkrete detaljene. For raskt å legge til nye kartsteder, bruk `scripts/add_location.py`.
