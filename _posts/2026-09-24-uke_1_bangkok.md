@@ -243,6 +243,7 @@ Vi bor på Aira Hotel mellom områdene Sukhumvit og Siam, sentralt i Bangkok. He
 {% include side-image.html id="pedikyr" %}
 Første skikkelige dag i Thailand var en velvære dag. En tur i gymmen, en tur i bassenget og deretter pedikyr på oss begge. René har lenge vært stolt over sin harde hud under beina, *som har gjort det mulig å løpe på grus uten å få vondt*. I anledningen sandalferie, med fotmassasje, barfot i templer, og den slags, måtte huden vekk. Den stakkars fotpleieren forsøkte forsiktig med en grov fil, men måtte raskt gi opp. Hun leitet febrilsk rundt i lokalet etter hardere skyts, før hun kom tilbake med noe som kan beskrives som en grov rasp. Den gjorde susen, og tottelottene til René er nå myke som barneføtter. 
 
+<!--
 Etter en sen middag dro vi til en lokal thai-massaje. Klokken var elleve og vi var litt forlegen over at vi var så sen og at de stakkars damene måtte jobbe så sent på kvelden. Etter en knallhard 90 minutters massasje satt vi og drakk te i resepsjonen. Til vår store forskrekkelse kom det rullende inn en familie klar for massasje kl halv ett på natten. 
 
 ## Priser og transport
@@ -254,7 +255,7 @@ Den lokale valuaten er Thailandsk Baht (THB), hvor 100 THB tilsvarer 28,5 NOK. V
 Bangkok er en by med et veldig stort bylandskap og hvor det alltid er kø. til gjengjeld er taxiturer skammelig billig. En times taxitur på rundt en mil koster 100 THB, altså under 30 NOK. Det er så billig at man lurer på hvordan de å få det til å gå rundt. Bensinprisen (95 oktan) er på 40 THB per liter, som tilsvarer rundt 11 NOK. Med norske øyne er dette billig, men for en lokal er dette en dyr vare. 
 
 I Bangkok er det både undergrunnsbane, overgrunnsbane (BTS Skytrain) og et omfattende bussnettverk. Dette gjør kollektivtransport til et lukrativt alternativ sammenlignet med taxi, ofte raskere og mer politlig. Vår uvitenhet gjorde oss litt skeptisk til undergrunnsbanen, men etter å ha tatt den kan vi ærlig si at den har den høyeste standarden av noen undergrunnsbane vi begge har tatt. Rent, oversiktlig, høy standard på tog, enkel å bruke og høy sikkerhet er noen beskrivende stikkord. 
-
+-->
 
 ## Noen severdigheter
 {% include side-image.html id="bronze-hermit" %}
