@@ -6,7 +6,7 @@ permalink: /gallery/
 
 # Galleri
 
-En liten samling av bilder fra reisen, gruppert etter hvilken uke de hører til.
+Bilder fra reisen, gruppert etter uke og sortert med nyeste bilder øverst. Sortering kan endres med filterknappen. 
 
 <!-- Gallery filter UI -->
 <link rel="stylesheet" href="{{ '/assets/css/gallery-filter.css' | relative_url }}">
