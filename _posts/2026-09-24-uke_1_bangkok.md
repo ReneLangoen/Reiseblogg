@@ -6,6 +6,36 @@ tags: [avreise, uke 1, Bangkok]
 week_label: "Uke 1"
 images:
 
+  - id: insekt
+    src: "/pictures/week-1/insekt.JPEG"
+    caption: "Nammis"
+    city: "Bangkok"
+    country: "Thailand"
+
+  - id: nrk
+    src: "/pictures/week-1/nrk.JPEG"
+    caption: "NRK syntes det var dramatisk"
+    city: "Bangkok"
+    country: "Thailand"
+
+  - id: thea-regn
+    src: "/pictures/week-1/thea_regn.JPEG"
+    caption: "Bergensere er ikke redd for litt regn"
+    city: "Bangkok"
+    country: "Thailand"
+
+  - id: stasjon
+    src: "/pictures/week-1/stasjon.JPEG"
+    caption: "Skikkelig regndag"
+    city: "Bangkok"
+    country: "Thailand"
+
+  - id: bts
+    src: "/pictures/week-1/bts.JPEG"
+    caption: "Skytrain i regnet"
+    city: "Bangkok"
+    country: "Thailand"
+
   - id: som-hjemme
     src: "/pictures/week-1/som_hjemme.JPG"
     caption: "Som hjemme <3"
@@ -261,3 +291,8 @@ I Bangkok er det både undergrunnsbane, overgrunnsbane (BTS Skytrain) og et omfa
 {% include side-image.html id="bronze-hermit" %}
 I Bangkok er det over 400 templer, så det er nok å velge mellom. Noen av de mest kjente er Wat Phra Kaew, Wat Arun og Wat Pho. Et kjennetegn for de buddistiske templene er kjegleformede tårn og overdådig utsmykking med gull, mosaikkfliser og glinsende steiner. Vi traff og på Bronseeremitten. Statuen er en heder til eremitter med dyp kunnskap i blant annet naturmedisin. Foran statuen er en malestein for som er brukt for å knuse og finmale urter. 
 
+## Vi tok med oss regnet
+{% include side-image.html id="nrk" %}
+
+Dessverre har mesteparten av uken her i Bangkok vært preget av regnvær. Det blir litt mer begrenset utforsking, og uteaktiviteter er ikke aktuelt da været begrenser transportmulighetene, særlig biltrafikken. Nært elvene som renner gjennom byen har det vært oversvømmelser, inn i butikker og hjem. Heldigvis har dette ikke rammet oss. Når man ser på medier sin framstilling av Bangkok skulle man trodd hele byen var under vann. Dette er ikke tilfelle. Oversvømmelsene er lokale og begrenset til enkelte nabolag. 
+Vi håper på bedre vær i Japan, men ser spent på et innkommende tyfonvarsel :flushed: :flushed: :flushed:

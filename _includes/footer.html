@@ -1,33 +1,21 @@
 <footer class="site-footer">
   <section class="subscribe">
     <h4>Få mail om nye innlegg</h4>
-    <form
-      name="subscribe"
-      method="post"
-      action="https://eot4wtb5sapqr7w.m.pipedream.net"
-    >
+    <form name="subscribe" method="post" action="https://eot4wtb5sapqr7w.m.pipedream.net">
       <label for="signup-email">E-postadresse</label>
 
-      <input
-        id="signup-email"
-        name="email"
-        type="email"
-        autocomplete="email"
-        required
-      >
+      <input id="signup-email" name="email" type="email" autocomplete="email" required>
 
-      <input
-        name="website"
-        type="text"
-        tabindex="-1"
-        autocomplete="off"
-        aria-hidden="true"
-        style="position: absolute; left: -9999px;"
-      >
+      <input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true"
+        style="position: absolute; left: -9999px;">
 
       <button type="submit">Meld på</button>
     </form>
   </section>
 
-  <p>© {{ site.time | date: '%Y' }} {{ site.title }}. Laget med Jekyll.</p>
+  <p>
+    © {{ site.time | date: '%Y' }} {{ site.title }}. Laget med Jekyll.
+    <a href="https://github.com/ReneLangoen/Reiseblogg" target="_blank" rel="noopener noreferrer">Se kildekoden på
+      GitHub</a>.
+  </p>
 </footer>
