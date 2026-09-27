@@ -7,31 +7,31 @@ week_label: "Uke 1"
 images:
 
   - id: insekt
-    src: "/pictures/week-1/insekt.JPEG"
+    src: "/pictures/week-1/insekt.jpeg"
     caption: "Nammis"
     city: "Bangkok"
     country: "Thailand"
 
   - id: nrk
-    src: "/pictures/week-1/nrk.JPEG"
+    src: "/pictures/week-1/nrk.jpeg"
     caption: "NRK syntes det var dramatisk"
     city: "Bangkok"
     country: "Thailand"
 
   - id: thea-regn
-    src: "/pictures/week-1/thea_regn.JPEG"
+    src: "/pictures/week-1/thea_regn.jpeg"
     caption: "Bergensere er ikke redd for litt regn"
     city: "Bangkok"
     country: "Thailand"
 
   - id: stasjon
-    src: "/pictures/week-1/stasjon.JPEG"
+    src: "/pictures/week-1/stasjon.jpeg"
     caption: "Skikkelig regndag"
     city: "Bangkok"
     country: "Thailand"
 
   - id: bts
-    src: "/pictures/week-1/bts.JPEG"
+    src: "/pictures/week-1/bts.jpeg"
     caption: "Skytrain i regnet"
     city: "Bangkok"
     country: "Thailand"
