@@ -6,6 +6,8 @@ Supports inserting ordered ghost intermediates between the previous location and
 the newly added main location; routes and distances will be computed and written
 after the user confirms the planned sequence.
 """
+from __future__ import annotations
+
 import os
 import argparse
 import urllib.parse

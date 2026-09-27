@@ -32,10 +32,8 @@ routes:
     distance_km: 10215.0
 
 
-  - from: bangkok
-    to: narita
-    mode: "Fly"
-    distance_km: 4659.1
+
+
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
