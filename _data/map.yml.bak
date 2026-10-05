@@ -15,7 +15,12 @@ locations:
     lng: 100.5018
 
 
-
+  - id: tokyo
+    label: Tokyo
+    weeks: [2]
+    country: Japan
+    lat: 35.6764
+    lng: 139.6500
 
   - id: narita
     label: Narita
@@ -23,6 +28,55 @@ locations:
     country: Japan
     lat: 35.7768
     lng: 140.3183
+
+  - id: ashikaga
+    label: Ashikaga
+    weeks: [2]
+    country: Japan
+    lat: 36.2892
+    lng: 139.5965
+
+  - id: nikko
+    label: Nikko
+    weeks: [2]
+    country: Japan
+    lat: 36.7503
+    lng: 139.6110
+
+  - id: chuzenji
+    label: Chūzenji-sjøen
+    weeks: [2]
+    country: Japan
+    lat: 36.7312
+    lng: 139.4908
+
+  - id: numata
+    label: Numata
+    country: Japan
+    ghost: true
+    lat: 36.6441
+    lng: 139.0429
+
+  - id: kusatsu
+    label: Kusatsu
+    weeks: [2]
+    country: Japan
+    lat: 36.6209
+    lng: 138.5960
+
+  - id: yamanouchi
+    label: Yamanouchi
+    country: Japan
+    ghost: true
+    lat: 36.7446
+    lng: 138.4127
+
+  - id: minamiuonuma
+    label: Minamiuonuma
+    weeks: [3]
+    country: Japan
+    lat: 37.0656
+    lng: 138.8761
 
 routes:
 
@@ -32,8 +86,51 @@ routes:
     distance_km: 10215.0
 
 
+  - from: bangkok
+    to: narita
+    mode: "Fly"
+    distance_km: 4659.1
+
+  - from: narita
+    to: tokyo
+    mode: "Tog"
+    distance_km: 61.4
+
+  - from: tokyo
+    to: narita
+    mode: "Tog"
+    distance_km: 61.4
 
 
+  - from: narita
+    to: ashikaga
+    mode: "Bil"
+    distance_km: 163
+
+  - from: ashikaga
+    to: nikko
+    mode: "Bil"
+    distance_km: 78
+
+  - from: nikko
+    to: chuzenji
+    mode: "Bil"
+    distance_km: 20
+
+  - from: chuzenji
+    to: numata
+    mode: "Bil"
+    distance_km: 41.1
+
+  - from: numata
+    to: kusatsu
+    mode: "Bil"
+    distance_km: 331.8
+
+  - from: kusatsu
+    to: yamanouchi
+    mode: "Bil"
+    distance_km: 21.4
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

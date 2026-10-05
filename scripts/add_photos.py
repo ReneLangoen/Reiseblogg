@@ -23,6 +23,8 @@ IMAGE_EXTENSIONS = {
     ".webp",
 }
 
+REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
+
 
 def slugify(value: str) -> str:
     normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
@@ -99,7 +101,7 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
     ):
         if not path.is_file() or path.suffix.lower() not in IMAGE_EXTENSIONS:
             continue
-        source = "/" + quote(path.resolve().relative_to(Path.cwd().resolve()).as_posix(), safe="/:@-._~")
+        source = "/" + quote(path.resolve().relative_to(REPOSITORY_ROOT).as_posix(), safe="/:@-._~")
         capture_times[source] = capture_datetime(path) or datetime.min
         if source in existing_sources:
             continue
@@ -120,6 +122,9 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
             }
         )
         existing_ids.add(image_id)
+
+    if not added:
+        return 0, False
 
     images.extend(added)
     images.sort(
