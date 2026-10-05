@@ -73,10 +73,17 @@ locations:
 
   - id: minamiuonuma
     label: Minamiuonuma
-    weeks: [3]
+    weeks: [2]
     country: Japan
     lat: 37.0656
     lng: 138.8761
+
+  - id: joetsu
+    label: Joetsu
+    weeks: [3]
+    country: Japan
+    lat: 37.1479
+    lng: 138.2360
 
 routes:
 
@@ -131,6 +138,11 @@ routes:
     to: yamanouchi
     mode: "Bil"
     distance_km: 21.4
+
+  - from: yamanouchi
+    to: minamiuonuma
+    mode: "Bil"
+    distance_km: 54.5
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

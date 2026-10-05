@@ -78,6 +78,13 @@ locations:
     lat: 37.0656
     lng: 138.8761
 
+  - id: joetsu
+    label: Joetsu
+    weeks: [2]
+    country: Japan
+    lat: 37.1685
+    lng: 138.2118
+
 routes:
 
   - from: bergen
@@ -136,6 +143,11 @@ routes:
     to: minamiuonuma
     mode: "Bil"
     distance_km: 54.5
+
+  - from: minamiuonuma
+    to: joetsu
+    mode: "Bil"
+    distance_km: 57.5
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
