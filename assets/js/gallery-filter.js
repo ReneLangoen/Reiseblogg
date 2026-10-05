@@ -55,6 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
   populate(citySel, cities);
   populate(weekSel, weeks);
 
+  const requestedCity = new URLSearchParams(window.location.search).get('city');
+  if (requestedCity && Array.from(citySel.options).some(option => option.value === requestedCity)) {
+    citySel.value = requestedCity;
+  }
+
   function matchesFilters(fig) {
     const img = fig.querySelector('img');
     const c = (img && img.dataset.country) ? img.dataset.country.trim() : '';
