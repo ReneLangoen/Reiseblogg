@@ -282,7 +282,7 @@ permalink: /map/
         riseOnHover: true
       }).addTo(map);
 
-      marker.bindTooltip(`${labelText}<br>Uke ${weekLabel}`, {
+      marker.bindTooltip(`${labelText}<br>Uke ${weekLabel}<br>Trykk for å se bilder`, {
         direction: 'top',
         offset: [0, -8]
       });
