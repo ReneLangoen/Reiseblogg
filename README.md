@@ -75,6 +75,7 @@ Legg til lokasjoner/ruter med riktig format via:
 ```bash
 ./scripts/add_location.py "Oslo" "Norway"   # geokoder automatisk og legger til
 ./scripts/add_location.py --list            # list lagrede lokasjoner
+./scripts/add_route.py                     # legg til rute mellom eksisterende lokasjoner
 ```
 
 Skriptet spør interaktivt om en rute fra forrige lokasjon, inkludert mellomstopp

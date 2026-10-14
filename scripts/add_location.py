@@ -391,7 +391,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
-    # returns distance in kilometers (float) or None on failure
+    # returns distance in kilometers (float) or None when routing is unavailable
     coords_a = get_location_coords(from_id)
     coords_b = get_location_coords(to_id)
     if not coords_a or not coords_b:
@@ -406,6 +406,15 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
         d2 = haversine(munich[0], munich[1], lat2, lon2)
         return d1 + d2
 
+    if 'tog' in mode_l or 'train' in mode_l:
+        try:
+            from scripts.compute_train_distance import compute_distance_and_path
+            meters, _ = compute_distance_and_path((lat1, lon1), (lat2, lon2), padding_deg=0.5)
+            return meters / 1000.0
+        except Exception as e:
+            print(f"Train routing failed ({e})")
+            return None
+
     # driving mode: use OSRM
     if 'bil' in mode_l or 'car' in mode_l:
         try:
@@ -418,13 +427,40 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
                 if meters is not None:
                     return float(meters) / 1000.0
         except Exception as e:
-            print(f"OSRM routing failed ({e}), falling back to great-circle distance")
+            print(f"OSRM routing failed ({e})")
+        return None
 
     # default: great-circle distance
     return haversine(lat1, lon1, lat2, lon2)
 
 
-def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float | None = None) -> bool:
+def prompt_for_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
+    """Resolve a route distance, optionally asking for a manual value."""
+    distance_km = compute_route_distance(from_id, to_id, mode)
+    if distance_km is not None:
+        return distance_km
+
+    while True:
+        try:
+            value = input(
+                f"Distance for {from_id} -> {to_id} in km "
+                "(leave blank to skip): "
+            ).strip()
+        except KeyboardInterrupt:
+            print()
+            return None
+        if not value:
+            return None
+        try:
+            distance_km = float(value.replace(',', '.'))
+            if distance_km < 0:
+                raise ValueError
+            return distance_km
+        except ValueError:
+            print("Enter a non-negative number, or press Enter to skip.")
+
+
+def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float | None = None, calculate_distance: bool = True) -> bool:
     p = Path("_data/map.yml")
     if not p.exists():
         print("Error: _data/map.yml not found; cannot add route.")
@@ -445,7 +481,7 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             dk_val = float(distance_km)
         except Exception:
             dk_val = None
-    if dk_val is None:
+    if dk_val is None and calculate_distance:
         # If transport mode indicates train, attempt OSM-based railway routing
         try:
             mode_low = mode_str.lower()
@@ -603,7 +639,7 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
                 mode = input(f"Transport mode from '{current_from}' to '{new_ghost_id}': ").strip() or default_mode
             except KeyboardInterrupt:
                 mode = default_mode
-            dist_km = compute_route_distance(current_from, new_ghost_id, mode)
+            dist_km = prompt_for_route_distance(current_from, new_ghost_id, mode)
             planned_routes.append((current_from, new_ghost_id, mode, dist_km))
             print(f"Planned route {current_from} -> {new_ghost_id} ({mode})")
             current_from = new_ghost_id
@@ -616,7 +652,7 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
     # If no ghosts were added, use the already-provided default_mode
     if not ghost_ids:
         mode_last = default_mode
-        dk = compute_route_distance(current_from, new_id, mode_last)
+        dk = prompt_for_route_distance(current_from, new_id, mode_last)
         planned_routes.append((current_from, new_id, mode_last, dk))
     else:
         # Ask for the final leg mode when there were intermediates
@@ -624,7 +660,7 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
             mode_last = input(f"Transport mode from '{current_from}' to '{new_id}': ").strip() or default_mode
         except KeyboardInterrupt:
             mode_last = default_mode
-        dk = compute_route_distance(current_from, new_id, mode_last)
+        dk = prompt_for_route_distance(current_from, new_id, mode_last)
         planned_routes.append((current_from, new_id, mode_last, dk))
 
     # show planned sequence and ask for confirmation before writing
@@ -705,7 +741,7 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
 
     # append planned routes now
     for fr, to, md, dk in planned_routes:
-        if append_route(fr, to, md, distance_km=dk):
+        if append_route(fr, to, md, distance_km=dk, calculate_distance=False):
             print(f"Wrote route {fr} -> {to} ({md})")
         else:
             print(f"Failed to write route {fr} -> {to} ({md})")

@@ -22,7 +22,7 @@ title: Hjem
           <h3>{{ post.title }}</h3>
           <p>{{ post.description | default: post.excerpt | strip_html | truncate: 150 }}</p>
           <div class="tags">
-            {% for tag in post.tags limit:4 %}<span>{{ tag }}</span>{% endfor %}
+            {% for tag in post.tags %}<span>{{ tag }}</span>{% endfor %}
           </div>
         </div>
       </a>

@@ -17,14 +17,14 @@ locations:
 
   - id: tokyo
     label: Tokyo
-    weeks: [2]
+    weeks: [2, 3]
     country: Japan
     lat: 35.6764
     lng: 139.6500
 
   - id: narita
     label: Narita
-    weeks: [2]
+    weeks: [2, 3]
     country: Japan
     lat: 35.7768
     lng: 140.3183
@@ -80,10 +80,80 @@ locations:
 
   - id: joetsu
     label: Joetsu
-    weeks: [2]
+    weeks: [3]
     country: Japan
     lat: 37.1685
     lng: 138.2118
+
+  - id: himi
+    label: Himi
+    weeks: [3]
+    country: Japan
+    lat: 36.8646
+    lng: 136.9704
+
+  - id: shinminato-uchikawa
+    label: Shinminato Uchikawa
+    weeks: [3]
+    country: Japan
+    lat: 36.7811
+    lng: 137.0877
+
+  - id: shirakawa-go
+    label: Shirakawa-go
+    weeks: [3]
+    country: Japan
+    lat: 36.2620
+    lng: 136.9069
+
+  - id: hirayu
+    label: Hirayu
+    weeks: [3]
+    country: Japan
+    lat: 36.1771
+    lng: 137.5596
+
+  - id: hida
+    label: Hida
+    weeks: [3]
+    country: Japan
+    lat: 36.2383
+    lng: 137.1859
+
+  - id: inuyama
+    label: Inuyama
+    weeks: [3]
+    country: Japan
+    lat: 35.3610
+    lng: 136.9845
+
+  - id: takayama
+    label: Takayama
+    weeks: [3]
+    country: Japan
+    lat: 36.1396
+    lng: 137.2510
+
+  - id: omaezaki
+    label: Omaezaki
+    weeks: [3]
+    country: Japan
+    lat: 34.6381
+    lng: 138.1280
+
+  - id: hitoana
+    label: Hitoana
+    weeks: [3]
+    country: Japan
+    lat: 35.3615
+    lng: 138.5907
+
+  - id: oshino
+    label: Oshino
+    country: Japan
+    ghost: true
+    lat: 35.4601
+    lng: 138.8479
 
 routes:
 
@@ -132,7 +202,7 @@ routes:
   - from: numata
     to: kusatsu
     mode: "Bil"
-    distance_km: 331.8
+    distance_km: 60
 
   - from: kusatsu
     to: yamanouchi
@@ -142,12 +212,67 @@ routes:
   - from: yamanouchi
     to: minamiuonuma
     mode: "Bil"
-    distance_km: 54.5
+    distance_km: 132
 
   - from: minamiuonuma
     to: joetsu
     mode: "Bil"
     distance_km: 57.5
+
+  - from: joetsu
+    to: himi
+    mode: "Bil"
+    distance_km: 158.8
+
+  - from: himi
+    to: shinminato-uchikawa
+    mode: "Bil"
+    distance_km: 18.3
+
+  - from: shinminato-uchikawa
+    to: shirakawa-go
+    mode: "Bil"
+    distance_km: 85.5
+
+  - from: shirakawa-go
+    to: hirayu
+    mode: "Bil"
+    distance_km: 95.3
+
+  - from: hirayu
+    to: hida
+    mode: "Bil"
+    distance_km: 44.9
+
+  - from: hida
+    to: inuyama
+    mode: "Bil"
+    distance_km: 146.7
+
+  - from: inuyama
+    to: takayama
+    mode: "Bil"
+    distance_km: 131.8
+
+  - from: takayama
+    to: omaezaki
+    mode: "Bil"
+    distance_km: 289.5
+
+  - from: omaezaki
+    to: hitoana
+    mode: "Bil"
+    distance_km: 111.3
+
+  - from: hitoana
+    to: oshino
+    mode: "Bil"
+    distance_km: 39.1
+
+  - from: oshino
+    to: narita
+    mode: "Bil"
+    distance_km: 188.4
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
