@@ -1,8 +1,8 @@
 ---
 title: "Uke 3: Siste uke med bobil og tilbake til Tokyo"
-description: "En dag i Tokyo før vi skal på bobilferie i to uker"
+description: "Bobillivet, Ukaifiske og flåtefestival. "
 location: "Tokyo, Japan"
-tags: [uke 3, Japan, Tokyo, bobil, Ukaifiske, flåtefestival]
+tags: [uke 3, Japan, bobil, Ukaifiske, flåtefestival]
 week_label: "Uke 3"
 images:
   - id: togbygging-over-videosamtale
@@ -493,7 +493,7 @@ images:
 
   - id: izakaya
     src: "/pictures/week-3/Izakaya_%E5%A4%A9%E7%AC%91%20by%20559.jpeg"
-    caption: "Izakaya 天笑 by 559 i Himi. Vår beste matopplevelse sålangt på turen."
+    caption: "Izakaya 天笑 by 559 i Himi. Vår beste matopplevelse så langt på turen."
     city: "Himi"
     country: "Japan"
 
@@ -568,27 +568,36 @@ hero_image: fujisan2
 ## Livet i bobil
 {% include side-image.html id="strandlivet" %}
 
-Vi har kjørt mye rundt i bobilen, besøkt småsteder og gjort flere småaktiviteter underveis. Alt for mange til å nevne alle, men du kan se bilder fra aktivitetene i galleriet. Bobilen ga oss masse fleksibilitet og frihet i hverdagen, med mulighet til å krysse fjell og daler mye enklere enn med toglinjene. Bobilturisme i Japan er egentlig veldig enkelt og bra tilrettelagt. Det er veldig mange gode og gratis stoppesteder, med gode toalettmuligheter (ingen bobiler i Japan har toalett). Den mest utfordrende delen er å kvitte seg med boss. Man kan sjuvsnike inn litt boss på en 7-Eleven, men for større mengder er man tvunget til å booke seg inn på campingplasser, som koster rundt 300-400 kr natten.
+Vi har kjørt mye rundt i bobilen, besøkt småsteder og gjort flere småaktiviteter underveis. Alt for mange til å nevne alle, men du kan se bilder fra aktivitetene i galleriet. Bobilen ga oss masse fleksibilitet og frihet i hverdagen, med mulighet til å krysse fjell og daler mye enklere enn med toglinjene. Bobilturisme i Japan er egentlig veldig enkelt og bra tilrettelagt. Japanere er VELDIG rolig og tolmodig i trafikken, og venstrekjøringen blir man fort vant til. Det er veldig mange gode og gratis stoppesteder, med gode toalettmuligheter (ingen bobiler i Japan har toalett). Den mest utfordrende delen er å kvitte seg med boss. Man kan sjuvsnike inn litt boss på en 7-Eleven, men for større mengder er man tvunget til å booke seg inn på campingplasser.
 
 ## En drøm om en fiskeauksjon
 {% include side-image.html id="izakaya" %}
 
-Vi hadde veldig lyst å besøke en ekte fiskeauksjon i Japan. Vi hadde sett oss ut fiskelandsbyen Himi, like ved storbbyen Toyama. Vi kom fram dit kvelden før, stod opp kl 5 om morgenen neste dag, og kjørte spent til fiskeauksjonshallen. Dette var en onsdags morgen, og onsdager viste seg å være hviledagen til fiskere og fiskeindustrien. Så de eneste som møtte opp til auksjonshallen denne morgene var oss og noen sultne hegrer. Ganske skuff, men vi trøstet oss med en nydelig soloppgang i Toyamabukten. 
+Vi hadde veldig lyst å besøke en ekte fiskeauksjon i Japan. Vi hadde sett oss ut fiskelandsbyen Himi, like ved storbbyen Toyama. Vi kom fram dit kvelden før, stod Thea ble purret opp kl 5 om morgenen neste dag. Spent kjørte vi til fiskeauksjonshallen. Dette var en onsdags morgen, og onsdager viste seg å være hviledagen til fiskere og fiskeindustrien. Så de eneste som møtte opp til auksjonshallen denne morgene var oss og noen sultne hegrer. Ganske skuff, men vi trøstet oss med en nydelig soloppgang i Toyamabukten. 
 
 
 ## Ukaifiske i Inayama
 {% include side-image.html id="ukaifiske" %}
 
-Det er ingen hemmelighet at bobilreisen vår gjennom Japan er sterkt inspirert av TEAM Bachstads tur til Japan. På sin reise deltok de på Ukaifiske, en over 1000 år gammel fisketeknikk praktisert i Nagoya, hvor skarver i bånd brukes til å fange fisk. Fiske ledes av skarvemesteren, som holder 10 skarver samtidig og passer på at de ikke floker seg sammen og tar imot fisken de fanger underveis. 
+Det er ingen hemmelighet at bobilreisen vår gjennom Japan er sterkt inspirert av TEAM Bachstads tur til Japan. På sin reise deltok de på Ukaifiske, en over 1300 år gammel fisketeknikk praktisert i Nagoya, hvor skarver i bånd brukes til å fange fisk. Fiske ledes av skarvemesteren, som holder 10 skarver samtidig og passer på at de ikke floker seg sammen og tar imot fisken de fanger underveis. 
 
 ## Flåtefestival i Takayama
 {% include side-image.html id="flater-med-papirlykter" %}
 
-Etter Ukaifiske utenfor Nagoya, kjørte vi sammee kveld nord (igjen) for å delta på en flåtefestival som skulle holdes neste dag i Takayama. Denne flåtefestivalen er svært berømt i Japan, er en av de største flåtefestivalene og anses ansees som en av de viktigste tradisjonelle festivalene i landet. Vi hadde inntrykket av at festivalen skulle være litt mer partysteminng, og var klar for litt rølpefest i gatene. Men som mye annet i Japan, gikk ting rolig for seg, med strenge rammer rundt prosesjonen og mest eldre turister som ønsket å se på flåtene og ta bilder. Kjekt var det likevel. 
+Etter Ukaifiske utenfor Nagoya, kjørte vi samme kveld nord (igjen) for å delta på en flåtefestival som skulle holdes neste dag i Takayama. Denne flåtefestivalen er en av Japans største og mest kjente, og regnes blant landets viktigste tradisjonelle festivaler. Vi hadde inntrykket av at festivalen skulle være litt mer partysteminng, og var klar for litt skikkelig fest i gatene. Men som mye annet i Japan, gikk ting rolig for seg, med strenge rammer rundt prosesjonen og mest eldre turister som ønsket å se på flåtene og ta bilder. Kjekt var det likevel. 
+
+Kjekt var det og å ta noen øl med et sveitserpar og høre om nye behandlinger for klovråte på sau fra en veterinær.
+Senere ble det sake med et portugiserpar som vi holdt lag med utover kvelden. 
+
 
 ## Rolige dager i bobil
 {% include side-image.html id="fujisan-fra-idebok-cow-resort" %}
 
-Resten av dagene gikk med til å kose seg litt på veien, med flotte veistrekninger og fine campingplasser, blant annet på stranden ved store sanddyner i Oma(ezaki), og på bondegård i Hinaoka med utsikt til Fuji-san. Neste uke venter storbylivet i Tokyo før i slutten av uken veien går videre til Osaka og Kyoto. 
+Resten av dagene gikk med til å kose seg litt på veien, med flotte veistrekninger og fine campingplasser, blant annet på stranden ved store sanddyner i Oma(ezaki), og på bondegård i Hinaoka med utsikt til Fuji-san. 
+
+På starten av bobileventyret så vi for oss å dekke store deler av hovedøyen Honshu. Men etter hvert som vi kjørte rundt, innså vi at det var mer realistisk å ta det rolig og nyte de stedene vi besøkte, fremfor å stresse over hele øyen. Et fint bilde av hvor turen har gått kommer fram i *Kart* siden som du finner øverst. Her kan du også se at vi så langt har besøkt 20 byer i Japan, og at vi har kjørt over 1800 km i bobilen. Inkludert alle småturer og dagligkjøring har vi faktisk kjørt godt over 2000. Takk for nå bobilen. Jeg skullle ønske det fantes Toyota Dyna med camper hjemme i Norge. 
+
+
+Neste uke venter storbylivet i Tokyo før i slutten av uken veien går videre til Osaka og Kyoto. 
 
 
