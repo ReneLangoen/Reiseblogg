@@ -27,9 +27,15 @@ REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 
 
 def slugify(value: str) -> str:
+    value = value.casefold().replace("æ", "ae").replace("ø", "o").replace("å", "a")
     normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
     slug = re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
     return slug or "image"
+
+
+def caption_from_filename(value: str) -> str:
+    caption = value.replace("_", " ")
+    return caption[:1].upper() + caption[1:]
 
 
 def yaml_value(value: str) -> str:
@@ -77,7 +83,7 @@ def capture_datetime(path: Path) -> Optional[datetime]:
     return None
 
 
-def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[int, bool]:
+def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[int, int, bool]:
     text = post.read_text(encoding="utf-8")
     front_matter, body = parse_front_matter(text)
     metadata = yaml.safe_load(front_matter) or {}
@@ -86,9 +92,13 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
         raise ValueError("The post's images field must be a YAML list")
 
     existing_sources = {image.get("src") for image in images if isinstance(image, dict)}
+    existing_images = {
+        image.get("src"): image for image in images if isinstance(image, dict)
+    }
     existing_ids = {image.get("id") for image in images if isinstance(image, dict)}
     capture_times = {}
     added = []
+    captions_updated = 0
     for path in sorted(
         folder.iterdir(),
         key=lambda item: (
@@ -104,6 +114,10 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
         source = "/" + quote(path.resolve().relative_to(REPOSITORY_ROOT).as_posix(), safe="/:@-._~")
         capture_times[source] = capture_datetime(path) or datetime.min
         if source in existing_sources:
+            existing_image = existing_images.get(source)
+            if existing_image and not existing_image.get("caption"):
+                existing_image["caption"] = caption_from_filename(path.stem)
+                captions_updated += 1
             continue
 
         image_id = slugify(path.stem)
@@ -116,15 +130,15 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
             {
                 "id": image_id,
                 "src": source,
-                "caption": "",
+                "caption": caption_from_filename(path.stem),
                 "city": city,
                 "country": country,
             }
         )
         existing_ids.add(image_id)
 
-    if not added:
-        return 0, False
+    if not added and not captions_updated:
+        return 0, 0, False
 
     images.extend(added)
     images.sort(
@@ -148,7 +162,11 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
     new_text = "---\n" + new_front_matter.rstrip() + "\n---\n" + body
     if new_text != text:
         post.write_text(new_text, encoding="utf-8")
-    return len(added), any(path["src"].lower().endswith((".heic", ".heif")) for path in added)
+    return (
+        len(added),
+        captions_updated,
+        any(path["src"].lower().endswith((".heic", ".heif")) for path in added),
+    )
 
 
 def main() -> None:
@@ -171,11 +189,15 @@ def main() -> None:
     if not args.folder.is_dir():
         parser.error(f"Photo folder does not exist: {args.folder}")
 
-    added, has_heic = update_images(args.post, args.folder, args.city, args.country)
+    added, captions_updated, has_heic = update_images(
+        args.post, args.folder, args.city, args.country
+    )
     if added:
         print(f"Added {added} photo(s) to {args.post}")
-    else:
-        print("No new photos to add")
+    if captions_updated:
+        print(f"Generated captions for {captions_updated} photo(s) in {args.post}")
+    if not added and not captions_updated:
+        print("No new photos or captions to add")
     if has_heic:
         print("Warning: HEIC files were added; browser support is not universal.")
 

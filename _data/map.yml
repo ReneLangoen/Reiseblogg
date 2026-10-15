@@ -19,8 +19,8 @@ locations:
     label: Tokyo
     weeks: [2, 3]
     country: Japan
-    lat: 35.6764
-    lng: 139.6500
+    lat: 35.728088
+    lng: 139.77045900
 
   - id: narita
     label: Narita
@@ -92,8 +92,8 @@ locations:
     lat: 36.8646
     lng: 136.9704
 
-  - id: shinminato-uchikawa
-    label: Shinminato Uchikawa
+  - id: shinminato
+    label: Shinminato
     weeks: [3]
     country: Japan
     lat: 36.7811
@@ -225,11 +225,11 @@ routes:
     distance_km: 158.8
 
   - from: himi
-    to: shinminato-uchikawa
+    to: shinminato
     mode: "Bil"
     distance_km: 18.3
 
-  - from: shinminato-uchikawa
+  - from: shinminato
     to: shirakawa-go
     mode: "Bil"
     distance_km: 85.5
