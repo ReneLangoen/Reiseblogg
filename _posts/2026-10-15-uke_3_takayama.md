@@ -2,7 +2,7 @@
 title: "Uke 3: Siste uke med bobil og tilbake til Tokyo"
 description: "En dag i Tokyo før vi skal på bobilferie i to uker"
 location: "Tokyo, Japan"
-tags: [uke 3, Japan, Tokyo, bobil, ]
+tags: [uke 3, Japan, Tokyo, bobil, Ukaifiske, flåtefestival]
 week_label: "Uke 3"
 images:
   - id: togbygging-over-videosamtale
@@ -19,7 +19,7 @@ images:
 
   - id: fujisan-fra-tokyo-skytree
     src: "/pictures/week-3/fujisan_fra_tokyo_skytree.jpeg"
-    caption: "Fujisan fra Tokyo skytree"
+    caption: "Fuji-san fra Tokyo skytree"
     city: "Tokyo"
     country: "Japan"
 
@@ -55,13 +55,13 @@ images:
 
   - id: fujisan
     src: "/pictures/week-3/Fujisan.jpeg"
-    caption: "Fujisan"
+    caption: "Fuji-san"
     city: "Hitoana"
     country: "Japan"
 
   - id: fujisan2
     src: "/pictures/week-3/Fujisan2.jpeg"
-    caption: "Fujisan"
+    caption: "Fuji-san"
     city: "Hitoana"
     country: "Japan"
 
@@ -71,9 +71,27 @@ images:
     city: "Hitoana"
     country: "Japan"
 
+  - id: brown-swiss-kalver
+    src: "/pictures/week-3/Brown_swiss_kalver.jpeg"
+    caption: "Brown swiss kalver"
+    city: "Hitoana"
+    country: "Japan"
+
+  - id: brown-swiss-kalv
+    src: "/pictures/week-3/Brown_swiss_kalv.jpeg"
+    caption: "Brown swiss kalv"
+    city: "Hitoana"
+    country: "Japan"
+
   - id: fujisan-fra-idebok-cow-resort
     src: "/pictures/week-3/Fujisan_fra_Idebok_cow_resort.jpeg"
-    caption: "Fujisan fra Idebok cow resort"
+    caption: "Fuji-san fra Idebok cow resort"
+    city: "Hitoana"
+    country: "Japan"
+
+  - id: fujisan-og-fine-kyr
+    src: "/pictures/week-3/fujisan_og_fine_kyr.jpeg"
+    caption: "Fuji-san og fine kyr på Idebok cow resort campingplass"
     city: "Hitoana"
     country: "Japan"
 
@@ -181,19 +199,19 @@ images:
 
   - id: ukaimesteren-i-aksjon
     src: "/pictures/week-3/Ukaimesteren_i_aksjon.jpeg"
-    caption: "Ukaimesteren i aksjon"
-    city: "Inuyama"
-    country: "Japan"
-
-  - id: flinke-skarver
-    src: "/pictures/week-3/Flinke_skarver.jpeg"
-    caption: "Flinke skarver"
+    caption: "Skarvemesteren i aksjon"
     city: "Inuyama"
     country: "Japan"
 
   - id: kom-deg-uti-igjen
     src: "/pictures/week-3/Kom_deg_uti_igjen.jpeg"
     caption: "Kom deg uti igjen!"
+    city: "Inuyama"
+    country: "Japan"
+
+  - id: flinke-skarver
+    src: "/pictures/week-3/Flinke_skarver.jpeg"
+    caption: "Flinke skarver"
     city: "Inuyama"
     country: "Japan"
 
@@ -205,7 +223,7 @@ images:
 
   - id: ukaimesteren-i-sving
     src: "/pictures/week-3/Ukaimesteren_i_sving.jpeg"
-    caption: "Ukaimesteren i sving"
+    caption: "Skarvemesteren i sving"
     city: "Inuyama"
     country: "Japan"
 
@@ -473,9 +491,9 @@ images:
     city: "Himi"
     country: "Japan"
 
-  - id: izakaya-by-559
+  - id: izakaya
     src: "/pictures/week-3/Izakaya_%E5%A4%A9%E7%AC%91%20by%20559.jpeg"
-    caption: "Izakaya 天笑 by 559. Vår beste matopplevelse sålangt på turen."
+    caption: "Izakaya 天笑 by 559 i Himi. Vår beste matopplevelse sålangt på turen."
     city: "Himi"
     country: "Japan"
 
@@ -511,7 +529,7 @@ images:
 
   - id: img-6209
     src: "/pictures/week-3/IMG_6209.jpeg"
-    caption: "Vi møttte en medcamper, Chiori, med dvergpuddelene Nana og Cherry"
+    caption: "Vi møttte medcamperen Chiori, med dvergpuddelene Nana og Cherry"
     city: "Joetsu"
     country: "Japan"
 
@@ -544,10 +562,33 @@ images:
     caption: "Sjøhund"
     city: "Joetsu"
     country: "Japan"
-
-
 hero_image: fujisan2
 ---
 
-## Tokyo, minigriser og Izakaya
-{% include side-image.html id="spadom" %}
+## Livet i bobil
+{% include side-image.html id="strandlivet" %}
+
+Vi har kjørt mye rundt i bobilen, besøkt småsteder og gjort flere småaktiviteter underveis. Alt for mange til å nevne alle, men du kan se bilder fra aktivitetene i galleriet. Bobilen ga oss masse fleksibilitet og frihet i hverdagen, med mulighet til å krysse fjell og daler mye enklere enn med toglinjene. Bobilturisme i Japan er egentlig veldig enkelt og bra tilrettelagt. Det er veldig mange gode og gratis stoppesteder, med gode toalettmuligheter (ingen bobiler i Japan har toalett). Den mest utfordrende delen er å kvitte seg med boss. Man kan sjuvsnike inn litt boss på en 7-Eleven, men for større mengder er man tvunget til å booke seg inn på campingplasser, som koster rundt 300-400 kr natten.
+
+## En drøm om en fiskeauksjon
+{% include side-image.html id="izakaya" %}
+
+Vi hadde veldig lyst å besøke en ekte fiskeauksjon i Japan. Vi hadde sett oss ut fiskelandsbyen Himi, like ved storbbyen Toyama. Vi kom fram dit kvelden før, stod opp kl 5 om morgenen neste dag, og kjørte spent til fiskeauksjonshallen. Dette var en onsdags morgen, og onsdager viste seg å være hviledagen til fiskere og fiskeindustrien. Så de eneste som møtte opp til auksjonshallen denne morgene var oss og noen sultne hegrer. Ganske skuff, men vi trøstet oss med en nydelig soloppgang i Toyamabukten. 
+
+
+## Ukaifiske i Inayama
+{% include side-image.html id="ukaifiske" %}
+
+Det er ingen hemmelighet at bobilreisen vår gjennom Japan er sterkt inspirert av TEAM Bachstads tur til Japan. På sin reise deltok de på Ukaifiske, en over 1000 år gammel fisketeknikk praktisert i Nagoya, hvor skarver i bånd brukes til å fange fisk. Fiske ledes av skarvemesteren, som holder 10 skarver samtidig og passer på at de ikke floker seg sammen og tar imot fisken de fanger underveis. 
+
+## Flåtefestival i Takayama
+{% include side-image.html id="flater-med-papirlykter" %}
+
+Etter Ukaifiske utenfor Nagoya, kjørte vi sammee kveld nord (igjen) for å delta på en flåtefestival som skulle holdes neste dag i Takayama. Denne flåtefestivalen er svært berømt i Japan, er en av de største flåtefestivalene og anses ansees som en av de viktigste tradisjonelle festivalene i landet. Vi hadde inntrykket av at festivalen skulle være litt mer partysteminng, og var klar for litt rølpefest i gatene. Men som mye annet i Japan, gikk ting rolig for seg, med strenge rammer rundt prosesjonen og mest eldre turister som ønsket å se på flåtene og ta bilder. Kjekt var det likevel. 
+
+## Rolige dager i bobil
+{% include side-image.html id="fujisan-fra-idebok-cow-resort" %}
+
+Resten av dagene gikk med til å kose seg litt på veien, med flotte veistrekninger og fine campingplasser, blant annet på stranden ved store sanddyner i Oma(ezaki), og på bondegård i Hinaoka med utsikt til Fuji-san. Neste uke venter storbylivet i Tokyo før i slutten av uken veien går videre til Osaka og Kyoto. 
+
+
