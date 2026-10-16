@@ -7,7 +7,7 @@ week_label: "Uke 3"
 images:
   - id: togbygging-over-videosamtale
     src: "/pictures/week-3/togbygging_over_videosamtale.jpeg"
-    caption: "Togbygging over videosamtale"
+    caption: "Jonathan bygger Shinkansen over videosamtale"
     city: "Tokyo"
     country: "Japan"
 
