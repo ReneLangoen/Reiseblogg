@@ -408,7 +408,7 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
 
     if 'tog' in mode_l or 'train' in mode_l:
         try:
-            from scripts.compute_train_distance import compute_distance_and_path
+            from compute_train_distance import compute_distance_and_path
             meters, _ = compute_distance_and_path((lat1, lon1), (lat2, lon2), padding_deg=0.5)
             return meters / 1000.0
         except Exception as e:
@@ -488,7 +488,7 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             if 'tog' in mode_low or 'train' in mode_low:
                 try:
                     # lazy import to avoid hard dependency unless needed
-                    from scripts.compute_train_distance import compute_distance_and_path
+                    from compute_train_distance import compute_distance_and_path
                     coords_a = get_location_coords(from_id)
                     coords_b = get_location_coords(to_id)
                     if coords_a and coords_b:

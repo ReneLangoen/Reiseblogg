@@ -17,7 +17,7 @@ images:
     city: "Tokyo"
     country: "Japan"
 
-  - id: fujisan-fra-tokyo-skytree
+  - id: fujisan-fra-tokyo-sky-tree
     src: "/pictures/week-3/fujisan_fra_tokyo_skytree.jpeg"
     caption: "Fuji-san fra Tokyo skytree"
     city: "Tokyo"

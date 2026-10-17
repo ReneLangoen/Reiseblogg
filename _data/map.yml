@@ -155,6 +155,13 @@ locations:
     lat: 35.4601
     lng: 138.8479
 
+  - id: unga
+    label: Unga
+    weeks: [3]
+    country: Japan
+    lat: 35.9140
+    lng: 139.9061
+
 routes:
 
   - from: bergen
@@ -273,6 +280,9 @@ routes:
     to: narita
     mode: "Bil"
     distance_km: 188.4
+
+
+  
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

@@ -17,14 +17,14 @@ locations:
 
   - id: tokyo
     label: Tokyo
-    weeks: [2, 8]
+    weeks: [2, 3]
     country: Japan
-    lat: 35.6764
-    lng: 139.6500
+    lat: 35.728088
+    lng: 139.77045900
 
   - id: narita
     label: Narita
-    weeks: [2]
+    weeks: [2, 3]
     country: Japan
     lat: 35.7768
     lng: 140.3183
@@ -92,8 +92,8 @@ locations:
     lat: 36.8646
     lng: 136.9704
 
-  - id: shinminato-uchikawa
-    label: Shinminato Uchikawa
+  - id: shinminato
+    label: Shinminato
     weeks: [3]
     country: Japan
     lat: 36.7811
@@ -122,28 +122,28 @@ locations:
 
   - id: inuyama
     label: Inuyama
-    weeks: [4]
+    weeks: [3]
     country: Japan
     lat: 35.3610
     lng: 136.9845
 
   - id: takayama
     label: Takayama
-    weeks: [5]
+    weeks: [3]
     country: Japan
     lat: 36.1396
     lng: 137.2510
 
   - id: omaezaki
     label: Omaezaki
-    weeks: [6]
+    weeks: [3]
     country: Japan
     lat: 34.6381
     lng: 138.1280
 
   - id: hitoana
     label: Hitoana
-    weeks: [7]
+    weeks: [3]
     country: Japan
     lat: 35.3615
     lng: 138.5907
@@ -222,52 +222,57 @@ routes:
   - from: joetsu
     to: himi
     mode: "Bil"
-    distance_km: 169
+    distance_km: 158.8
 
   - from: himi
-    to: shinminato-uchikawa
+    to: shinminato
     mode: "Bil"
-    distance_km: 14.0
+    distance_km: 18.3
 
-  - from: shinminato-uchikawa
+  - from: shinminato
     to: shirakawa-go
     mode: "Bil"
-    distance_km: 59.9
+    distance_km: 85.5
 
   - from: shirakawa-go
     to: hirayu
     mode: "Bil"
-    distance_km: 59.3
+    distance_km: 95.3
 
   - from: hirayu
     to: hida
     mode: "Bil"
-    distance_km: 34.2
+    distance_km: 44.9
 
   - from: hida
     to: inuyama
     mode: "Bil"
-    distance_km: 99.2
+    distance_km: 146.7
 
   - from: inuyama
     to: takayama
     mode: "Bil"
-    distance_km: 89.9
+    distance_km: 131.8
 
   - from: takayama
     to: omaezaki
     mode: "Bil"
-    distance_km: 184.9
+    distance_km: 289.5
 
   - from: omaezaki
     to: hitoana
     mode: "Bil"
-    distance_km: 90.8
+    distance_km: 111.3
 
   - from: hitoana
     to: oshino
     mode: "Bil"
-    distance_km: 25.8
+    distance_km: 39.1
+
+  - from: oshino
+    to: narita
+    mode: "Bil"
+    distance_km: 188.4
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
