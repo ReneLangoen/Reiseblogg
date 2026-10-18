@@ -35,6 +35,10 @@ def compute_distance_and_path(origin, dest, padding_deg=0.5):
     import osmnx as ox
     import networkx as nx
 
+    # overpass-api.de resets connections that carry osmnx/requests' default headers
+    from osmnx import _http
+    _http._get_http_headers = lambda *a, **k: {"User-Agent": "reiseblogg/1.0 (personal travel blog)"}
+
     olat, olon = origin
     dlat, dlon = dest
 

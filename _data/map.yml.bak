@@ -17,14 +17,14 @@ locations:
 
   - id: tokyo
     label: Tokyo
-    weeks: [2, 3]
+    weeks: [2, 4]
     country: Japan
     lat: 35.728088
     lng: 139.77045900
 
   - id: narita
     label: Narita
-    weeks: [2, 3]
+    weeks: [2, 4]
     country: Japan
     lat: 35.7768
     lng: 140.3183
@@ -155,6 +155,27 @@ locations:
     lat: 35.4601
     lng: 138.8479
 
+  - id: unga
+    label: Unga
+    weeks: [4]
+    country: Japan
+    lat: 35.9140
+    lng: 139.9061
+
+  - id: osaka
+    label: Osaka
+    weeks: [4]
+    country: Japan
+    lat: 34.6938
+    lng: 135.5015
+
+  - id: nara
+    label: Nara
+    weeks: [5]
+    country: Japan
+    lat: 34.6845
+    lng: 135.8048
+
 routes:
 
   - from: bergen
@@ -171,12 +192,12 @@ routes:
   - from: narita
     to: tokyo
     mode: "Tog"
-    distance_km: 61.4
+    distance_km: 59.0
 
   - from: tokyo
     to: narita
     mode: "Tog"
-    distance_km: 61.4
+    distance_km: 59.0
 
 
   - from: narita
@@ -273,6 +294,23 @@ routes:
     to: narita
     mode: "Bil"
     distance_km: 188.4
+
+
+  - from: narita
+    to: tokyo
+    mode: "Tog"
+    distance_km: 59.0
+
+  - from: tokyo
+    to: unga
+    mode: "Tog"
+    distance_km: 36.6
+
+  - from: unga
+    to: osaka
+    mode: "Tog"
+    distance_km: 557.3
+
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

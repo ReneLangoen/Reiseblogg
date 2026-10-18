@@ -61,6 +61,10 @@ def slugify(s: str) -> str:
     return s.strip("-")
 
 
+# coordinates of locations prepared in this session but not yet written to map.yml
+_PENDING_COORDS: dict = {}
+
+
 def format_block(label: str, lat: str, lon: str, country: str = None, ghost: bool = False):
     id_ = slugify(label)
     try:
@@ -71,6 +75,10 @@ def format_block(label: str, lat: str, lon: str, country: str = None, ghost: boo
     except Exception:
         lat_s = lat
         lon_s = lon
+    try:
+        _PENDING_COORDS[id_] = (float(lat), float(lon))
+    except Exception:
+        pass
     parts = [
         f"  - id: {id_}\n",
         f"    label: {label}\n",
@@ -361,6 +369,8 @@ def get_last_location_id() -> str | None:
 
 
 def get_location_coords(loc_id: str):
+    if loc_id in _PENDING_COORDS:
+        return _PENDING_COORDS[loc_id]
     p = Path("_data/map.yml")
     if not p.exists():
         return None
@@ -408,8 +418,9 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
 
     if 'tog' in mode_l or 'train' in mode_l:
         try:
-            from compute_train_distance import compute_distance_and_path
-            meters, _ = compute_distance_and_path((lat1, lon1), (lat2, lon2), padding_deg=0.5)
+            from train_lines import train_route
+            meters, coords = train_route(from_id, to_id, (lat1, lon1), (lat2, lon2))
+            _TRAIN_PATH_CACHE[(from_id, to_id)] = coords
             return meters / 1000.0
         except Exception as e:
             print(f"Train routing failed ({e})")
@@ -460,6 +471,47 @@ def prompt_for_route_distance(from_id: str, to_id: str, mode: str) -> float | No
             print("Enter a non-negative number, or press Enter to skip.")
 
 
+PATHS_FILE = Path("_data/route_paths.yml")
+
+
+def _simplify_path(points, tol=0.0002):
+    """Ramer-Douglas-Peucker simplification (tolerance in degrees, ~20 m)."""
+    if len(points) < 3:
+        return list(points)
+    (y1, x1), (y2, x2) = points[0], points[-1]
+    dx, dy = x2 - x1, y2 - y1
+    norm = (dx * dx + dy * dy) ** 0.5
+    best, idx = 0.0, 0
+    for i in range(1, len(points) - 1):
+        y, x = points[i]
+        if norm:
+            d = abs(dy * (x - x1) - dx * (y - y1)) / norm
+        else:
+            d = ((x - x1) ** 2 + (y - y1) ** 2) ** 0.5
+        if d > best:
+            best, idx = d, i
+    if best <= tol:
+        return [points[0], points[-1]]
+    return _simplify_path(points[: idx + 1], tol)[:-1] + _simplify_path(points[idx:], tol)
+
+
+def save_route_path(from_id: str, to_id: str, coords) -> None:
+    """Store route geometry in _data/route_paths.yml under the key 'from-to'."""
+    key = f"{from_id}-{to_id}"
+    if PATHS_FILE.exists():
+        text = PATHS_FILE.read_text(encoding="utf-8")
+    else:
+        text = "# Rutegeometri generert av scripts/add_route.py (ikke rediger manuelt).\n# Nøkkel: fra-til. Kartet bruker omvendt rekkefølge hvis bare til-fra finnes.\n"
+    if re.search(rf"^{re.escape(key)}:", text, flags=re.M):
+        return
+    pts = _simplify_path([(float(a), float(b)) for a, b in coords])
+    block = f"\n{key}:\n" + "".join(f"  - [{a:.5f}, {b:.5f}]\n" for a, b in pts)
+    PATHS_FILE.write_text(text + block, encoding="utf-8")
+
+
+_TRAIN_PATH_CACHE: dict = {}
+
+
 def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float | None = None, calculate_distance: bool = True) -> bool:
     p = Path("_data/map.yml")
     if not p.exists():
@@ -481,6 +533,18 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             dk_val = float(distance_km)
         except Exception:
             dk_val = None
+    mode_is_train = any(k in mode_str.lower() for k in ('tog', 'train'))
+    if mode_is_train:
+        route_path = _TRAIN_PATH_CACHE.get((from_id, to_id))
+        if route_path is None and dk_val is not None:
+            # distance was supplied without a path; fetch the geometry for the map
+            try:
+                from train_lines import train_route
+                ca, cb = get_location_coords(from_id), get_location_coords(to_id)
+                if ca and cb:
+                    _, route_path = train_route(from_id, to_id, ca, cb)
+            except Exception as e:
+                print(f"Could not fetch train geometry ({e}); route will be drawn as a straight line")
     if dk_val is None and calculate_distance:
         # If transport mode indicates train, attempt OSM-based railway routing
         try:
@@ -488,12 +552,12 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             if 'tog' in mode_low or 'train' in mode_low:
                 try:
                     # lazy import to avoid hard dependency unless needed
-                    from compute_train_distance import compute_distance_and_path
+                    from train_lines import train_route
                     coords_a = get_location_coords(from_id)
                     coords_b = get_location_coords(to_id)
                     if coords_a and coords_b:
                         # compute meters and node coords
-                        meters, coords = compute_distance_and_path((coords_a[0], coords_a[1]), (coords_b[0], coords_b[1]), padding_deg=0.5)
+                        meters, coords = train_route(from_id, to_id, (coords_a[0], coords_a[1]), (coords_b[0], coords_b[1]))
                         dk_val = meters / 1000.0
                         route_path = coords
                 except Exception:
@@ -511,12 +575,9 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             route_block += f"    distance_km: {round(float(dk_val), 1)}\n"
         except Exception:
             pass
-    # include geometry points if available (map expects `points`)
-    if route_path:
-        route_block += "    points:\n"
-        for lat, lon in route_path:
-            route_block += f"      - [{lat:.6f}, {lon:.6f}]\n"
     route_block += "\n"
+    if route_path and not DRY_RUN:
+        save_route_path(from_id, to_id, route_path)
     if routes_match:
         m_comment = re.search(r"^# .*$", text[routes_match.end():], flags=re.M)
         end_idx = routes_match.end() + m_comment.start() if m_comment else len(text)

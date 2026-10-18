@@ -1,2 +1,5 @@
 gspread
 PyYAML
+osmnx
+networkx
+requests

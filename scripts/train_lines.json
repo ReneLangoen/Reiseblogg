@@ -1,0 +1,50 @@
+{
+  "narita-tokyo": [
+    {
+      "line": "Keisei|京成",
+      "from": "Narita",
+      "to": "Nippori"
+    }
+  ],
+  "tokyo-unga": [
+    {
+      "line": "Joban|常磐",
+      "from": "Nippori",
+      "to": "Kashiwa"
+    },
+    {
+      "line": "Urban Park|アーバンパーク|野田線|Noda",
+      "from": "Kashiwa",
+      "to": "Unga"
+    }
+  ],
+  "unga-osaka": [
+    {
+      "line": "Urban Park|アーバンパーク|野田線|Noda",
+      "from": "Unga",
+      "to": "Kashiwa"
+    },
+    {
+      "line": "Joban|常磐|Ueno-Tokyo|上野東京",
+      "from": "Kashiwa",
+      "to": "Tokyo"
+    },
+    {
+      "line": "Tokaido Shinkansen|東海道新幹線",
+      "from": "Tokyo",
+      "to": "Shin-Osaka"
+    }
+  ],
+  "osaka-nara": [
+    {
+      "line": "Yotsubashi|四つ橋",
+      "from": "Hommachi station",
+      "to": "Namba station"
+    },
+    {
+      "line": "Kintetsu Nara|近鉄奈良",
+      "from": "Osaka-Namba station",
+      "to": "Kintetsu-Nara station"
+    }
+  ]
+}

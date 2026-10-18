@@ -26,7 +26,8 @@ permalink: /map/
 <script>
   window.mapData = {
     locations: {{ site.data.map.locations | jsonify }},
-    routes: {{ site.data.map.routes | jsonify }}
+    routes: {{ site.data.map.routes | jsonify }},
+    routePaths: {{ site.data.route_paths | jsonify }}
   };
 </script>
 
@@ -174,6 +175,15 @@ permalink: /map/
         linePoints = part1.concat(part2.slice(1));
       }
 
+      // geometry stored separately in _data/route_paths.yml (key from-to, or reversed to-from)
+      if (!linePoints && !(route.points && route.points.length)) {
+        const paths = window.mapData.routePaths || {};
+        const direct = paths[`${route.from}-${route.to}`];
+        const rev = paths[`${route.to}-${route.from}`];
+        if (direct && direct.length) linePoints = direct.map(p => [p[0], p[1]]);
+        else if (rev && rev.length) linePoints = rev.map(p => [p[0], p[1]]).reverse();
+      }
+
       // prefer explicit points if provided
       if (!linePoints && route.points && Array.isArray(route.points) && route.points.length) {
         linePoints = route.points.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
@@ -228,21 +238,36 @@ permalink: /map/
       poly.on('mouseover', function(e) { this.openTooltip(e.latlng); });
       poly.on('mousemove', function(e) { this.setTooltipLatLng(e.latlng); });
       poly.on('mouseout', function() { this.closeTooltip(); });
-          // add a small directional arrow along the route
-          try {
-            if (linePoints && linePoints.length >= 2) {
-              const midIndex = Math.max(1, Math.floor(linePoints.length * 0.5));
-              const pA = linePoints[midIndex - 1];
-              const pB = linePoints[midIndex];
-              const angle = Math.atan2(pB[1] - pA[1], pB[0] - pA[0]) * 180 / Math.PI;
-              const arrowColor = route.color || modeColors[route.mode] || '#4f7d76';
-              const arrowHtml = `<div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:8px solid ${arrowColor};transform:rotate(${angle}deg);"></div>`;
-              const arrowIcon = L.divIcon({ className: 'route-arrow-icon', html: arrowHtml, iconSize: [12, 12], iconAnchor: [6, 6] });
-              L.marker([(pA[0] + pB[0]) / 2, (pA[1] + pB[1]) / 2], { icon: arrowIcon, interactive: false }).addTo(map);
-            }
-          } catch (e) {
-            console.warn('Failed to render route arrow', e);
+      // directional arrows spaced evenly along the route (roughly one per 120 km, at least 1)
+      try {
+        if (linePoints && linePoints.length >= 2) {
+          const cum = [0];
+          for (let i = 1; i < linePoints.length; i++) {
+            cum.push(cum[i - 1] + haversine(linePoints[i-1][0], linePoints[i-1][1], linePoints[i][0], linePoints[i][1]));
           }
+          const total = cum[cum.length - 1];
+          const count = Math.min(8, Math.max(1, Math.round(total / 120)));
+          const arrowColor = route.color || modeColors[route.mode] || '#4f7d76';
+          for (let k = 0; k < count; k++) {
+            const target = total * (k + 0.5) / count;
+            let i = 1;
+            while (i < cum.length - 1 && cum[i] < target) i++;
+            const pA = linePoints[i - 1];
+            const pB = linePoints[i];
+            const seg = cum[i] - cum[i - 1];
+            const t = seg > 0 ? (target - cum[i - 1]) / seg : 0;
+            const lat = pA[0] + (pB[0] - pA[0]) * t;
+            const lng = pA[1] + (pB[1] - pA[1]) * t;
+            // bearing clockwise from north; scale longitude by cos(lat) so the angle matches the map
+            const angle = Math.atan2((pB[1] - pA[1]) * Math.cos(lat * Math.PI / 180), pB[0] - pA[0]) * 180 / Math.PI;
+            const arrowHtml = `<div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid ${arrowColor};transform:rotate(${angle}deg);filter:drop-shadow(0 0 1px #fff);"></div>`;
+            const arrowIcon = L.divIcon({ className: 'route-arrow-icon', html: arrowHtml, iconSize: [10, 10], iconAnchor: [5, 5] });
+            L.marker([lat, lng], { icon: arrowIcon, interactive: false, keyboard: false }).addTo(map);
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to render route arrows', e);
+      }
     }
 
     // fire off rendering for all routes
