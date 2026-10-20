@@ -9,6 +9,7 @@ are station names (English or Japanese). A reversed key (to-from) reuses the rou
 import heapq
 import json
 import math
+import re
 import sys
 import time
 import urllib.parse
@@ -52,7 +53,10 @@ def _escape(s):
 
 
 def _find_stations(name, bbox=JAPAN_BBOX):
-    n = _escape(name)
+    n = re.sub(r"\s*(station|駅)$", "", name.strip(), flags=re.I)
+    # tolerate hyphens/spaces and macrons (Osaka-Namba matches "Ōsaka Namba")
+    n = "".join("[-  ]?" if ch in "- " else {"o": "[oōÔô]", "u": "[uū]"}.get(ch.lower(), re.escape(ch)) for ch in n)
+    n = _escape(n)
     pat = f"^{n}( Station| 駅)?$"
     q = (
         f'[out:json][timeout:60];nwr["railway"~"^(station|halt)$"]'
@@ -71,7 +75,8 @@ def _line_graph(line_regex, bbox):
     rx = _escape(line_regex)
     q = (
         f'[out:json][timeout:180];'
-        f'relation["route"~"^(train|railway)$"]["name"~"{rx}",i]({bbox})->.r;'
+        f'(relation["route"~"^(train|railway|subway|light_rail|tram)$"]["name"~"{rx}",i]({bbox});'
+        f'relation["route"~"^(train|railway|subway|light_rail|tram)$"]["name:en"~"{rx}",i]({bbox});)->.r;'
         f'way(r.r)->.w;.w out geom;'
     )
     adj, coords = {}, {}
@@ -99,6 +104,45 @@ def _nearest_node(coords, point):
         if d < best_d:
             best, best_d = nid, d
     return best, best_d
+
+
+def _bridge_gaps(adj, coords, max_gap_m=400):
+    """Join nearby nodes that belong to different disconnected pieces of track."""
+    comp, n_comp = {}, 0
+    for n in adj:
+        if n in comp:
+            continue
+        n_comp += 1
+        comp[n] = n_comp
+        stack = [n]
+        while stack:
+            u = stack.pop()
+            for v, _ in adj[u]:
+                if v not in comp:
+                    comp[v] = n_comp
+                    stack.append(v)
+    cell = 0.005
+    grid = {}
+    for n in adj:
+        la, lo = coords[n]
+        grid.setdefault((int(la / cell), int(lo / cell)), []).append(n)
+    best = {}
+    for n in adj:
+        la, lo = coords[n]
+        gx, gy = int(la / cell), int(lo / cell)
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for m in grid.get((gx + dx, gy + dy), []):
+                    if comp[m] == comp[n]:
+                        continue
+                    d = _haversine_m(coords[n], coords[m])
+                    if d <= max_gap_m:
+                        key = (min(comp[n], comp[m]), max(comp[n], comp[m]))
+                        if key not in best or d < best[key][0]:
+                            best[key] = (d, n, m)
+    for d, a, b in best.values():
+        adj[a].append((b, d))
+        adj[b].append((a, d))
 
 
 def _dijkstra(adj, src, dst):
@@ -153,6 +197,9 @@ def compute_leg(line_regex, from_station, to_station):
             f'({from_station}: {s_d:.0f} m, {to_station}: {e_d:.0f} m from track)'
         )
     dist, path = _dijkstra(adj, s_node, e_node)
+    if path is None:
+        _bridge_gaps(adj, coords)
+        dist, path = _dijkstra(adj, s_node, e_node)
     if path is None:
         raise RuntimeError(f'No connected track on "{line_regex}" from {from_station} to {to_station}')
     return dist, [coords[n] for n in path]

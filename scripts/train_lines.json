@@ -33,6 +33,11 @@
       "line": "Tokaido Shinkansen|東海道新幹線",
       "from": "Tokyo",
       "to": "Shin-Osaka"
+},
+    {
+      "line": "Midosuji|御堂筋",
+      "from": "Shin-Osaka",
+      "to": "Hommachi"
     }
   ],
   "osaka-nara": [
@@ -42,9 +47,25 @@
       "to": "Namba station"
     },
     {
-      "line": "Kintetsu Nara|近鉄奈良",
+      "line": "Kintetsu Nara Line|Osaka-Namba => Kintetsu-Nara|近畿日本鉄道奈良線|近畿日本鉄道難波線",
       "from": "Osaka-Namba station",
       "to": "Kintetsu-Nara station"
     }
+  ],
+  "osaka-kyoto": [
+    {
+      "line": "Midosuji|御堂筋",
+      "from": "Hommachi",
+      "to": "Umeda"
+    },
+    {
+      "line": "JR Kyoto Line|Tokaido Main Line|JR京都線|東海道本線",
+      "from": "Osaka",
+      "to": "Kyoto"
+    }
+  ],
+  "osaka-kobe": [
+    {"line": "Midosuji|御堂筋", "from": "Hommachi", "to": "Umeda"},
+    {"line": "JR Kobe Line|Tokaido Main Line|JR神戸線|東海道本線", "from": "Osaka", "to": "Kobe"}
   ]
 }

@@ -83,6 +83,12 @@ def capture_datetime(path: Path) -> Optional[datetime]:
     return None
 
 
+def count_images(post: Path) -> int:
+    front_matter, _ = parse_front_matter(post.read_text(encoding="utf-8"))
+    images = (yaml.safe_load(front_matter) or {}).get("images") or []
+    return sum(1 for image in images if isinstance(image, dict))
+
+
 def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[int, int, bool]:
     text = post.read_text(encoding="utf-8")
     front_matter, body = parse_front_matter(text)
@@ -200,6 +206,7 @@ def main() -> None:
         print("No new photos or captions to add")
     if has_heic:
         print("Warning: HEIC files were added; browser support is not universal.")
+    print(f"Total photos in {args.post}: {count_images(args.post)}")
 
 
 if __name__ == "__main__":
