@@ -229,7 +229,7 @@ h3 { font-size: 1.25rem; }
 .post-card-link {
   display: flex;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: stretch;
   color: inherit;
   text-decoration: none;
 }
@@ -238,16 +238,26 @@ h3 { font-size: 1.25rem; }
   color: inherit;
 }
 
-.post-card-image {
-  width: 160px;
-  height: 110px;
-  object-fit: cover;
+.post-card-image-wrap {
+  position: relative;
+  width: 220px;
+  flex: 0 0 220px;
+  align-self: stretch;
+  overflow: hidden;
   border-radius: 14px;
   border: 1px solid var(--line);
-  flex-shrink: 0;
 }
 
-.post-card-image.placeholder {
+.post-card-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-card-image-wrap.placeholder {
   background: linear-gradient(135deg, #e2efe9, #f4faf8);
 }
 
@@ -509,7 +519,7 @@ blockquote {
   nav { flex-wrap: wrap; }
   .intro { padding-top: 1rem; }
   .post-card-link { flex-direction: column; }
-  .post-card-image { width: 100%; height: 150px; }
+  .post-card-image-wrap { width: 100%; height: 150px; flex-basis: 150px; }
   .gallery-grid { grid-template-columns: 1fr; }
   .side-image {
     float: none;

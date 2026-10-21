@@ -2,7 +2,7 @@
 title: "Uke 1: Avreise til Bangkok"
 description: "Mandag 21. september satt vi kursen mot Bangkok. Her skal vi være i én uke for å avklimatiseres før turen går videre til Japan"
 location: "Bangkok, Thailand"
-tags: [avreise, uke 1, Bangkok]
+tags: [uke 1, avreise, Bangkok, avklimatisering, regn og flom]
 week_label: "Uke 1"
 images:
 
