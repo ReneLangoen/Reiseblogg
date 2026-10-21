@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const allImages = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img'));
   if (!allImages.length) return;
+  const countrySel = document.getElementById('gf-country');
+  const citySel = document.getElementById('gf-city');
 
   // create overlay
   const overlay = document.createElement('div');
@@ -25,19 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const lbMetadata = overlay.querySelector('.lb-metadata');
 
   let currentIndex = 0;
-  let currentList = allImages;
+
+  function navigationImages() {
+    return allImages.filter(img => {
+      if (countrySel?.value && img.dataset.country !== countrySel.value) return false;
+      if (citySel?.value && img.dataset.city !== citySel.value) return false;
+      return true;
+    }).sort((a, b) => Number(a.dataset.weekNumber) - Number(b.dataset.weekNumber)
+      || Number(a.closest('.gallery-card').dataset.originalIndex) - Number(b.closest('.gallery-card').dataset.originalIndex));
+  }
 
   function show(index) {
-    // ensure currentList reflects only visible images in DOM order
-    currentList = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img')).filter(i => {
-      const fig = i.closest('.gallery-card');
-      return fig && (fig.style.display !== 'none');
-    });
+    const currentList = navigationImages();
     if (!currentList.length) return;
     index = ((index % currentList.length) + currentList.length) % currentList.length;
     currentIndex = index;
     const imgEl = currentList[index];
-    const src = imgEl.getAttribute('data-large') || imgEl.src;
+    document.dispatchEvent(new CustomEvent('gallery:select-week', { detail: { week: imgEl.dataset.week } }));
+    const src = imgEl.getAttribute('data-large') || imgEl.dataset.src || imgEl.src;
     lbImage.src = src;
     lbImage.alt = imgEl.alt || '';
     const cap = imgEl.closest('figure')?.querySelector('figcaption')?.innerText || '';
@@ -67,9 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     img.style.cursor = 'zoom-in';
     img.addEventListener('click', (e) => {
       e.preventDefault();
-      // compute visible list and determine index within it
-      const visible = Array.from(document.querySelectorAll('.gallery-grid .gallery-card img')).filter(i => i.closest('.gallery-card') && i.closest('.gallery-card').style.display !== 'none');
-      const idx = visible.indexOf(img);
+      const idx = navigationImages().indexOf(img);
       show(idx >= 0 ? idx : 0);
     });
   });

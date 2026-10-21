@@ -6,29 +6,32 @@ permalink: /gallery/
 
 # Galleri
 
-Bilder fra reisen, gruppert etter uke og sortert med nyeste bilder øverst. Sortering kan endres med filterknappen. 
+Bilder fra reisen, gruppert etter uke og sortert med nyeste bilder øverst. Sortering kan endres med nedtrekksmenyen under. 
 
-<!-- Gallery filter UI -->
 <link rel="stylesheet" href="{{ '/assets/css/gallery-filter.css' | relative_url }}">
+<div class="gallery-week-controls" id="gf-weeks" aria-label="Velg uke">
+  <span class="gallery-week-label">Uke:</span>
+</div>
 <div class="gallery-controls">
   <label>Land: <select id="gf-country"><option value="">Alle</option></select></label>
   <label>By: <select id="gf-city"><option value="">Alle</option></select></label>
-  <label>Uke: <select id="gf-week"><option value="">Alle</option></select></label>
   <label>Sorter etter: <select id="gf-sort"><option value="original">Original</option><option value="original-reverse">Omvendt rekkefølge</option><option value="caption">Bildetekst</option><option value="city">By</option><option value="country">Land</option></select></label>
 </div>
 <script src="{{ '/assets/js/gallery-filter.js' | relative_url }}" defer></script>
 
 {% assign posts_with_images = site.posts | where_exp: "post", "post.images" %}
 {% for post in posts_with_images %}
-<section class="gallery-week">
-  <h2>{{ post.week_label | default: post.title }}</h2>
+{% assign gallery_week = post.week_label | default: post.title %}
+{% assign gallery_week_number = gallery_week | remove_first: "Uke " | split: ":" | first | strip %}
+<section class="gallery-week" data-week="{{ gallery_week | escape }}" data-week-number="{{ gallery_week_number | escape }}">
+  <h2>{{ gallery_week }}</h2>
   <div class="gallery-grid">
     {% for photo in post.images %}
     <figure class="gallery-card">
-      <img src="{{ photo.src | relative_url }}" alt="{{ photo.alt | default: post.title }}" loading="lazy"
+      <img data-src="{{ photo.src | relative_url }}" alt="{{ photo.alt | default: post.title }}" loading="lazy"
            data-city="{{ photo.city | default: post.location | split: "," | first | strip }}"
            data-country="{{ photo.country | default: post.location | split: "," | last | strip }}"
-           data-week="{{ post.week_label | default: post.title }}">
+           data-week="{{ gallery_week | escape }}" data-week-number="{{ gallery_week_number | escape }}">
       <figcaption>{{ photo.caption }}</figcaption>
     </figure>
     {% endfor %}

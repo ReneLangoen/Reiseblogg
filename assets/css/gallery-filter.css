@@ -1,6 +1,13 @@
+.gallery-week-controls{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:1rem 0 0.5rem}
+.gallery-week-label,.gallery-controls label{font-size:1.05rem;font-weight:650;color:var(--text)}
+.gallery-week-button{padding:0.4rem 0.8rem;border:0;border-radius:999px;background:var(--accent-soft);color:#000;font:inherit;cursor:pointer;transition:background 0.2s ease,color 0.2s ease}
+.gallery-week-button:hover{background:#d3e7e0;color:#000}
+.gallery-week-button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.gallery-week-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .gallery-controls{display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin:1rem 0;padding:0.5rem 0}
-.gallery-controls label{font-size:0.95rem;color:var(--muted)}
-.gallery-controls select{margin-left:0.4rem;padding:0.25rem 0.4rem;border-radius:4px;border:1px solid rgba(0,0,0,0.08)}
+.gallery-controls select{-webkit-appearance:none;appearance:none;margin-left:0.45rem;min-height:2.5rem;padding:0.5rem 2.25rem 0.5rem 0.8rem;border:1px solid var(--line);border-radius:999px;background-color:var(--card);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%234f7d76' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.8rem center;background-size:1rem;color:var(--text);font:inherit;font-weight:500;cursor:pointer;box-shadow:0 1px 2px rgba(17,24,29,0.06);transition:border-color 0.2s ease,box-shadow 0.2s ease}
+.gallery-controls select:hover{border-color:var(--accent)}
+.gallery-controls select:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,125,118,0.18)}
 .gallery-grid{display:flex;flex-wrap:wrap;gap:0.5rem}
 .gallery-card{width:calc(25% - 0.5rem);box-sizing:border-box}
 @media (max-width:900px){.gallery-card{width:calc(33.333% - 0.5rem)}}
