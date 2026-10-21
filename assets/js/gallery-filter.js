@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const weeks = Array.from(new Map(sectionWeeks.map(week => [week.label, week])).values())
     .sort((a, b) => a.number - b.number);
   let selectedWeek = weeks.length ? weeks[weeks.length - 1].label : '';
+  let availableWeekLabels = new Set();
   weeks.forEach(week => {
     const button = document.createElement('button');
     button.type = 'button';
@@ -68,15 +69,40 @@ document.addEventListener('DOMContentLoaded', () => {
     weekControls.appendChild(button);
   });
 
+  function matchesLocationFilters(fig) {
+    const img = fig.querySelector('img');
+    const country = img?.dataset.country?.trim() || '';
+    const city = img?.dataset.city?.trim() || '';
+    if (countrySel.value && countrySel.value !== country) return false;
+    if (citySel.value && citySel.value !== city) return false;
+    return true;
+  }
+
+  function updateWeekAvailability() {
+    availableWeekLabels = new Set(figures
+      .filter(matchesLocationFilters)
+      .map(fig => fig.querySelector('img')?.dataset.week)
+      .filter(Boolean));
+
+    weekControls.querySelectorAll('.gallery-week-button').forEach(button => {
+      button.disabled = !availableWeekLabels.has(button.dataset.week);
+    });
+    if (!availableWeekLabels.has(selectedWeek)) {
+      const matchingWeeks = weeks.filter(week => availableWeekLabels.has(week.label));
+      selectedWeek = matchingWeeks.length ? matchingWeeks[matchingWeeks.length - 1].label : '';
+    }
+    setSelectedWeek(selectedWeek);
+  }
+
   function setSelectedWeek(week) {
-    if (!weeks.some(item => item.label === week)) return;
+    if (week && !availableWeekLabels.has(week)) return;
     selectedWeek = week;
     weekControls.querySelectorAll('.gallery-week-button').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.week === selectedWeek));
     });
     figures.forEach(fig => {
       const img = fig.querySelector('img');
-      if (img.dataset.week === selectedWeek) {
+      if (selectedWeek && img.dataset.week === selectedWeek) {
         if (!img.getAttribute('src')) img.setAttribute('src', img.dataset.src);
       } else {
         img.removeAttribute('src');
@@ -104,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ci = (img && img.dataset.city) ? img.dataset.city.trim() : '';
     if (countrySel.value && countrySel.value !== c) return false;
     if (citySel.value && citySel.value !== ci) return false;
-    if (selectedWeek && selectedWeek !== (img && img.dataset.week)) return false;
+    if (!selectedWeek || selectedWeek !== (img && img.dataset.week)) return false;
     return true;
   }
 
@@ -205,9 +231,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  countrySel.addEventListener('change', () => { populate(citySel, new Set(figures.filter(f => { const i = f.querySelector('img'); return !countrySel.value || (i.dataset.country || '') === countrySel.value }).map(f => f.querySelector('img')?.dataset.city).filter(Boolean))); applySortAndFilter(); });
-  citySel.addEventListener('change', applySortAndFilter);
+  countrySel.addEventListener('change', () => {
+    const selectedCity = citySel.value;
+    const matchingCities = new Set(figures
+      .filter(fig => {
+        const img = fig.querySelector('img');
+        return !countrySel.value || img?.dataset.country === countrySel.value;
+      })
+      .map(fig => fig.querySelector('img')?.dataset.city)
+      .filter(Boolean));
+    populate(citySel, matchingCities);
+    citySel.value = matchingCities.has(selectedCity) ? selectedCity : '';
+    updateWeekAvailability();
+  });
+  citySel.addEventListener('change', updateWeekAvailability);
   sortSel.addEventListener('change', applySortAndFilter);
 
-  setSelectedWeek(selectedWeek);
+  updateWeekAvailability();
 });
