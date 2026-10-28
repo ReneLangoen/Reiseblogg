@@ -67,5 +67,21 @@
   "osaka-kobe": [
     {"line": "Midosuji|御堂筋", "from": "Hommachi", "to": "Umeda"},
     {"line": "JR Kobe Line|Tokaido Main Line|JR神戸線|東海道本線", "from": "Osaka", "to": "Kobe"}
+  ],
+  "osaka-hiroshima": [
+    {"line": "^Osaka Metro Midosuji Line \\(Nakamozu => Esaka\\)$", "from": "Hommachi", "to": "Umeda"},
+    {"line": "JR Kobe Line|Tokaido Main Line|JR神戸線|東海道本線|JR京都線", "from": "Osaka", "to": "Himeji"},
+    {"line": "Sanyo Shinkansen|山陽新幹線", "from": "Himeji", "to": "Hiroshima"}
+  ],
+  "hiroshima-kagoshima": [
+    {"line": "Sanyo Shinkansen|山陽新幹線", "from": "Hiroshima", "to": "Hakata"},
+    {"line": "Kyushu Shinkansen|九州新幹線", "from": "Hakata", "to": "鹿児島中央"}
+  ],
+  "miyajimaguchi-port-hiroshima": [
+    {
+      "line": "JR山陽本線|Sanyō Main Line|山陽本線",
+      "from": "Miyajimaguchi",
+      "to": "Hiroshima"
+    }
   ]
 }

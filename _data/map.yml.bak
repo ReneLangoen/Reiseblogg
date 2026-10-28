@@ -166,15 +166,43 @@ locations:
     label: Osaka
     weeks: [4]
     country: Japan
-    lat: 34.6938
-    lng: 135.5015
+    lat: 34.7023
+    lng: 135.4955
 
   - id: nara
     label: Nara
+    weeks: [4]
+    country: Japan
+    lat: 34.6841
+    lng: 135.8285
+
+  - id: kyoto
+    label: Kyoto
     weeks: [5]
     country: Japan
-    lat: 34.6845
-    lng: 135.8048
+    lat: 34.9853
+    lng: 135.7588
+
+  - id: kobe
+    label: Kobe
+    weeks: [5]
+    country: Japan
+    lat: 34.6793
+    lng: 135.1783
+
+  - id: hiroshima
+    label: Hiroshima
+    weeks: [5]
+    country: Japan
+    lat: 34.3853
+    lng: 132.4553
+
+  - id: kagoshima
+    label: Kagoshima
+    weeks: [5]
+    country: Japan
+    lat: 31.5844
+    lng: 130.5414
 
 routes:
 
@@ -309,8 +337,43 @@ routes:
   - from: unga
     to: osaka
     mode: "Tog"
-    distance_km: 557.3
+    distance_km: 563.0
 
+  - from: osaka
+    to: nara
+    mode: "Tog"
+    distance_km: 34.5
+
+  - from: nara
+    to: osaka
+    mode: "Tog"
+    distance_km: 34.5
+
+  - from: osaka
+    to: kyoto
+    mode: "Tog"
+    distance_km: 45.4
+
+  - from: kyoto
+    to: osaka
+    mode: "Tog"
+    distance_km: 45.4
+
+  - from: osaka
+    to: kobe
+    mode: "Tog"
+    distance_km: 35.5
+
+  - from: kobe
+    to: osaka
+    mode: "Tog"
+    distance_km: 35.5
+
+
+  - from: osaka
+    to: hiroshima
+    mode: "Tog"
+    distance_km: 340.0
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo

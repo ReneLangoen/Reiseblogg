@@ -465,6 +465,7 @@ permalink: /map/
         // render simplified summary HTML (user requested only three labels)
         const el = document.getElementById('statsSummary');
         const nbFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 0 });
+        const nauticalMileFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 1 });
         const nf = v => typeof v === 'number' ? nbFmt.format(Math.round(v)) : v;
         const antalLand = summary.estimatedCountries;
         const antalByer = summary.cities;
@@ -489,7 +490,13 @@ permalink: /map/
         const pairs = [];
         pairs.push(['Antall land', String(antalLand)]);
         pairs.push(['Antall byer', String(antalByer)]);
-        modesToShow.forEach(m => pairs.push([`Distanse ${m}`, `${nf(modeSums[m])} km`]));
+        modesToShow.forEach(m => {
+          if (m === 'Båt') {
+            pairs.push([`Distanse ${m}`, `${nauticalMileFmt.format(modeSums[m] / 1.852)} nautiske mil`]);
+          } else {
+            pairs.push([`Distanse ${m}`, `${nf(modeSums[m])} km`]);
+          }
+        });
         pairs.push(['Total distanse', `${nf(distanseReist)} km`]);
 
         let html = `<table>`;

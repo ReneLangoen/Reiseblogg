@@ -190,6 +190,44 @@ locations:
     lat: 34.6793
     lng: 135.1783
 
+  - id: hiroshima
+    label: Hiroshima
+    weeks: [5]
+    country: Japan
+    lat: 34.3937904
+    lng: 132.4541825
+
+  - id: motoyasu-pier
+    label: Motoyasu Pier
+    weeks: [5]
+    country: Japan
+    ghost: true
+    lat: 34.3937904
+    lng: 132.4541825
+
+  - id: miyajima-port
+    label: Miyajima Port
+    weeks: [5]
+    country: Japan
+    ghost: true
+    lat: 34.3020991
+    lng: 132.3222525
+
+  - id: miyajimaguchi-port
+    label: Miyajimaguchi Port
+    weeks: [5]
+    country: Japan
+    ghost: true
+    lat: 34.3110993
+    lng: 132.3052316
+
+  - id: kagoshima
+    label: Kagoshima
+    weeks: [5]
+    country: Japan
+    lat: 31.5844
+    lng: 130.5414
+
 routes:
 
   - from: bergen
@@ -355,6 +393,29 @@ routes:
     mode: "Tog"
     distance_km: 35.5
 
+
+  - from: osaka
+    to: hiroshima
+    mode: "Tog"
+    distance_km: 309.8
+
+  - from: motoyasu-pier
+    to: miyajima-port
+    mode: "Båt"
+
+  - from: miyajima-port
+    to: miyajimaguchi-port
+    mode: "Båt"
+
+  - from: miyajimaguchi-port
+    to: hiroshima
+    mode: "Tog"
+    distance_km: 21.8
+
+  - from: hiroshima
+    to: kagoshima
+    mode: "Tog"
+    distance_km: 505.2
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
