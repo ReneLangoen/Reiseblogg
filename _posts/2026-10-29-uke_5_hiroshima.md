@@ -1,6 +1,6 @@
 ---
 title: "Uke 5: Kø i Kyoto og nye venner i Hiroshima"
-description: "Vi står i kø i Kyoto, spiser biff og tar en bytur i Kobe, og blir kjent med hyggelige folk i Hiroshima. Innimellom blir det fjelltur og litt tid til å bare nyte livet. "
+description: "Vi står i kø i Kyoto, spiser biff og tar en bytur i Kobe, og blir kjent med hyggelige folk i Hiroshima. Innimellom blir det fjelltur og litt tid til å nyte livet. "
 location: "Kagoshima, Japan"
 tags: [uke 5, Japan, storbyer, mellomstore byer, Shinkansen, sightseeing, menneskemøter]
 week_label: "Uke 5"
