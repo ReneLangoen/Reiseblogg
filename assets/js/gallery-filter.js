@@ -58,7 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const weeks = Array.from(new Map(sectionWeeks.map(week => [week.label, week])).values())
     .sort((a, b) => a.number - b.number);
   let selectedWeek = weeks.length ? weeks[weeks.length - 1].label : '';
+  const ALL = '__all__';
   let availableWeekLabels = new Set();
+  const allButton = document.createElement('button');
+  allButton.type = 'button';
+  allButton.className = 'gallery-week-button gallery-week-button--all';
+  allButton.dataset.week = ALL;
+  allButton.textContent = 'Alle uker';
+  allButton.setAttribute('aria-pressed', 'false');
+  weekControls.appendChild(allButton);
   weeks.forEach(week => {
     const button = document.createElement('button');
     button.type = 'button';
@@ -85,9 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter(Boolean));
 
     weekControls.querySelectorAll('.gallery-week-button').forEach(button => {
-      button.disabled = !availableWeekLabels.has(button.dataset.week);
+      button.disabled = button.dataset.week === ALL
+        ? availableWeekLabels.size === 0
+        : !availableWeekLabels.has(button.dataset.week);
     });
-    if (!availableWeekLabels.has(selectedWeek)) {
+    if (selectedWeek !== ALL && !availableWeekLabels.has(selectedWeek)) {
       const matchingWeeks = weeks.filter(week => availableWeekLabels.has(week.label));
       selectedWeek = matchingWeeks.length ? matchingWeeks[matchingWeeks.length - 1].label : '';
     }
@@ -95,14 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setSelectedWeek(week) {
-    if (week && !availableWeekLabels.has(week)) return;
+    if (week && week !== ALL && !availableWeekLabels.has(week)) return;
     selectedWeek = week;
     weekControls.querySelectorAll('.gallery-week-button').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.week === selectedWeek));
     });
     figures.forEach(fig => {
       const img = fig.querySelector('img');
-      if (selectedWeek && img.dataset.week === selectedWeek) {
+      if (selectedWeek && (selectedWeek === ALL || img.dataset.week === selectedWeek)) {
         if (!img.getAttribute('src')) img.setAttribute('src', img.dataset.src);
       } else {
         img.removeAttribute('src');
@@ -116,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (button) setSelectedWeek(button.dataset.week);
   });
   document.addEventListener('gallery:select-week', event => {
+    if (selectedWeek === ALL) return;
     setSelectedWeek(event.detail.week);
   });
 
@@ -130,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ci = (img && img.dataset.city) ? img.dataset.city.trim() : '';
     if (countrySel.value && countrySel.value !== c) return false;
     if (citySel.value && citySel.value !== ci) return false;
-    if (!selectedWeek || selectedWeek !== (img && img.dataset.week)) return false;
+    if (!selectedWeek) return false;
+    if (selectedWeek !== ALL && selectedWeek !== (img && img.dataset.week)) return false;
     return true;
   }
 
