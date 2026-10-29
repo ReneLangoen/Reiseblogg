@@ -24,9 +24,19 @@ layout: default
     </div>
   {% endif %}
 
-  <div class="post-content">
-    {{ content }}
+  <div class="post-body-layout">
+    <div class="post-content">
+      {{ content }}
+    </div>
+    <aside class="post-image-column" aria-label="Bilder fra innlegget"></aside>
   </div>
+  <script>
+    (() => {
+      const layout = document.currentScript.previousElementSibling;
+      const imageColumn = layout?.querySelector('.post-image-column');
+      layout?.querySelectorAll('.post-content .side-image').forEach(image => imageColumn.appendChild(image));
+    })();
+  </script>
 
   {% if page.images %}
     <div class="post-footer-link">

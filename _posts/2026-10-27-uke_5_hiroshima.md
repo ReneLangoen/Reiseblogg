@@ -1,7 +1,7 @@
 ---
-title: "Uke 5: Enda flere storbyer"
-description: "Osaka, Kobe, Kyoto, Hiroshima"
-location: "Hiroshima, Japan"
+title: "Uke 5: Kø i Kyoto og nye venner i Hiroshima"
+description: "Vi står i kø i Kyoto, spiser biff og tar en bytur i Kobe, og blir kjent med hyggelige folk i Hiroshima. Innimellom blir det fjelltur og litt tid til å bare nyte livet. "
+location: "Kagoshima, Japan"
 tags: [uke 5, Japan, storbyer, mellomstore byer, Shinkansen, sightseeing, menneskemøter]
 week_label: "Uke 5"
 images:
@@ -37,7 +37,7 @@ images:
 
   - id: img-9251
     src: "/pictures/week-5/IMG_9251.jpeg"
-    caption: "Fantastisk utsikt fra Misenfjellet. Her ser man og hvor tropisk Japan er"
+    caption: "Fantastisk utsikt fra Misenfjellet over Hiroshimabukten"
     city: "Hiroshima"
     country: "Japan"
 
@@ -85,7 +85,7 @@ images:
 
   - id: sushi-pa-rulleband-restaurant
     src: "/pictures/week-5/Sushi_pa%CC%8A_rulleba%CC%8And_restaurant.jpeg"
-    caption: "Sushi på rullebånd restaurant"
+    caption: "Sushirullebåndrestaurant"
     city: "Hiroshima"
     country: "Japan"
 
@@ -238,7 +238,7 @@ images:
 
   - id: stemningbilde-fra-osaka
     src: "/pictures/week-5/Stemningbilde_fra_Osaka.jpeg"
-    caption: "Stemningbilde fra Osaka"
+    caption: "Stemningsbilde fra Osaka"
     city: "Osaka"
     country: "Japan"
 
@@ -269,7 +269,7 @@ images:
 
   - id: torii-portene-gar-fra-togstasjonen-helt-til-toppen-av-fjellet-inari
     src: "/pictures/week-5/Torii_portene_ga%CC%8Ar_fra_togstasjonen_helt_til_toppen_av_fjellet_Inari.jpeg"
-    caption: "Torii portene går fra togstasjonen helt til toppen av fjellet Inari"
+    caption: "Torii-portene går fra togstasjonen helt til toppen av fjellet Inari"
     city: "Kyoto"
     country: "Japan"
 
@@ -281,11 +281,11 @@ images:
 
   - id: thea-og-de-tusen-torii-porter
     src: "/pictures/week-5/Thea_og_de_tusen_torii_porter.JPG"
-    caption: "Thea og de tusen torii porter"
+    caption: "Thea og de tusen torii-porter"
     city: "Kyoto"
     country: "Japan"
 
-  - id: tanuki-marhunden-kjent-for-sin-enorme-pung-som-bringer-okonomisk-hell
+  - id: tanuki
     src: "/pictures/week-5/Tanuki_ma%CC%8Arhunden_kjent_for_sin_enorme_pung_som_bringer_%C3%B8konomisk_hell.jpeg"
     caption: "Tanuki mårhunden kjent for sin enorme pung som bringer økonomisk hell"
     city: "Kyoto"
@@ -311,7 +311,7 @@ images:
 
   - id: hoye-furutraer-symboliserte-makt-i-edo-perioden
     src: "/pictures/week-5/H%C3%B8ye_furutr%C3%A6r_symboliserte_makt_i_Edo_perioden.JPG"
-    caption: "Høye furutrær symboliserte makt i Edo perioden"
+    caption: "Høye furutrær symboliserte makt i Edo-perioden"
     city: "Kyoto"
     country: "Japan"
 
@@ -401,7 +401,7 @@ images:
 
   - id: noen-ofringer-i-en-miniatyr-helligdom
     src: "/pictures/week-5/noen_ofringer_i_en_miniatyr_helligdom.JPG"
-    caption: "Noen ofringer i en miniatyr helligdom"
+    caption: "Noen ofringer i en miniatyrhelligdom"
     city: "Osaka"
     country: "Japan"
 
@@ -491,13 +491,13 @@ images:
 
   - id: toffer-meg-pa-terassen
     src: "/pictures/week-5/t%C3%B8ffer_meg_pa%CC%8A_terassen.jpeg"
-    caption: "Tøffer meg på terassen"
+    caption: "Tøffer meg på terrassen"
     city: "Kobe"
     country: "Japan"
 
   - id: utsikt-fra-var-favoritterasse
     src: "/pictures/week-5/utsikt_fra_va%CC%8Ar_favoritterasse.jpeg"
-    caption: "Utsikt fra vår favoritterasse"
+    caption: "Utsikt fra vår favoritterrasse"
     city: "Kobe"
     country: "Japan"
 
@@ -509,7 +509,7 @@ images:
 
   - id: utenfor-drivhuset-var-en-fantastisk-terasse
     src: "/pictures/week-5/Utenfor_drivhuset_var_en_fantastisk_terasse.JPG"
-    caption: "Utenfor drivhuset var en fantastisk terasse"
+    caption: "Utenfor drivhuset var en fantastisk terrasse"
     city: "Kobe"
     country: "Japan"
 
@@ -521,7 +521,7 @@ images:
 
   - id: vi-laget-duftpose-med-lavendel-roser-og-laubaerblad
     src: "/pictures/week-5/Vi_laget_duftpose_med_lavendel_roser_og_laub%C3%A6rblad.JPG"
-    caption: "Vi laget duftpose med lavendel roser og laubærblad"
+    caption: "Vi laget duftpose med lavendel roser og laurbærblad"
     city: "Kobe"
     country: "Japan"
 
@@ -618,29 +618,41 @@ images:
 
 
 
-hero_image: to-familier-vi-ble-kjent-med-forste-kvelden
+hero_image: oss-ved-otorii
 ---
 
 
 ## Fra storbyer til mellomstore byer
 {% include side-image.html id="her-koste-vi-oss" %}
 
-De siste ukenehar vi besøkt storbyene Tokyo, Kyoto og Osaka, som er utrolige opplevelser, med veldig mange inntrykk, og kanskje litt mye stimuli i lengden. Med base i Osaka, dro vi til Nara, Kyoto og Kobe. Nara og Kobe er mindre byer, som gir en roligere tilværelse, med mer pusterom og luftige områder. Vi hadde en veldig fin dag i Kobe hvor vi tok en gondol opp byfjellet, hvor fjellsiden er fylt med blomster, busker og matplanter. Et herlig sted å tusle. Lengre ned fant vi et stort drivhus, og utenfor drivhuset en stor terrasse med sofasolsenger og servering. Her satt vi helt til solnedgang og nøt livet. 
+De siste ukene har vi besøkt storbyene Tokyo, Kyoto og Osaka, som er utrolige opplevelser, med veldig mange inntrykk, og kanskje litt mye stimuli i lengden. Med base i Osaka, dro vi til Nara, Kyoto og Kobe. Nara og Kobe er mindre byer, som gir en roligere tilværelse, med mer pusterom og luftige områder. Vi hadde en veldig fin dag i Kobe hvor vi tok en gondol opp byfjellet, hvor fjellsiden er fylt med blomster, busker og matplanter. Et herlig sted å tusle. Lengre ned fant vi et stort drivhus, og utenfor drivhuset en stor terrasse med sofasolsenger og servering. Her satt vi helt til solnedgang og nøt livet. 
 
 {% include side-image.html id="skaaaall" %}
-Etter dette var det fyrverkishow, Kobebiff og bytur i Kobe. Kobes mer passende størrelse gjør det til et flott sted for en bytur. Mange hyggelige mennesker som er interessert i å bli kjent. Blant annet var vi på *Bar Pinot Noir* og traff en tidligere vinbareier som nå var businessmann. Da vi egentlig skulle gå til toget fikk vi kontakt med tre karer som tok oss med på enda en bar. En av dem viste seg å være rallymotorsykkelfører som representerer Japan i rally Dakar. 
+Etter dette var det fyrverkerishow, kobebiff og bytur i Kobe. Kobes mer passende størrelse gjør det til et flott sted for en bytur. Mange hyggelige mennesker som er interessert i å bli kjent. Blant annet var vi på *Bar Pinot Noir* og traff en tidligere vinbareier som nå var businessmann. Da vi egentlig skulle gå til toget fikk vi kontakt med tre karer som tok oss med på enda en bar. En av dem viste seg å være rallymotorsykkelfører som representerer Japan i rally Dakar. Her ble det fest og moro. 
 
 ## Mange turister i Kyoto
+{% include side-image.html id="skal-ikke-sta-pa-hodeplagget" %}
+Kyoto var Japans hovedstad fram til Edo-perioden og har alltid vært sentrum for Japans kultur og tradisjoner. Byen er kjent for sine mange templer, vakre hager og historiske bygninger, som tiltrekker seg et stort antall turister fra hele verden. 
+Vi dro på to dagsturer med tog fra Osaka til Kyoto. Den ene dagen fikk vi med oss en historisk parade gjennom byen, med folk utkledd i tradisjonelle drakter og kostymer. Det var og marsjerende barne- og ungdomskorps med trommer og "gevær" som minnet mistenkelig om buekorps. 
 
-Kyoto var Japans hovedstad fram til Edo-perioden og har alltid vært sentrum for Japans kultur og tradisjoner. Byen er kjent for sine mange templer, vakre hager og historiske bygninger, som tiltrekker seg et stort antall turister fra hele verden. Dette er nok litt kontroversielt, men vår opplevelse var at det var for mange turister i Kyoto. På samtlige turistattraksjoner går man i kø, og i gatene om kvelden var det stort sett bare turister og få lokale innbyggere å se. 
+Overturisme er et velkjent fenomen i Japan, men bunner i at enkelte plasser, og da spesielt i Kyoto, tiltrekker seg et uforholdsmessig stort antall besøkende. Det er ikke et generelt problem over hele Japan, og vi vil anbefale andre som besøker Japan å utforske også de mindre kjente stedene for en mer autentisk opplevelse. På samtlige turistattraksjoner i Kyoto går man i kø, og i gatene om kvelden var det stort sett bare turister og få lokale innbyggere å se. Kyoto er en fin by, med noen unike attraksjoner, men det skal sies at mange av attraksjonene i Kyoto også kan finnes i andre versjoner på mindre velkjente steder i Japan.
 
 ## Herlige Hiroshima 
+{% include side-image.html id="to-familier-vi-ble-kjent-med-forste-kvelden" %}
+Hiroshima er enda en mellomstor by i Japan, med ca. 1,2 millioner innbyggere. Hiroshima er selvsagt mest kjent for en viss hendelse, men har veldig mye annet å by på. Menneskene vi har møtt her har vært veldig gjestfrie og imøtekommende. 
+Første kveld satte vi oss ned på en izakaya hvor det bare var lokale gjester. Etter litt prat gjennom kokken fikk vi kontakt med to familier som vi satte oss bort til og pratet med i flere timer. Ungdommene lærte engelsk på skolen og var veldig interesserte i å øve med å prate med oss. 
+Vi har vært på matmarked ved Hiroshimaslottet, hvor det og var konsert med japanske gutteband og jenteband.  Vi har vært på fjelltur på øyen Miyajima, hvor vi traff et veldig hyggelig norsk par på vår alder. 
+{% include side-image.html id="img-9251" %}
 
-Hiroshima er enda en mellomstyr by i Japan, med ca. 1.2 millioner innbyggere. Hiroshima er selvsagt mest kjent for en viss he
+En karakteriserende beskrivelse av Hiroshima er: passende størrelse, koselige gater, fin balanse mellom byliv og natur, og en varm og inkluderende atmosfære. Minnesmerkene og særlig museet om atombomben var en veldig sterk opplevelse. Gjennom oppvekst og skole hører man mye om bombene, og konsekvensene av dem, men det er noe helt annet å stå i byen der det skjedde og å høre historiene fortalt gjennom museet. 
+
+
 
 
 ## Mårhunden Tanuki
+{% include side-image.html id="tanuki" %}
 
+Vi har sett denne kompisen utenfor mange plasser, og har spekulert i hva greien er. Fjerde uken i Japan bestemte vi oss for å google litt.
 Tanuki-statuer står ofte utenfor restauranter, barer og butikker fordi de symboliserer hell, velstand og gode forretninger. Tanuki betyr mårhund på japansk, og figuren forestiller den mytologiske varianten fra japansk folklore. 
 Det morsomme er at nesten alle detaljene på figuren har en symbolsk betydning:
 - Den store magen: Velstand, raushet og evnen til å bevare roen.
@@ -650,3 +662,6 @@ Det morsomme er at nesten alle detaljene på figuren har en symbolsk betydning:
 - Sakeflasken: Feiring, vennskap og gode relasjoner.
 - Den røde smekken: Ofte forbundet med beskyttelse og lykke.
 
+## Veien videre
+
+Nå går turen videre med Shinkansen vestover, faktisk helt til enden av linjen i Kagoshima. Her skal vi utforske de sydligste, mest tropiske områdene på Japans hovedøyer. Vi bor og like ved vulkanen Sakurajima som er svært aktiv og har daglige små utbrudd. 
