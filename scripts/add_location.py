@@ -431,8 +431,18 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
         try:
             url = f"https://router.project-osrm.org/route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=false"
             req = urllib.request.Request(url, headers={"User-Agent": f"add_location/1.0 ({CONTACT_EMAIL})"})
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                data = json.loads(resp.read().decode('utf-8'))
+            try:
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    data = json.loads(resp.read().decode('utf-8'))
+            except urllib.error.URLError as ue:
+                # Old LibreSSL builds of Python can fail the TLS handshake; retry with curl
+                if 'SSL' not in str(ue):
+                    raise
+                import subprocess
+                out = subprocess.run(
+                    ["curl", "-sS", "--fail", "--max-time", "15", "-A", f"add_location/1.0 ({CONTACT_EMAIL})", url],
+                    capture_output=True, text=True, check=True)
+                data = json.loads(out.stdout)
             if data and data.get('routes'):
                 meters = data['routes'][0].get('distance')
                 if meters is not None:

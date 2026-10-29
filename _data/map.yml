@@ -223,10 +223,24 @@ locations:
 
   - id: kagoshima
     label: Kagoshima
-    weeks: [5]
+    weeks: [6]
     country: Japan
     lat: 31.5844
     lng: 130.5414
+
+  - id: tarumizu
+    label: Tarumizu
+    weeks: [6]
+    country: Japan
+    lat: 31.4927
+    lng: 130.7012
+
+  - id: kinko
+    label: Kinko
+    weeks: [6]
+    country: Japan
+    lat: 31.2174
+    lng: 130.8653
 
 routes:
 
@@ -416,6 +430,21 @@ routes:
     to: kagoshima
     mode: "Tog"
     distance_km: 505.2
+
+  - from: kagoshima
+    to: tarumizu
+    mode: "Bil"
+    distance_km: 29.2
+
+  - from: tarumizu
+    to: kinko
+    mode: "Bil"
+    distance_km: 45.5
+
+  - from: kinko
+    to: tarumizu
+    mode: "Bil"
+    distance_km: 45.5
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
