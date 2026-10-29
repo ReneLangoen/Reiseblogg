@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!allImages.length) return;
   const countrySel = document.getElementById('gf-country');
   const citySel = document.getElementById('gf-city');
+  const sortSel = document.getElementById('gf-sort');
 
   // create overlay
   const overlay = document.createElement('div');
@@ -29,12 +30,42 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentIndex = 0;
 
   function navigationImages() {
-    return allImages.filter(img => {
+    const sortKey = sortSel?.value || 'original';
+    const filteredImages = allImages.filter(img => {
       if (countrySel?.value && img.dataset.country !== countrySel.value) return false;
       if (citySel?.value && img.dataset.city !== citySel.value) return false;
       return true;
-    }).sort((a, b) => Number(a.dataset.weekNumber) - Number(b.dataset.weekNumber)
-      || Number(a.closest('.gallery-card').dataset.originalIndex) - Number(b.closest('.gallery-card').dataset.originalIndex));
+    });
+
+    return filteredImages.sort((a, b) => {
+      const aCard = a.closest('.gallery-card');
+      const bCard = b.closest('.gallery-card');
+      const aIndex = Number(aCard.dataset.originalIndex);
+      const bIndex = Number(bCard.dataset.originalIndex);
+
+      if (sortKey === 'original' || sortKey === 'original-reverse') {
+        const weekOrder = Number(a.dataset.weekNumber) - Number(b.dataset.weekNumber);
+        if (weekOrder) return weekOrder;
+        return sortKey === 'original-reverse' ? bIndex - aIndex : aIndex - bIndex;
+      }
+
+      let aValue = '';
+      let bValue = '';
+      if (sortKey === 'caption') {
+        aValue = aCard.querySelector('figcaption')?.innerText || '';
+        bValue = bCard.querySelector('figcaption')?.innerText || '';
+      } else if (sortKey === 'city') {
+        aValue = a.dataset.city || '';
+        bValue = b.dataset.city || '';
+      } else if (sortKey === 'country') {
+        aValue = a.dataset.country || '';
+        bValue = b.dataset.country || '';
+      } else if (sortKey === 'week') {
+        aValue = a.dataset.week || '';
+        bValue = b.dataset.week || '';
+      }
+      return aValue.localeCompare(bValue, 'nb') || aIndex - bIndex;
+    });
   }
 
   function show(index) {
