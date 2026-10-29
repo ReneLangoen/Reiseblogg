@@ -638,15 +638,15 @@ Vi dro på to dagsturer med tog fra Osaka til Kyoto. Den ene dagen fikk vi med o
 
 Overturisme er et velkjent fenomen i Japan, men bunner i at enkelte plasser, og da spesielt i Kyoto, tiltrekker seg et uforholdsmessig stort antall besøkende. Det er ikke et generelt problem over hele Japan, og vi vil anbefale andre som besøker Japan å utforske også de mindre kjente stedene for en mer autentisk opplevelse. På samtlige turistattraksjoner i Kyoto går man i kø, og i gatene om kvelden var det stort sett bare turister og få lokale innbyggere å se. Kyoto er en fin by, med noen unike attraksjoner, men det skal sies at mange av attraksjonene i Kyoto også kan finnes i andre versjoner på mindre velkjente steder i Japan.
 
-## Et stop i Himeji
+## Et stopp i Himeji
 {% include side-image.html id="himejislottet" %}
-På vei vestover med tog fra Osaka, stoppet vi i Himeji for å se Himejislottet. Nå har vi besøkt vel fem slott i Japan, og Himejislottet er uten tvil det mest imponerende. Slottet er bygget opp av et kraftig og komplisert nettverk av trebjelker, de fleste av dem er enda originale fra tidlig 1600 tallet. Man får også veldig også adgang i slottet og kan utforske mesteparten av hovedbygning, helt opp til toppen av hovedbygget. 
+På vei vestover med tog fra Osaka, stoppet vi i Himeji for å se Himejislottet. Nå har vi besøkt vel fem slott i Japan, og Himejislottet er uten tvil det mest imponerende. Slottet er bygget opp av et kraftig og komplisert nettverk av trebjelker, de fleste av dem er enda originale fra tidlig 1600 tallet. Man får også veldig god adgang i slottet og kan utforske mesteparten av hovedbygning, helt opp til toppen. 
 
 ## Herlige Hiroshima 
 {% include side-image.html id="to-familier-vi-ble-kjent-med-forste-kvelden" %}
-Hiroshima er enda en mellomstor by i Japan, med ca. 1,2 millioner innbyggere. Hiroshima er selvsagt mest kjent for en viss hendelse, men har veldig mye annet å by på. Menneskene vi har møtt her har vært veldig gjestfrie og imøtekommende. 
+Hiroshima er en mellomstor by i Japan, med ca. 1,2 millioner innbyggere. Hiroshima er selvsagt mest kjent for en viss hendelse, men har veldig mye annet å by på. Menneskene vi har møtt her har vært veldig gjestfrie og imøtekommende. 
 Første kveld satte vi oss ned på en izakaya hvor det bare var lokale gjester. Etter litt prat gjennom kokken fikk vi kontakt med to familier som vi satte oss bort til og pratet med i flere timer. Ungdommene lærte engelsk på skolen og var veldig interesserte i å øve med å prate med oss. 
-Vi har vært på matmarked ved Hiroshimaslottet, hvor det og var konsert med japanske gutteband og jenteband.  Vi har vært på fjelltur på øyen Miyajima, hvor vi traff et veldig hyggelig norsk par på vår alder. 
+Vi har vært på matmarked ved Hiroshimaslottet, hvor det og var konsert med japanske gutteband og jenteband.  Og vi har vært på fjelltur på øyen Miyajima, hvor vi traff et veldig hyggelig norsk par på vår alder som vi tilbrakte resten av dagen med.
 {% include side-image.html id="img-9251" %}
 
 En karakteriserende beskrivelse av Hiroshima er: passende størrelse, koselige gater, fin balanse mellom byliv og natur, og en varm og inkluderende atmosfære. Minnesmerkene og særlig museet om atombomben var en veldig sterk opplevelse. Gjennom oppvekst og skole hører man mye om bombene, og konsekvensene av dem, men det er noe helt annet å stå i byen der det skjedde og å høre historiene fortalt gjennom museet. 
