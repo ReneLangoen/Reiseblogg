@@ -12,9 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
     <button class="lb-close" aria-label="Lukk">×</button>
     <button class="lb-prev" aria-label="Forrige">‹</button>
     <div class="lb-frame">
-      <img class="lb-image" src="" alt="">
+      <img class="lb-image" src="" alt="" draggable="false">
       <div class="lb-caption"></div>
       <div class="lb-metadata"></div>
+      <div class="lb-zoom-controls" aria-label="Zoomkontroller">
+        <span class="lb-zoom-label">Zooming</span>
+        <button class="lb-zoom-out" type="button" aria-label="Zoom ut">−</button>
+        <span class="lb-zoom-level" aria-live="polite">100%</span>
+        <button class="lb-zoom-in" type="button" aria-label="Zoom inn">+</button>
+        <button class="lb-zoom-reset" type="button" aria-label="Tilbakestill zoom">Tilbakestill</button>
+      </div>
     </div>
     <button class="lb-next" aria-label="Neste">›</button>
   `;
@@ -26,8 +33,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnPrev = overlay.querySelector('.lb-prev');
   const btnNext = overlay.querySelector('.lb-next');
   const lbMetadata = overlay.querySelector('.lb-metadata');
+  const btnZoomOut = overlay.querySelector('.lb-zoom-out');
+  const btnZoomIn = overlay.querySelector('.lb-zoom-in');
+  const btnZoomReset = overlay.querySelector('.lb-zoom-reset');
+  const lbZoomLevel = overlay.querySelector('.lb-zoom-level');
 
   let currentIndex = 0;
+  let zoom = 1;
+  let panX = 0;
+  let panY = 0;
+  let pointerStart = null;
+  const minZoom = 1;
+  const maxZoom = 10;
+  const zoomStep = 0.25;
+  const wheelZoomStep = zoomStep / 3;
+
+  function updateZoom() {
+    const maxPanX = lbImage.offsetWidth * (zoom - minZoom) / 2;
+    const maxPanY = lbImage.offsetHeight * (zoom - minZoom) / 2;
+    panX = Math.min(maxPanX, Math.max(-maxPanX, panX));
+    panY = Math.min(maxPanY, Math.max(-maxPanY, panY));
+    lbImage.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+    lbImage.classList.toggle('is-zoomed', zoom > minZoom);
+    lbZoomLevel.textContent = `${Math.round(zoom * 100)}%`;
+    btnZoomOut.disabled = zoom <= minZoom;
+    btnZoomIn.disabled = zoom >= maxZoom;
+  }
+
+  function setZoom(nextZoom, centerX = 0, centerY = 0) {
+    const newZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom));
+    if (newZoom === zoom) return;
+    const ratio = newZoom / zoom;
+    panX = (panX - centerX) * ratio + centerX;
+    panY = (panY - centerY) * ratio + centerY;
+    zoom = newZoom;
+    if (zoom === minZoom) {
+      panX = 0;
+      panY = 0;
+    }
+    updateZoom();
+  }
+
+  function resetZoom() {
+    zoom = minZoom;
+    panX = 0;
+    panY = 0;
+    updateZoom();
+  }
 
   function navigationImages() {
     const sortKey = sortSel?.value || 'original';
@@ -98,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.remove('open');
     lbImage.src = '';
     lbMetadata.textContent = '';
+    resetZoom();
   }
 
   allImages.forEach((img, i) => {
@@ -113,6 +166,34 @@ document.addEventListener('DOMContentLoaded', () => {
   btnClose.addEventListener('click', hide);
   btnPrev.addEventListener('click', () => show(currentIndex - 1));
   btnNext.addEventListener('click', () => show(currentIndex + 1));
+  btnZoomIn.addEventListener('click', () => setZoom(zoom + zoomStep));
+  btnZoomOut.addEventListener('click', () => setZoom(zoom - zoomStep));
+  btnZoomReset.addEventListener('click', resetZoom);
+
+  lbImage.addEventListener('wheel', event => {
+    event.preventDefault();
+    const bounds = lbImage.getBoundingClientRect();
+    setZoom(zoom + (event.deltaY < 0 ? wheelZoomStep : -wheelZoomStep),
+      event.clientX - (bounds.left + bounds.width / 2) + panX,
+      event.clientY - (bounds.top + bounds.height / 2) + panY);
+  }, { passive: false });
+  lbImage.addEventListener('load', updateZoom);
+
+  lbImage.addEventListener('pointerdown', event => {
+    if (zoom <= minZoom || event.button !== 0) return;
+    event.preventDefault();
+    pointerStart = { x: event.clientX - panX, y: event.clientY - panY };
+    lbImage.setPointerCapture(event.pointerId);
+  });
+  lbImage.addEventListener('pointermove', event => {
+    if (!pointerStart) return;
+    panX = event.clientX - pointerStart.x;
+    panY = event.clientY - pointerStart.y;
+    updateZoom();
+  });
+  lbImage.addEventListener('pointerup', () => { pointerStart = null; });
+  lbImage.addEventListener('pointercancel', () => { pointerStart = null; });
+  lbImage.addEventListener('dragstart', event => event.preventDefault());
 
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) hide();
@@ -129,6 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
       show(currentIndex + 1);
+    } else if (e.key === '+' || e.key === '=') {
+      e.preventDefault();
+      setZoom(zoom + zoomStep);
+    } else if (e.key === '-') {
+      e.preventDefault();
+      setZoom(zoom - zoomStep);
+    } else if (e.key === '0') {
+      e.preventDefault();
+      resetZoom();
     }
   });
 });
