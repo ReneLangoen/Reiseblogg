@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Galleri
-permalink: /gallery/
+permalink: /galleri/
 ---
 
 # Galleri

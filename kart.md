@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Reisekart
-permalink: /map/
+permalink: /kart/
 ---
 
 <section class="page-intro">
@@ -311,7 +311,7 @@ permalink: /map/
         direction: 'top',
         offset: [0, -8]
       });
-      const galleryUrl = new URL("{{ '/gallery/' | relative_url }}", window.location.origin);
+      const galleryUrl = new URL("{{ '/galleri/' | relative_url }}", window.location.origin);
       galleryUrl.searchParams.set('city', labelText);
       marker.bindPopup(`<strong>${labelText}</strong><br>Uke ${weekLabel}<br><a href="${galleryUrl.pathname}${galleryUrl.search}">Se bildene fra ${labelText}</a>`);
     });

@@ -6,7 +6,7 @@ layout: default
   <header class="post-header">
     <p class="meta">
       {{ page.date | date: "%B %-d, %Y" }}
-      {% if page.location %} · <a href="{{ '/map/' | relative_url }}">📍 {{ page.location }}</a>{% endif %}
+      {% if page.location %} · <a href="{{ '/kart/' | relative_url }}">📍 {{ page.location }}</a>{% endif %}
       {% if page.week_label %} · {{ page.week_label }}{% endif %}
     </p>
     <h1>{{ page.title }}</h1>
@@ -40,7 +40,7 @@ layout: default
 
   {% if page.images %}
     <div class="post-footer-link">
-      <a href="{{ '/gallery/' | relative_url }}">Se flere bilder fra denne uken</a>
+      <a href="{{ '/galleri/' | relative_url }}{% if page.week_label %}?week={{ page.week_label | url_encode }}{% endif %}">Se flere bilder fra denne uken</a>
     </div>
   {% endif %}
 </article>

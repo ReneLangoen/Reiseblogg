@@ -64,7 +64,7 @@ Emoji kan skrives med GitHub-syntaks i innlegg, for eksempel `:disappointed:`.
 
 ## Kartdata (`_data/map.yml`)
 
-`map.md` leser `site.data.map` og tegner kartet klient-side.
+`kart.md` leser `site.data.map` og tegner kartet klient-side.
 
 - `locations`: `id`, `label`, `lat`, `lng`, valgfritt `country`. `ghost: true` registrerer et
   sted i statistikken uten å vise det som markør på kartet.
@@ -97,5 +97,4 @@ abonnentlisten er et lokalt verktøy som ikke er en del av dette repoet — se
 - Ugyldig `_data/map.yml`: sjekk at `lat`/`lng` er tall og at YAML-strukturen er gyldig.
 - 403/429 fra Nominatim: sett `NOMINATIM_EMAIL` og unngå hyppige forespørsler.
 - Liquid-feil ved bygg: `bundle exec jekyll build --trace` gir full stacktrace.
-
 

@@ -57,7 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
   })).filter(week => week.label && Number.isFinite(week.number));
   const weeks = Array.from(new Map(sectionWeeks.map(week => [week.label, week])).values())
     .sort((a, b) => a.number - b.number);
-  let selectedWeek = weeks.length ? weeks[weeks.length - 1].label : '';
+  const requestedWeek = new URLSearchParams(window.location.search).get('week');
+  let selectedWeek = weeks.some(week => week.label === requestedWeek)
+    ? requestedWeek
+    : (weeks.length ? weeks[weeks.length - 1].label : '');
   const ALL = '__all__';
   let availableWeekLabels = new Set();
   const allButton = document.createElement('button');
