@@ -200,6 +200,12 @@ images:
     city: "Himeji"
     country: "Japan"
 
+  - id: himejislottet
+    src: "/pictures/week-5/IMG_8951.jpeg"
+    caption: "Himejislottet"
+    city: "Himeji"
+    country: "Japan"
+
   - id: himejislottet-i-all-sin-prakt
     src: "/pictures/week-5/Himejislottet_i_all_sin_prakt.jpeg"
     caption: "Himejislottet i all sin prakt"
@@ -613,11 +619,6 @@ images:
 
 
 
-
-
-
-
-
 hero_image: oss-ved-otorii
 ---
 
@@ -636,6 +637,10 @@ Kyoto var Japans hovedstad fram til Edo-perioden og har alltid vært sentrum for
 Vi dro på to dagsturer med tog fra Osaka til Kyoto. Den ene dagen fikk vi med oss en historisk parade gjennom byen, med folk utkledd i tradisjonelle drakter og kostymer. Det var og marsjerende barne- og ungdomskorps med trommer og "gevær" som minnet mistenkelig om buekorps. 
 
 Overturisme er et velkjent fenomen i Japan, men bunner i at enkelte plasser, og da spesielt i Kyoto, tiltrekker seg et uforholdsmessig stort antall besøkende. Det er ikke et generelt problem over hele Japan, og vi vil anbefale andre som besøker Japan å utforske også de mindre kjente stedene for en mer autentisk opplevelse. På samtlige turistattraksjoner i Kyoto går man i kø, og i gatene om kvelden var det stort sett bare turister og få lokale innbyggere å se. Kyoto er en fin by, med noen unike attraksjoner, men det skal sies at mange av attraksjonene i Kyoto også kan finnes i andre versjoner på mindre velkjente steder i Japan.
+
+## Et stop i Himeji
+{% include side-image.html id="himejislottet" %}
+På vei vestover med tog fra Osaka, stoppet vi i Himeji for å se Himejislottet. Nå har vi besøkt vel fem slott i Japan, og Himejislottet er uten tvil det mest imponerende. Slottet er bygget opp av et kraftig og komplisert nettverk av trebjelker, de fleste av dem er enda originale fra tidlig 1600 tallet. Man får også veldig også adgang i slottet og kan utforske mesteparten av hovedbygning, helt opp til toppen av hovedbygget. 
 
 ## Herlige Hiroshima 
 {% include side-image.html id="to-familier-vi-ble-kjent-med-forste-kvelden" %}
