@@ -274,8 +274,8 @@ locations:
     label: Busan
     weeks: [7]
     country: South-Korea
-    lat: 35.1800
-    lng: 129.0752
+    lat: 35.1200
+    lng: 129.0382
 
 routes:
 
@@ -510,6 +510,11 @@ routes:
     to: kagoshima
     mode: "Bil"
     distance_km: 28.5
+
+  - from: kagoshima
+    to: fukuoka
+    mode: "Tog"
+    distance_km: 257.2
 
   - from: fukuoka
     to: busan
