@@ -42,7 +42,7 @@ permalink: /kart/
     const map = L.map('travel-map', {
       minZoom: 2,
       scrollWheelZoom: false
-    }).setView([50, 10], 4);
+    }).setView([22, 120], 4);
 
     const modeColors = {
       Fly: '#1f78b4',
@@ -316,8 +316,6 @@ permalink: /kart/
       marker.bindPopup(`<strong>${labelText}</strong><br>Uke ${weekLabel}<br><a href="${galleryUrl.pathname}${galleryUrl.search}">Se bildene fra ${labelText}</a>`);
     });
 
-    const bounds = L.latLngBounds(visibleLocations.map(loc => [loc.lat, loc.lng]));
-    if (visibleLocations.length) map.fitBounds(bounds.pad(0.2));
   });
 </script>
 

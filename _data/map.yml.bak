@@ -237,10 +237,45 @@ locations:
 
   - id: kinko
     label: Kinko
-    weeks: [7]
+    weeks: [6]
     country: Japan
-    lat: 31.2174
-    lng: 130.8653
+    lat: 31.2432
+    lng: 130.7841
+
+  - id: cape-sata
+    label: Cape Sata
+    weeks: [6]
+    country: Japan
+    lat: 30.999752683059633
+    lng: 130.66389213498377
+
+  - id: kanoya
+    label: Kanoya
+    weeks: [6]
+    country: Japan
+    lat: 31.3780
+    lng: 130.8525
+
+  - id: kirishima
+    label: Kirishima
+    weeks: [6]
+    country: Japan
+    lat: 31.7410
+    lng: 130.7632
+
+  - id: fukuoka
+    label: Fukuoka
+    weeks: [6]
+    country: Japan
+    lat: 33.6251
+    lng: 130.6180
+
+  - id: busan
+    label: Busan
+    weeks: [7]
+    country: South-Korea
+    lat: 35.1800
+    lng: 129.0752
 
 routes:
 
@@ -440,6 +475,41 @@ routes:
     to: kinko
     mode: "Bil"
     distance_km: 45.5
+
+  - from: kinko
+    to: tarumizu
+    mode: "Bil"
+    distance_km: 45.5
+
+  - from: tarumizu
+    to: cape-sata
+    mode: "Bil"
+    distance_km: 75.0
+
+  - from: cape-sata
+    to: kanoya
+    mode: "Bil"
+    distance_km: 62.0
+
+  - from: kanoya
+    to: tarumizu
+    mode: "Bil"
+    distance_km: 24.3
+
+  - from: tarumizu
+    to: kirishima
+    mode: "Bil"
+    distance_km: 40.1
+
+  - from: kirishima
+    to: tarumizu
+    mode: "Bil"
+    distance_km: 40.1
+
+  - from: tarumizu
+    to: kagoshima
+    mode: "Bil"
+    distance_km: 28.5
 
 # Legg til nye punkter med disse feltene:
 # - id: oslo
