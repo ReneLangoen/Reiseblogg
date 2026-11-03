@@ -239,6 +239,7 @@ locations:
     label: Kinko
     weeks: [6]
     country: Japan
+    ghost: true
     lat: 31.2432
     lng: 130.7841
 
