@@ -119,6 +119,12 @@ images:
     city: "Hiroshima"
     country: "Japan"
 
+  - id: mange-japanere-duller-fryktelig-mye-med-hundene-selskapshunder-i-barnevogn-og-baeresele-er-veldig-vanlig
+    src: "/pictures/week-5/Mange_japanere_duller_fryktelig_mye_med_hundene_Selskapshunder_i_barnevogn_og_b%C3%A6resele_er_veldig_vanlig.jpeg"
+    caption: "Mange japanere duller fryktelig mye med hundene. Selskapshunder i barnevogn og bæresele er veldig vanlig"
+    city: "Hiroshima"
+    country: "Japan"
+
   - id: to-familier-vi-ble-kjent-med-forste-kvelden
     src: "/pictures/week-5/to_familier_vi_ble_kjent_med_f%C3%B8rste_kvelden.jpeg"
     caption: "To familier vi ble kjent med første kvelden"
