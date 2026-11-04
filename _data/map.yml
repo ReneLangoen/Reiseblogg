@@ -2,7 +2,7 @@ locations:
   - id: bergen
     label: Bergen
     weeks: [0]
-    country: Norway
+    country: Norge
     lat: 60.3943
     lng: 5.3259
 
@@ -274,7 +274,7 @@ locations:
   - id: busan
     label: Busan
     weeks: [7]
-    country: South-Korea
+    country: Sør-Korea
     lat: 35.1200
     lng: 129.0382
 
