@@ -278,6 +278,37 @@ locations:
     lat: 35.1200
     lng: 129.0382
 
+  - id: seoul
+    label: Seoul
+    weeks: [7]
+    country: Sør-Korea
+    lat: 37.5547
+    lng: 126.9707
+
+
+  - id: dorasan
+    label: Dorasan
+    weeks: [7]
+    country: Sør-Korea
+    lat: 37.8984
+    lng: 126.7092
+
+  - id: incheon
+    label: Incheon
+    weeks: [8]
+    country: Sør-Korea
+    lat: 37.44738
+    lng: 126.45264
+
+  - id: phu-quoc
+    label: Phú Quốc
+    weeks: [8]
+    country: Vietnam
+    lat: 10.1727
+    lng: 103.9922
+
+
+
 routes:
 
   - from: bergen
@@ -522,23 +553,32 @@ routes:
     mode: "Båt"
     distance_km: 223.4
 
-# Legg til nye punkter med disse feltene:
-# - id: oslo
-#   label: Oslo
-#   lat: 59.9139
-#   lng: 10.7522
-#
-# Rekkefølgeinformasjon:
-# - Punktrekkefølgen i "locations" bestemmer uke-tallene på kartet.
-# - Markørene får automatisk "Uke 1", "Uke 2" osv. basert på rekkefølgen her.
-# - Hvis du ønsker en annen rekkefølge, flytt elementene i listen.
-#
-# Ruteforklaring:
-# - "from" og "to" refererer til id-ene i "locations".
-# - "mode" brukes til å bestemme fargen i legend og på ruten.
-# - Eksempel: mode: "Fly", "Tog", "Bil", "Buss" eller "Båt".
-#
-# Legg til nye ruter med disse feltene:
-# - from: tokyo
-#   to: osaka
-#   mode: "Tog"
+  - from: busan
+    to: seoul
+    mode: "Tog"
+    line: "KTX"
+    distance_km: 417.0
+
+  - from: seoul
+    to: incheon
+    mode: "Tog"
+    line: "Airport Express (AREX)"
+    distance_km: 58.3
+
+
+  - from: seoul
+    to: dorasan
+    mode: "Buss"
+    distance_km: 59.2
+
+  - from: dorasan
+    to: seoul
+    mode: "Buss"
+    distance_km: 60.3
+
+
+  - from: incheon
+    to: phu-quoc
+    mode: "Fly"
+    distance_km: 3774.9
+

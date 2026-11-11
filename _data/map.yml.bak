@@ -2,7 +2,7 @@ locations:
   - id: bergen
     label: Bergen
     weeks: [0]
-    country: Norway
+    country: Norge
     lat: 60.3943
     lng: 5.3259
 
@@ -239,11 +239,12 @@ locations:
     label: Kinko
     weeks: [6]
     country: Japan
+    ghost: true
     lat: 31.2432
     lng: 130.7841
 
   - id: cape-sata
-    label: Cape Sata
+    label: Kapp Sata
     weeks: [6]
     country: Japan
     lat: 30.999752683059633
@@ -267,15 +268,46 @@ locations:
     label: Fukuoka
     weeks: [6]
     country: Japan
-    lat: 33.6251
-    lng: 130.6180
+    lat: 33.58993204675439
+    lng: 130.41928118030762
 
   - id: busan
     label: Busan
     weeks: [7]
-    country: South-Korea
-    lat: 35.1800
-    lng: 129.0752
+    country: Sør-Korea
+    lat: 35.1200
+    lng: 129.0382
+
+  - id: seoul
+    label: Seoul
+    weeks: [7]
+    country: Sør-Korea
+    lat: 37.5547
+    lng: 126.9707
+
+
+  - id: dorasan
+    label: Dorasan
+    weeks: [7]
+    country: Sør-Korea
+    lat: 37.8984
+    lng: 126.7092
+
+  - id: incheon
+    label: Incheon Airport T1
+    weeks: [8]
+    country: Sør-Korea
+    lat: 37.44738
+    lng: 126.45264
+
+  - id: phu-quoc
+    label: Phu Quoc
+    weeks: [8]
+    country: Vietnam
+    lat: 10.1727
+    lng: 103.9922
+
+
 
 routes:
 
@@ -511,23 +543,35 @@ routes:
     mode: "Bil"
     distance_km: 28.5
 
-# Legg til nye punkter med disse feltene:
-# - id: oslo
-#   label: Oslo
-#   lat: 59.9139
-#   lng: 10.7522
-#
-# Rekkefølgeinformasjon:
-# - Punktrekkefølgen i "locations" bestemmer uke-tallene på kartet.
-# - Markørene får automatisk "Uke 1", "Uke 2" osv. basert på rekkefølgen her.
-# - Hvis du ønsker en annen rekkefølge, flytt elementene i listen.
-#
-# Ruteforklaring:
-# - "from" og "to" refererer til id-ene i "locations".
-# - "mode" brukes til å bestemme fargen i legend og på ruten.
-# - Eksempel: mode: "Fly", "Tog", "Bil", "Buss" eller "Båt".
-#
-# Legg til nye ruter med disse feltene:
-# - from: tokyo
-#   to: osaka
-#   mode: "Tog"
+  - from: kagoshima
+    to: fukuoka
+    mode: "Tog"
+    distance_km: 257.2
+
+  - from: fukuoka
+    to: busan
+    mode: "Båt"
+    distance_km: 223.4
+
+  - from: busan
+    to: seoul
+    mode: "Tog"
+    line: "KTX"
+    distance_km: 417.0
+
+  - from: seoul
+    to: incheon
+    mode: "Tog"
+    line: "Airport Express (AREX)"
+    distance_km: 58.3
+
+
+  - from: seoul
+    to: dorasan
+    mode: "Buss"
+    distance_km: 59.2
+
+  - from: dorasan
+    to: seoul
+    mode: "Buss"
+    distance_km: 60.3

@@ -368,6 +368,38 @@ def get_last_location_id() -> str | None:
     return ids[-1] if ids else None
 
 
+def prompt_route_origin(new_id: str, default_source: str | None) -> str | None:
+    if AUTO_YES:
+        return default_source
+    p = Path("_data/map.yml")
+    text = p.read_text(encoding="utf-8") if p.exists() else ""
+    routes_match = re.search(r"^routes:\s*", text, flags=re.M)
+    locations_text = text[:routes_match.start()] if routes_match else text
+    location_ids = re.findall(r"^\s*-\s*id:\s*([a-z0-9-]+)", locations_text, flags=re.M)
+    available_ids = [location_id for location_id in location_ids if location_id != new_id]
+    if not available_ids:
+        print("No existing locations are available as a route origin.")
+        return None
+
+    print("Available route origins: " + ", ".join(available_ids))
+    while True:
+        try:
+            source_id = input(
+                f"Route from location ID to '{new_id}' (Enter to skip): "
+            ).strip().lower()
+        except KeyboardInterrupt:
+            print()
+            return None
+        if not source_id:
+            return None
+        if source_id == new_id:
+            print("A route must connect two different locations.")
+        elif source_id not in available_ids:
+            print("Unknown location ID. Choose one from the list, or press Enter to skip.")
+        else:
+            return source_id
+
+
 def get_location_coords(loc_id: str):
     if loc_id in _PENDING_COORDS:
         return _PENDING_COORDS[loc_id]
@@ -400,6 +432,11 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 
+def _is_road_mode(mode: str) -> bool:
+    mode_l = (mode or "").lower()
+    return any(kind in mode_l for kind in ("bil", "car", "bus"))
+
+
 def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
     # returns distance in kilometers (float) or None when routing is unavailable
     coords_a = get_location_coords(from_id)
@@ -410,7 +447,7 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
     lat2, lon2 = coords_b
     mode_l = (mode or "").lower()
     # special-case Bergen -> Bangkok: route via Munich for non-driving modes
-    if from_id == 'bergen' and to_id == 'bangkok' and ('bil' not in mode_l and 'car' not in mode_l):
+    if from_id == 'bergen' and to_id == 'bangkok' and not _is_road_mode(mode_l):
         munich = (48.1351, 11.5820)
         d1 = haversine(lat1, lon1, munich[0], munich[1])
         d2 = haversine(munich[0], munich[1], lat2, lon2)
@@ -426,8 +463,8 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
             print(f"Train routing failed ({e})")
             return None
 
-    # driving mode: use OSRM
-    if 'bil' in mode_l or 'car' in mode_l:
+    # Road modes use OSRM for distance.
+    if _is_road_mode(mode_l):
         try:
             url = f"https://router.project-osrm.org/route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=false"
             req = urllib.request.Request(url, headers={"User-Agent": f"add_location/1.0 ({CONTACT_EMAIL})"})
@@ -840,6 +877,35 @@ def interactive_insert_intermediates(prev_id: str | None, new_id: str, append: b
         p.write_text(txt2, encoding='utf-8')
 
 
+def add_location_with_optional_route(block: str, new_id: str, append: bool, force: bool) -> None:
+    prev_id = get_last_location_id()
+    source_id = prompt_route_origin(new_id, prev_id)
+    if not source_id:
+        if prev_id == new_id:
+            print(f"Location '{new_id}' is already the last location; nothing to link.")
+            return
+        if append_to_map(block, force=force):
+            print("Appended to _data/map.yml")
+        else:
+            print("Failed to append to _data/map.yml")
+        return
+
+    mode = input("Transport mode (Fly/Tog/Bil/etc.): ").strip() or "Fly"
+    if source_id == prev_id:
+        interactive_insert_intermediates(
+            source_id, new_id, append, force, default_mode=mode, main_block=block
+        )
+        return
+
+    if prev_id != new_id and not append_to_map(block, force=force):
+        print("Failed to append to _data/map.yml")
+        return
+    if append_route(source_id, new_id, mode):
+        print(f"Added route {source_id} -> {new_id} ({mode}).")
+    else:
+        print(f"Failed to add route {source_id} -> {new_id}.")
+
+
 def main():
     # Interactive-only entry point
     global DRY_RUN, AUTO_YES
@@ -887,29 +953,8 @@ def main():
         print("\nAdd this to `_data/map.yml` under `locations:`:\n")
         print(block)
         if append:
-            prev_id = get_last_location_id()
             new_id = re.search(r"id:\s*([a-z0-9-]+)", block).group(1)
-            if AUTO_YES:
-                ans = 'y'
-            else:
-                try:
-                    ans = input(f"Add a route from last location '{prev_id}' to '{new_id}'? [y/N]: ").strip().lower()
-                except KeyboardInterrupt:
-                    ans = ""
-            if ans in ("y", "yes"):
-                mode = input("Transport mode (Fly/Tog/Bil/etc.): ").strip() or "Fly"
-                if prev_id:
-                    # interactive insertion of intermediates/ghosts + per-segment routes
-                    interactive_insert_intermediates(prev_id, new_id, append, force, default_mode=mode, main_block=block)
-                else:
-                    print("No previous location found to link from.")
-            else:
-                # user didn't want to add routes/intermediates: append main location now
-                ok = append_to_map(block, force=force)
-                if ok:
-                    print("Appended to _data/map.yml")
-                else:
-                    print("Failed to append to _data/map.yml")
+            add_location_with_optional_route(block, new_id, append, force)
         return
 
     display_name = res.get("display_name", f"{city}, {country}")
@@ -925,29 +970,7 @@ def main():
     if append:
         prev_id = get_last_location_id()
         new_id = re.search(r"id:\s*([a-z0-9-]+)", block).group(1)
-        # if new_id is same as prev_id, avoid prompting to add a self-route
-        if prev_id and new_id and prev_id == new_id:
-            print(f"Location '{new_id}' is already the last location; nothing to link.")
-            return
-        if AUTO_YES:
-            ans = 'y'
-        else:
-            try:
-                ans = input(f"Add a route from last location '{prev_id}' to '{new_id}'? [y/N]: ").strip().lower()
-            except KeyboardInterrupt:
-                ans = ""
-        if ans in ("y", "yes"):
-            mode = input("Transport mode (Fly/Tog/Bil/etc.): ").strip() or "Fly"
-            if prev_id:
-                interactive_insert_intermediates(prev_id, new_id, append, force, default_mode=mode, main_block=block)
-            else:
-                print("No previous location found to link from.")
-        else:
-            ok = append_to_map(block, force=force)
-            if ok:
-                print("Appended to _data/map.yml")
-            else:
-                print("Failed to append to _data/map.yml")
+        add_location_with_optional_route(block, new_id, append, force)
 
 
 if __name__ == "__main__":

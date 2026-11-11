@@ -4,7 +4,8 @@
 Line definitions live in scripts/train_lines.json:
   {"narita-tokyo": [{"line": "Keisei|京成", "from": "Narita", "to": "Nippori"}], ...}
 `line` is a regex matched against the OSM route relation's name tags; `from`/`to`
-are station names (English or Japanese). A reversed key (to-from) reuses the route backwards.
+are station names (English or Japanese). A leg may override the station-search
+bounding box with `bbox`; a reversed key (to-from) reuses the route backwards.
 """
 import heapq
 import json
@@ -168,10 +169,10 @@ def _dijkstra(adj, src, dst):
     return dist[dst], path[::-1]
 
 
-def compute_leg(line_regex, from_station, to_station):
+def compute_leg(line_regex, from_station, to_station, station_bbox=JAPAN_BBOX):
     """Shortest track path on the named line(s) between two stations."""
-    starts = _find_stations(from_station)
-    ends = _find_stations(to_station)
+    starts = _find_stations(from_station, bbox=station_bbox)
+    ends = _find_stations(to_station, bbox=station_bbox)
     if not starts:
         raise RuntimeError(f'Station not found: "{from_station}"')
     if not ends:
@@ -222,7 +223,10 @@ def get_legs(from_id, to_id):
         return lines[f"{from_id}-{to_id}"]
     rev = lines.get(f"{to_id}-{from_id}")
     if rev:
-        return [{"line": leg["line"], "from": leg["to"], "to": leg["from"]} for leg in reversed(rev)]
+        return [
+            {**leg, "from": leg["to"], "to": leg["from"]}
+            for leg in reversed(rev)
+        ]
     return None
 
 
@@ -245,7 +249,9 @@ def compute_route(legs):
     """Chain the legs; returns (meters, [(lat, lon), ...])."""
     total, coords = 0.0, []
     for leg in legs:
-        d, c = compute_leg(leg["line"], leg["from"], leg["to"])
+        d, c = compute_leg(
+            leg["line"], leg["from"], leg["to"], station_bbox=leg.get("bbox", JAPAN_BBOX)
+        )
         total += d
         coords.extend(c if not coords else c[1:])
     return total, coords

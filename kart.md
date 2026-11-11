@@ -51,6 +51,11 @@ permalink: /kart/
       Buss: '#ff7f00',
       Båt: '#6a3d9a'
     };
+    const isRoadMode = mode => {
+      const normalized = String(mode || '').toLowerCase();
+      return normalized.includes('bil') || normalized.includes('car') ||
+        normalized.includes('bus');
+    };
 
     const openFreeMapLayer = L.maplibreGL({
       style: 'https://tiles.openfreemap.org/styles/liberty'
@@ -187,8 +192,8 @@ permalink: /kart/
       // prefer explicit points if provided
       if (!linePoints && route.points && Array.isArray(route.points) && route.points.length) {
         linePoints = route.points.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
-      } else if (!linePoints && route.mode && (String(route.mode).toLowerCase().includes('bil') || String(route.mode).toLowerCase().includes('car'))) {
-        // fetch driving route from OSRM between from and to
+      } else if (!linePoints && isRoadMode(route.mode)) {
+        // fetch road route from OSRM between from and to
         try {
           const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
           const resp = await fetch(url);
@@ -238,7 +243,7 @@ permalink: /kart/
       poly.on('mouseover', function(e) { this.openTooltip(e.latlng); });
       poly.on('mousemove', function(e) { this.setTooltipLatLng(e.latlng); });
       poly.on('mouseout', function() { this.closeTooltip(); });
-      // directional arrows spaced evenly along the route (roughly one per 120 km, at least 1)
+      // directional arrows spaced evenly along the route (roughly one per 100 km, at least 1)
       try {
         if (linePoints && linePoints.length >= 2) {
           const cum = [0];
@@ -246,7 +251,7 @@ permalink: /kart/
             cum.push(cum[i - 1] + haversine(linePoints[i-1][0], linePoints[i-1][1], linePoints[i][0], linePoints[i][1]));
           }
           const total = cum[cum.length - 1];
-          const count = Math.min(8, Math.max(1, Math.round(total / 120)));
+          const count = Math.min(10, Math.max(1, Math.ceil(total / 100)));
           const arrowColor = route.color || modeColors[route.mode] || '#4f7d76';
           for (let k = 0; k < count; k++) {
             const target = total * (k + 0.5) / count;
@@ -260,8 +265,8 @@ permalink: /kart/
             const lng = pA[1] + (pB[1] - pA[1]) * t;
             // bearing clockwise from north; scale longitude by cos(lat) so the angle matches the map
             const angle = Math.atan2((pB[1] - pA[1]) * Math.cos(lat * Math.PI / 180), pB[0] - pA[0]) * 180 / Math.PI;
-            const arrowHtml = `<div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid ${arrowColor};transform:rotate(${angle}deg);filter:drop-shadow(0 0 1px #fff);"></div>`;
-            const arrowIcon = L.divIcon({ className: 'route-arrow-icon', html: arrowHtml, iconSize: [10, 10], iconAnchor: [5, 5] });
+            const arrowHtml = `<div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid ${arrowColor};transform:rotate(${angle}deg);filter:drop-shadow(0 0 1px #fff);"></div>`;
+            const arrowIcon = L.divIcon({ className: 'route-arrow-icon', html: arrowHtml, iconSize: [12, 12], iconAnchor: [6, 6] });
             L.marker([lat, lng], { icon: arrowIcon, interactive: false, keyboard: false }).addTo(map);
           }
         }
@@ -341,6 +346,11 @@ permalink: /kart/
       try {
         const locations = window.mapData && window.mapData.locations ? window.mapData.locations : [];
         const routes = window.mapData && window.mapData.routes ? window.mapData.routes : [];
+        const isRoadMode = mode => {
+          const normalized = String(mode || '').toLowerCase();
+          return normalized.includes('bil') || normalized.includes('car') ||
+            normalized.includes('bus');
+        };
 
         function haversine(lat1, lon1, lat2, lon2) {
           const R = 6371; // km
@@ -401,8 +411,8 @@ permalink: /kart/
             distances.push({ d: s, from: r.from, to: r.to, mode: r.mode });
             return;
           }
-          // For driving modes without explicit distance, fetch OSRM distance asynchronously
-          if (r.mode && (String(r.mode).toLowerCase().includes('bil') || String(r.mode).toLowerCase().includes('car'))) {
+          // For road modes without explicit distance, fetch OSRM distance asynchronously
+          if (isRoadMode(r.mode)) {
             const p = fetchOsrmDistance(from, to).then(d => {
               const val = (d !== null) ? d : haversine(from.lat, from.lng, to.lat, to.lng);
               distances.push({ d: val, from: r.from, to: r.to, mode: r.mode });
@@ -533,7 +543,8 @@ permalink: /kart/
           listHtml += '<div class="places-list">';
           countryNames.forEach(cn => {
             const cities = Array.from(groups[cn]).sort((a,b)=>a.localeCompare(b, 'nb'));
-            listHtml += `<div class="country-group"><strong>${cn}</strong><ul>`;
+            const countryClass = cn === 'Japan' ? 'country-group country-group-japan' : 'country-group';
+            listHtml += `<div class="${countryClass}"><strong>${cn}</strong><ul>`;
             cities.forEach(ct => { listHtml += `<li>${ct}</li>`; });
             listHtml += '</ul></div>';
           });
