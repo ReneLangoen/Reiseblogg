@@ -29,7 +29,6 @@ class PhotoOrderTest(unittest.TestCase):
             for name in ("middle.jpg", "newest.jpg"):
                 (folder / name).touch()
             with patch.object(add_photos, "REPOSITORY_ROOT", root), \
-                 patch.object(add_photos, "ensure_preview"), \
                  patch.object(add_photos, "capture_datetime", side_effect=lambda path: dates[path.name]):
                 add_photos.update_images(post, folder, "Oslo", "Norway")
                 (folder / "oldest.jpg").touch()
@@ -38,6 +37,7 @@ class PhotoOrderTest(unittest.TestCase):
                 images = yaml.safe_load(front)["images"]
                 self.assertEqual([image["id"] for image in images], ["oldest", "middle", "newest"])
                 self.assertEqual(add_photos.update_images(post, folder, "Oslo", "Norway"), (0, 0, False))
+                self.assertFalse((root / "gallery-previews").exists())
 
     def test_import_sorts_photos_from_multiple_folders_and_places_unknown_last(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -53,7 +53,6 @@ class PhotoOrderTest(unittest.TestCase):
             post.write_text("---\ntitle: Test\n---\nBody\n", encoding="utf-8")
             dates = {"early.jpg": datetime(2026, 1, 1), "late.jpg": datetime(2026, 1, 3), "unknown.jpg": None}
             with patch.object(add_photos, "REPOSITORY_ROOT", root), \
-                 patch.object(add_photos, "ensure_preview"), \
                  patch.object(add_photos, "capture_datetime", side_effect=lambda path: dates[path.name]):
                 add_photos.update_images(post, old_folder, "Oslo", "Norway")
                 add_photos.update_images(post, new_folder, "Oslo", "Norway")

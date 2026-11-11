@@ -58,21 +58,13 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
   Bilder uten lesbart opptakstidspunkt legges til slutt med en advarsel.
   Filnavnet brukes som `id`, bildeteksten blir tom, og by/land hentes fra de siste
   argumentene. Kommandoen krever `exiftool`, er trygg å kjøre flere ganger og legger bare
-  til nye filer. På macOS lager den også små JPEG-forhåndsvisninger med `sips` i
-  `gallery-previews/`, uten å endre originalene. Galleriet viser først
-  forhåndsvisningene som passer de valgte filtrene, og laster deretter originalene
-  med nettleserens vanlige bildeinnlasting. Originalen lastes også når et bilde
-  åpnes. Legg forhåndsvisningene i git sammen med originalene, slik at GitHub Pages
-  kan publisere dem. Velger man «Alle uker», kan dette bruke mye mobildata.
+  til nye filer. Galleriet og lysboksen bruker bildene direkte. Velger man «Alle
+  uker», kan dette bruke mye mobildata.
 
-  For å lage eller oppdatere forhåndsvisninger uten å endre innleggene:
+  Ukesbildene er komprimert til JPEG med maks 1920 piksler på lengste side og
+  kvalitet 60 der det ga mindre filer. Nye bilder må komprimeres separat for å
+  holde samme størrelsesnivå; ta vare på originalene utenfor nettstedet.
 
-  ```bash
-  python3 scripts/gallery_previews.py pictures/week-*
-  ```
-
-  Kommandoen oppdaterer forhåndsvisninger når originalen er nyere; bruk `--force` for å
-  lage alle på nytt. Hvis en forhåndsvisning mangler, viser galleriet originalen i stedet.
 3. Legg til lokasjon og rute i `_data/map.yml`, se under.
 
 Emoji kan skrives med GitHub-syntaks i innlegg, for eksempel `:disappointed:`.

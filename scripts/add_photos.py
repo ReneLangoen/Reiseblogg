@@ -12,10 +12,8 @@ from typing import Optional
 
 import yaml
 
-from gallery_previews import IMAGE_EXTENSIONS, ensure_preview
-
-
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
+IMAGE_EXTENSIONS = {".gif", ".heic", ".heif", ".jpeg", ".jpg", ".png", ".webp"}
 
 
 def slugify(value: str) -> str:
@@ -100,7 +98,6 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
     paths = [path for path in folder.iterdir() if path.is_file() and path.suffix.lower() in IMAGE_EXTENSIONS]
     dates = {path: capture_datetime(path) for path in paths}
     for path in sorted(paths, key=lambda item: (dates[item] or datetime.max, item.name.casefold())):
-        ensure_preview(path)
         source = "/" + quote(path.resolve().relative_to(REPOSITORY_ROOT).as_posix(), safe="/:@-._~")
         capture_times[source] = dates[path]
         if source in existing_sources:

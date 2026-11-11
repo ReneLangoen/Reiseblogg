@@ -127,8 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIndex = index;
     const imgEl = currentList[index];
     document.dispatchEvent(new CustomEvent('gallery:select-week', { detail: { week: imgEl.dataset.week } }));
-    const src = imgEl.getAttribute('data-large') || imgEl.dataset.src || imgEl.src;
-    lbImage.src = src;
+    lbImage.src = imgEl.dataset.src || imgEl.src;
     lbImage.alt = imgEl.alt || '';
     const cap = imgEl.closest('figure')?.querySelector('figcaption')?.innerText || '';
     lbCaption.textContent = cap;

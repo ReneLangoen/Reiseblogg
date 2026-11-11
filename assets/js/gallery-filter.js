@@ -28,13 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fig.setAttribute('data-original-index', i);
     fig._originalGrid = fig.parentElement;
     fig._originalSection = fig.closest('.gallery-week');
-    const img = fig.querySelector('img');
-    img.addEventListener('error', () => {
-      if (img.getAttribute('src') === img.dataset.src && img.dataset.src !== img.dataset.large) {
-        console.warn('Gallery preview failed to load; using original:', img.dataset.src);
-        img.setAttribute('src', img.dataset.large);
-      }
-    });
   });
 
   // collect unique values
@@ -70,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     : (weeks.length ? weeks[weeks.length - 1].label : '');
   const ALL = '__all__';
   let availableWeekLabels = new Set();
-  let loadingController = null;
   const allButton = document.createElement('button');
   allButton.type = 'button';
   allButton.className = 'gallery-week-button gallery-week-button--all';
@@ -123,17 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     figures.forEach(fig => {
       const img = fig.querySelector('img');
-      if (matchesFilters(fig)) {
-        if (!img.getAttribute('src')) {
-          img.loading = 'eager';
-          img.setAttribute('src', img.dataset.src);
-        }
+      if (selectedWeek && (selectedWeek === ALL || img.dataset.week === selectedWeek)) {
+        if (!img.getAttribute('src')) img.setAttribute('src', img.dataset.src);
       } else {
         img.removeAttribute('src');
       }
     });
     applySortAndFilter();
-    loadOriginals(figures.filter(matchesFilters));
   }
 
   weekControls.addEventListener('click', event => {
@@ -201,51 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasVisibleCards = Array.from(section.querySelectorAll('.gallery-card'))
         .some(fig => fig.style.display !== 'none');
       section.style.display = hasVisibleCards ? '' : 'none';
-    });
-  }
-
-  function loadOriginals(visible) {
-    if (loadingController) loadingController.abort();
-    const controller = new AbortController();
-    loadingController = controller;
-    const { signal } = controller;
-    const images = visible.map(fig => fig.querySelector('img'));
-
-    function waitForPreview(img) {
-      if (img.getAttribute('src') !== img.dataset.src || img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        const finish = () => {
-          img.removeEventListener('load', finish);
-          img.removeEventListener('error', finish);
-          signal.removeEventListener('abort', finish);
-          resolve();
-        };
-        img.addEventListener('load', finish);
-        img.addEventListener('error', finish);
-        signal.addEventListener('abort', finish, { once: true });
-        if (img.complete || signal.aborted) finish();
-      });
-    }
-
-    Promise.all(images.map(waitForPreview)).then(() => {
-      if (signal.aborted) return;
-      images.forEach(img => {
-        const url = img.dataset.large;
-        if (!url || img.getAttribute('src') === url) return;
-
-        const original = new Image();
-        const abort = () => original.removeAttribute('src');
-        signal.addEventListener('abort', abort, { once: true });
-        original.onload = () => {
-          signal.removeEventListener('abort', abort);
-          if (!signal.aborted) img.setAttribute('src', url);
-        };
-        original.onerror = () => {
-          signal.removeEventListener('abort', abort);
-          if (!signal.aborted) console.warn('Gallery original failed to load:', url);
-        };
-        original.src = url;
-      });
     });
   }
 

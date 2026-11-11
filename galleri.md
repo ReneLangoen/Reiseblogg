@@ -27,13 +27,8 @@ Bilder fra reisen, gruppert etter uke og sortert med eldste bilder øverst. Sort
   <h2>{{ gallery_week }}</h2>
   <div class="gallery-grid">
     {% for photo in post.images %}
-    {% assign preview_src = photo.src %}
-    {% assign src_prefix = photo.src | slice: 0, 10 %}
-    {% if src_prefix == '/pictures/' %}
-      {% assign preview_src = photo.src | prepend: '/gallery-previews' | append: '.jpg' %}
-    {% endif %}
     <figure class="gallery-card">
-      <img data-src="{{ preview_src | relative_url }}" data-large="{{ photo.src | relative_url }}" alt="{{ photo.alt | default: post.title | escape }}" loading="lazy"
+      <img data-src="{{ photo.src | relative_url }}" alt="{{ photo.alt | default: post.title | escape }}" loading="lazy"
            data-city="{{ photo.city | default: post.location | split: "," | first | strip }}"
            data-country="{{ photo.country | default: post.location | split: "," | last | strip }}"
            data-week="{{ gallery_week | escape }}" data-week-number="{{ gallery_week_number | escape }}">
