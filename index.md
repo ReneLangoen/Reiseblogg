@@ -24,7 +24,7 @@ title: Hjem
         <div class="post-card-content">
           <p class="meta">{{ post.date | date: "%b %-d, %Y" }}{% if post.location %} · {{ post.location }}{% endif %}</p>
           <h3>{{ post.title }}</h3>
-          <p>{{ post.description | default: post.excerpt | strip_html | truncate: 150 }}</p>
+          <p>{% if post.description %}{{ post.description | strip_html }}{% else %}{{ post.excerpt | strip_html | truncate: 150 }}{% endif %}</p>
           <div class="tags">
             {% for tag in post.tags %}<span>{{ tag }}</span>{% endfor %}
           </div>

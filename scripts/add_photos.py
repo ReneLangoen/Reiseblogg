@@ -6,7 +6,7 @@ import re
 import shutil
 import subprocess
 import unicodedata
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 from pathlib import Path
 from typing import Optional
 
@@ -97,21 +97,12 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
     capture_times = {}
     added = []
     captions_updated = 0
-    for path in sorted(
-        folder.iterdir(),
-        key=lambda item: (
-            (capture_datetime(item) or datetime.min)
-            if item.is_file() and item.suffix.lower() in IMAGE_EXTENSIONS
-            else datetime.min,
-            item.name.casefold(),
-        ),
-        reverse=True,
-    ):
-        if not path.is_file() or path.suffix.lower() not in IMAGE_EXTENSIONS:
-            continue
+    paths = [path for path in folder.iterdir() if path.is_file() and path.suffix.lower() in IMAGE_EXTENSIONS]
+    dates = {path: capture_datetime(path) for path in paths}
+    for path in sorted(paths, key=lambda item: (dates[item] or datetime.max, item.name.casefold())):
         ensure_preview(path)
         source = "/" + quote(path.resolve().relative_to(REPOSITORY_ROOT).as_posix(), safe="/:@-._~")
-        capture_times[source] = capture_datetime(path) or datetime.min
+        capture_times[source] = dates[path]
         if source in existing_sources:
             existing_image = existing_images.get(source)
             if existing_image and not existing_image.get("caption"):
@@ -140,12 +131,24 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
         return 0, 0, False
 
     images.extend(added)
+    for image in images:
+        source = image.get("src")
+        if not source or source in capture_times:
+            continue
+        path = (REPOSITORY_ROOT / unquote(source).lstrip("/")).resolve()
+        if source.startswith("/") and path.is_relative_to(REPOSITORY_ROOT) and path.is_file():
+            capture_times[source] = capture_datetime(path)
+        else:
+            print(f"Warning: cannot read capture time for {source}; placing it last.")
+            capture_times[source] = None
+    missing_times = [source for source, value in capture_times.items() if value is None]
+    if missing_times:
+        print(f"Warning: {len(missing_times)} photo(s) have no capture time; placing them last.")
     images.sort(
         key=lambda image: (
-            capture_times.get(image.get("src"), datetime.min),
+            capture_times.get(image.get("src")) or datetime.max,
             image.get("src") or "",
         ),
-        reverse=True,
     )
     new_images = image_block(images)
     images_match = re.search(

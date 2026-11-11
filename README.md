@@ -54,16 +54,16 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
   python3 scripts/add_photos.py _posts/2026-09-25-uke_1_bangkok.md pictures/week-1 Bangkok Thailand
   ```
 
-  Bildene sorteres etter opptakstidspunkt fra EXIF-metadata, med nyeste bilde øverst.
+  Bildene sorteres etter opptakstidspunkt fra EXIF-metadata, med eldste bilde øverst.
+  Bilder uten lesbart opptakstidspunkt legges til slutt med en advarsel.
   Filnavnet brukes som `id`, bildeteksten blir tom, og by/land hentes fra de siste
   argumentene. Kommandoen krever `exiftool`, er trygg å kjøre flere ganger og legger bare
   til nye filer. På macOS lager den også små JPEG-forhåndsvisninger med `sips` i
-  `gallery-previews/`, uten å endre originalene. Galleriet bruker disse i oversikten
-  og laster originalen når bildet åpnes. Legg forhåndsvisningene i git sammen med
-  originalene, slik at GitHub Pages kan publisere dem.
-  Galleriet laster først alle forhåndsvisningene som passer de valgte filtrene, og
-  deretter originalene i bakgrunnen (to om gangen). Velger man «Alle uker», kan
-  dette bruke mye mobildata; nettleseren kan også fjerne bilder fra mellomlageret.
+  `gallery-previews/`, uten å endre originalene. Galleriet viser først
+  forhåndsvisningene som passer de valgte filtrene, og laster deretter originalene
+  med nettleserens vanlige bildeinnlasting. Originalen lastes også når et bilde
+  åpnes. Legg forhåndsvisningene i git sammen med originalene, slik at GitHub Pages
+  kan publisere dem. Velger man «Alle uker», kan dette bruke mye mobildata.
 
   For å lage eller oppdatere forhåndsvisninger uten å endre innleggene:
 

@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     : (weeks.length ? weeks[weeks.length - 1].label : '');
   const ALL = '__all__';
   let availableWeekLabels = new Set();
-  let preloadController = null;
+  let loadingController = null;
   const allButton = document.createElement('button');
   allButton.type = 'button';
   allButton.className = 'gallery-week-button gallery-week-button--all';
@@ -124,13 +124,16 @@ document.addEventListener('DOMContentLoaded', () => {
     figures.forEach(fig => {
       const img = fig.querySelector('img');
       if (matchesFilters(fig)) {
-        img.loading = 'eager';
-        if (!img.getAttribute('src')) img.setAttribute('src', img.dataset.src);
+        if (!img.getAttribute('src')) {
+          img.loading = 'eager';
+          img.setAttribute('src', img.dataset.src);
+        }
       } else {
         img.removeAttribute('src');
       }
     });
     applySortAndFilter();
+    loadOriginals(figures.filter(matchesFilters));
   }
 
   weekControls.addEventListener('click', event => {
@@ -201,15 +204,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function preloadOriginals(visible) {
-    if (preloadController) preloadController.abort();
+  function loadOriginals(visible) {
+    if (loadingController) loadingController.abort();
     const controller = new AbortController();
-    preloadController = controller;
+    loadingController = controller;
     const { signal } = controller;
     const images = visible.map(fig => fig.querySelector('img'));
 
     function waitForPreview(img) {
-      if (img.complete) return Promise.resolve();
+      if (img.getAttribute('src') !== img.dataset.src || img.complete) return Promise.resolve();
       return new Promise(resolve => {
         const finish = () => {
           img.removeEventListener('load', finish);
@@ -224,22 +227,25 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    Promise.all(images.map(waitForPreview)).then(async () => {
-      const urls = Array.from(new Set(images.map(img => img.dataset.large).filter(Boolean)));
-      let next = 0;
-      async function loadNext() {
-        while (!signal.aborted && next < urls.length) {
-          const url = urls[next++];
-          try {
-            const response = await fetch(url, { signal, priority: 'low' });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            await response.blob();
-          } catch (error) {
-            if (!signal.aborted) console.warn('Gallery original preload failed:', url, error);
-          }
-        }
-      }
-      await Promise.all([loadNext(), loadNext()]);
+    Promise.all(images.map(waitForPreview)).then(() => {
+      if (signal.aborted) return;
+      images.forEach(img => {
+        const url = img.dataset.large;
+        if (!url || img.getAttribute('src') === url) return;
+
+        const original = new Image();
+        const abort = () => original.removeAttribute('src');
+        signal.addEventListener('abort', abort, { once: true });
+        original.onload = () => {
+          signal.removeEventListener('abort', abort);
+          if (!signal.aborted) img.setAttribute('src', url);
+        };
+        original.onerror = () => {
+          signal.removeEventListener('abort', abort);
+          if (!signal.aborted) console.warn('Gallery original failed to load:', url);
+        };
+        original.src = url;
+      });
     });
   }
 
@@ -257,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
       visible.forEach(fig => { fig.style.display = 'block'; });
       hidden.forEach(fig => { fig.style.display = 'none'; });
       updateSectionVisibility();
-      preloadOriginals(visible);
       return;
     }
 
@@ -282,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
       });
       updateSectionVisibility();
-      preloadOriginals(visible);
       return;
     }
 
@@ -297,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
       mergedGrid.appendChild(fig);
       fig.style.display = 'none';
     });
-    preloadOriginals(visible);
   }
 
   countrySel.addEventListener('change', () => {

@@ -6,7 +6,7 @@ permalink: /galleri/
 
 # Galleri
 
-Bilder fra reisen, gruppert etter uke og sortert med nyeste bilder øverst. Sortering kan endres med nedtrekksmenyen under. 
+Bilder fra reisen, gruppert etter uke og sortert med eldste bilder øverst. Sortering kan endres med nedtrekksmenyen under.
 
 <link rel="stylesheet" href="{{ '/assets/css/gallery-filter.css' | relative_url }}">
 <div class="gallery-week-controls" id="gf-weeks" aria-label="Velg uke">
@@ -19,7 +19,7 @@ Bilder fra reisen, gruppert etter uke og sortert med nyeste bilder øverst. Sort
 </div>
 <script src="{{ '/assets/js/gallery-filter.js' | relative_url }}" defer></script>
 
-{% assign posts_with_images = site.posts | where_exp: "post", "post.images" %}
+{% assign posts_with_images = site.posts | where_exp: "post", "post.images" | reverse %}
 {% for post in posts_with_images %}
 {% assign gallery_week = post.week_label | default: post.title %}
 {% assign gallery_week_number = gallery_week | remove_first: "Uke " | split: ":" | first | strip %}
