@@ -243,15 +243,9 @@ images:
     country: "Norge"
 
 
-  - id: avreise
-    src: "/pictures/week-1/avreise.jpeg"
-    caption: "Avreise Flesland"
-    city: "Bergen"
-    country: "Norge"
 
 
-
-hero_image: avreise
+hero_image: som-hjemme
 ---
 
 

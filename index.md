@@ -5,7 +5,7 @@ title: Hjem
 
 <section class="post-list">
 
-  {% for post in site.posts limit:6 %}
+  {% for post in site.posts %}
     <article class="post-card">
       <a class="post-card-link" href="{{ post.url | relative_url }}">
         {% assign hero_id = post.hero_image | default: post.images.first.id %}
