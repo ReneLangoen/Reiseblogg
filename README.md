@@ -61,6 +61,9 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
   `gallery-previews/`, uten å endre originalene. Galleriet bruker disse i oversikten
   og laster originalen når bildet åpnes. Legg forhåndsvisningene i git sammen med
   originalene, slik at GitHub Pages kan publisere dem.
+  Galleriet laster først alle forhåndsvisningene som passer de valgte filtrene, og
+  deretter originalene i bakgrunnen (to om gangen). Velger man «Alle uker», kan
+  dette bruke mye mobildata; nettleseren kan også fjerne bilder fra mellomlageret.
 
   For å lage eller oppdatere forhåndsvisninger uten å endre innleggene:
 

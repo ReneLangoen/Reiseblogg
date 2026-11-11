@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     : (weeks.length ? weeks[weeks.length - 1].label : '');
   const ALL = '__all__';
   let availableWeekLabels = new Set();
+  let preloadController = null;
   const allButton = document.createElement('button');
   allButton.type = 'button';
   allButton.className = 'gallery-week-button gallery-week-button--all';
@@ -122,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     figures.forEach(fig => {
       const img = fig.querySelector('img');
-      if (selectedWeek && (selectedWeek === ALL || img.dataset.week === selectedWeek)) {
+      if (matchesFilters(fig)) {
+        img.loading = 'eager';
         if (!img.getAttribute('src')) img.setAttribute('src', img.dataset.src);
       } else {
         img.removeAttribute('src');
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (button) setSelectedWeek(button.dataset.week);
   });
   document.addEventListener('gallery:select-week', event => {
-    if (selectedWeek === ALL) return;
+    if (selectedWeek === ALL || selectedWeek === event.detail.week) return;
     setSelectedWeek(event.detail.week);
   });
 
@@ -199,6 +201,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function preloadOriginals(visible) {
+    if (preloadController) preloadController.abort();
+    const controller = new AbortController();
+    preloadController = controller;
+    const { signal } = controller;
+    const images = visible.map(fig => fig.querySelector('img'));
+
+    function waitForPreview(img) {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        const finish = () => {
+          img.removeEventListener('load', finish);
+          img.removeEventListener('error', finish);
+          signal.removeEventListener('abort', finish);
+          resolve();
+        };
+        img.addEventListener('load', finish);
+        img.addEventListener('error', finish);
+        signal.addEventListener('abort', finish, { once: true });
+        if (img.complete || signal.aborted) finish();
+      });
+    }
+
+    Promise.all(images.map(waitForPreview)).then(async () => {
+      const urls = Array.from(new Set(images.map(img => img.dataset.large).filter(Boolean)));
+      let next = 0;
+      async function loadNext() {
+        while (!signal.aborted && next < urls.length) {
+          const url = urls[next++];
+          try {
+            const response = await fetch(url, { signal, priority: 'low' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            await response.blob();
+          } catch (error) {
+            if (!signal.aborted) console.warn('Gallery original preload failed:', url, error);
+          }
+        }
+      }
+      await Promise.all([loadNext(), loadNext()]);
+    });
+  }
+
   function applySortAndFilter() {
     const key = sortSel.value || 'original';
     const visible = figures.filter(matchesFilters).sort((a, b) => compareFigures(a, b, key));
@@ -213,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
       visible.forEach(fig => { fig.style.display = 'block'; });
       hidden.forEach(fig => { fig.style.display = 'none'; });
       updateSectionVisibility();
+      preloadOriginals(visible);
       return;
     }
 
@@ -237,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
       });
       updateSectionVisibility();
+      preloadOriginals(visible);
       return;
     }
 
@@ -251,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mergedGrid.appendChild(fig);
       fig.style.display = 'none';
     });
+    preloadOriginals(visible);
   }
 
   countrySel.addEventListener('change', () => {
