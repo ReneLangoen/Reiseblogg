@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <button class="lb-close" aria-label="Lukk">×</button>
     <button class="lb-prev" aria-label="Forrige">‹</button>
     <div class="lb-frame">
-      <img class="lb-image" src="" alt="" draggable="false">
+      <div class="lb-image-area">
+        <img class="lb-image" src="" alt="" draggable="false">
+      </div>
       <div class="lb-caption"></div>
       <div class="lb-metadata"></div>
       <div class="lb-zoom-controls" aria-label="Zoomkontroller">
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.appendChild(overlay);
 
   const lbImage = overlay.querySelector('.lb-image');
+  const imageArea = overlay.querySelector('.lb-image-area');
   const lbCaption = overlay.querySelector('.lb-caption');
   const btnClose = overlay.querySelector('.lb-close');
   const btnPrev = overlay.querySelector('.lb-prev');
@@ -59,6 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
     btnZoomOut.disabled = zoom <= minZoom;
     btnZoomIn.disabled = zoom >= maxZoom;
   }
+
+  function resizeImage() {
+    if (!lbImage.naturalWidth || !lbImage.naturalHeight) return;
+    const scale = Math.min(
+      imageArea.clientWidth / lbImage.naturalWidth,
+      imageArea.clientHeight / lbImage.naturalHeight
+    );
+    lbImage.style.width = `${lbImage.naturalWidth * scale}px`;
+    lbImage.style.height = `${lbImage.naturalHeight * scale}px`;
+    updateZoom();
+  }
+
+  new ResizeObserver(resizeImage).observe(imageArea);
 
   function setZoom(nextZoom, centerX = 0, centerY = 0) {
     const newZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom));
@@ -176,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.clientX - (bounds.left + bounds.width / 2) + panX,
       event.clientY - (bounds.top + bounds.height / 2) + panY);
   }, { passive: false });
-  lbImage.addEventListener('load', updateZoom);
+  lbImage.addEventListener('load', resizeImage);
 
   lbImage.addEventListener('pointerdown', event => {
     if (zoom <= minZoom || event.button !== 0) return;
