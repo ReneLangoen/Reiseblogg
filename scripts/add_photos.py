@@ -12,16 +12,8 @@ from typing import Optional
 
 import yaml
 
+from gallery_previews import IMAGE_EXTENSIONS, ensure_preview
 
-IMAGE_EXTENSIONS = {
-    ".gif",
-    ".heic",
-    ".heif",
-    ".jpeg",
-    ".jpg",
-    ".png",
-    ".webp",
-}
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 
@@ -117,6 +109,7 @@ def update_images(post: Path, folder: Path, city: str, country: str) -> tuple[in
     ):
         if not path.is_file() or path.suffix.lower() not in IMAGE_EXTENSIONS:
             continue
+        ensure_preview(path)
         source = "/" + quote(path.resolve().relative_to(REPOSITORY_ROOT).as_posix(), safe="/:@-._~")
         capture_times[source] = capture_datetime(path) or datetime.min
         if source in existing_sources:

@@ -34,7 +34,7 @@ scripts/        Vedlikeholdsverktøy for innhold/kartdata (ikke del av nettstede
 _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og bygget)
 ```
 
-`scripts/` og `cache/` er lagt til i `exclude:` i `_config.yml` og havner derfor aldri i
+`scripts/`, `tests/` og `cache/` er lagt til i `exclude:` i `_config.yml` og havner derfor aldri i
 `_site/` eller på det publiserte nettstedet.
 
 ## Legge til et nytt ukesinnlegg
@@ -57,7 +57,19 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
   Bildene sorteres etter opptakstidspunkt fra EXIF-metadata, med nyeste bilde øverst.
   Filnavnet brukes som `id`, bildeteksten blir tom, og by/land hentes fra de siste
   argumentene. Kommandoen krever `exiftool`, er trygg å kjøre flere ganger og legger bare
-  til nye filer.
+  til nye filer. På macOS lager den også små JPEG-forhåndsvisninger med `sips` i
+  `gallery-previews/`, uten å endre originalene. Galleriet bruker disse i oversikten
+  og laster originalen når bildet åpnes. Legg forhåndsvisningene i git sammen med
+  originalene, slik at GitHub Pages kan publisere dem.
+
+  For å lage eller oppdatere forhåndsvisninger uten å endre innleggene:
+
+  ```bash
+  python3 scripts/gallery_previews.py pictures/week-*
+  ```
+
+  Kommandoen oppdaterer forhåndsvisninger når originalen er nyere; bruk `--force` for å
+  lage alle på nytt. Hvis en forhåndsvisning mangler, viser galleriet originalen i stedet.
 3. Legg til lokasjon og rute i `_data/map.yml`, se under.
 
 Emoji kan skrives med GitHub-syntaks i innlegg, for eksempel `:disappointed:`.
@@ -97,4 +109,3 @@ abonnentlisten er et lokalt verktøy som ikke er en del av dette repoet — se
 - Ugyldig `_data/map.yml`: sjekk at `lat`/`lng` er tall og at YAML-strukturen er gyldig.
 - 403/429 fra Nominatim: sett `NOMINATIM_EMAIL` og unngå hyppige forespørsler.
 - Liquid-feil ved bygg: `bundle exec jekyll build --trace` gir full stacktrace.
-

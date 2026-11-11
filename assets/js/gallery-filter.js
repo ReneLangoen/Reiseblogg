@@ -28,6 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
     fig.setAttribute('data-original-index', i);
     fig._originalGrid = fig.parentElement;
     fig._originalSection = fig.closest('.gallery-week');
+    const img = fig.querySelector('img');
+    img.addEventListener('error', () => {
+      if (img.getAttribute('src') === img.dataset.src && img.dataset.src !== img.dataset.large) {
+        console.warn('Gallery preview failed to load; using original:', img.dataset.src);
+        img.setAttribute('src', img.dataset.large);
+      }
+    });
   });
 
   // collect unique values
