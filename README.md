@@ -98,6 +98,22 @@ geokodingsoppslag mot OpenStreetMap Nominatim identifiserer seg riktig.
 ruter. `scripts/compute_train_distance.py` estimerer togavstand via OSM-jernbanedata
 (krever `osmnx`).
 
+Tog-, bil- og bussruter lagres i `_data/route_paths.yml` når de legges til.
+Bil og buss bruker kjøreruter fra OSRM; disse er estimater, ikke nødvendigvis den
+faktiske reiseruten. Bil- og bussruter lagres separat for hver kjøreretning.
+Fly- og båtruter tegnes lokalt som geodetiske linjer når ingen egne rutepunkter er
+angitt. Kartet kontakter ikke en rutetjeneste ved visning, men selve kartlaget
+krever fortsatt nett.
+
+For å hente manglende bil- og bussruter på nytt (krever nett):
+
+```bash
+python3 scripts/cache_road_routes.py
+```
+
+Kommandoen beholder lagrede avstander og ruter, og rapporterer eventuelle feil.
+Legg både `_data/map.yml` og `_data/route_paths.yml` i git etter endringer.
+
 ## Nyhetsbrev
 
 Påmeldingsskjemaet i footeren sender til en ekstern endpoint. Synkronisering mot

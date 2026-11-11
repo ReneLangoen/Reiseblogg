@@ -14,6 +14,7 @@ import urllib.parse
 import urllib.request
 import json
 import re
+import subprocess
 from pathlib import Path
 import urllib.error
 
@@ -437,6 +438,32 @@ def _is_road_mode(mode: str) -> bool:
     return any(kind in mode_l for kind in ("bil", "car", "bus"))
 
 
+def road_route(origin, destination):
+    """Fetch OSRM driving distance and ordered [latitude, longitude] geometry."""
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    url = f"https://router.project-osrm.org/route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=full&geometries=geojson"
+    req = urllib.request.Request(url, headers={"User-Agent": f"add_location/1.0 ({CONTACT_EMAIL})"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.URLError as error:
+        if "SSL" not in str(error):
+            raise
+        out = subprocess.run(
+            ["curl", "-sS", "--fail", "--max-time", "25", "-A", f"add_location/1.0 ({CONTACT_EMAIL})", url],
+            capture_output=True, text=True, check=True,
+        )
+        data = json.loads(out.stdout)
+    if data.get("code") != "Ok" or not data.get("routes"):
+        raise ValueError(f"OSRM returned no route: {data.get('message', data.get('code'))}")
+    route = data["routes"][0]
+    coordinates = route.get("geometry", {}).get("coordinates", [])
+    if len(coordinates) < 2 or not isinstance(route.get("distance"), (int, float)):
+        raise ValueError("OSRM returned an invalid route geometry or distance")
+    return route["distance"] / 1000.0, [(float(lat), float(lon)) for lon, lat in coordinates]
+
+
 def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
     # returns distance in kilometers (float) or None when routing is unavailable
     coords_a = get_location_coords(from_id)
@@ -463,28 +490,13 @@ def compute_route_distance(from_id: str, to_id: str, mode: str) -> float | None:
             print(f"Train routing failed ({e})")
             return None
 
-    # Road modes use OSRM for distance.
+    # Cache geometry together with the distance so it can be saved on confirmation.
     if _is_road_mode(mode_l):
         try:
-            url = f"https://router.project-osrm.org/route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=false"
-            req = urllib.request.Request(url, headers={"User-Agent": f"add_location/1.0 ({CONTACT_EMAIL})"})
-            try:
-                with urllib.request.urlopen(req, timeout=10) as resp:
-                    data = json.loads(resp.read().decode('utf-8'))
-            except urllib.error.URLError as ue:
-                # Old LibreSSL builds of Python can fail the TLS handshake; retry with curl
-                if 'SSL' not in str(ue):
-                    raise
-                import subprocess
-                out = subprocess.run(
-                    ["curl", "-sS", "--fail", "--max-time", "15", "-A", f"add_location/1.0 ({CONTACT_EMAIL})", url],
-                    capture_output=True, text=True, check=True)
-                data = json.loads(out.stdout)
-            if data and data.get('routes'):
-                meters = data['routes'][0].get('distance')
-                if meters is not None:
-                    return float(meters) / 1000.0
-        except Exception as e:
+            distance, coords = road_route((lat1, lon1), (lat2, lon2))
+            _ROAD_PATH_CACHE[(from_id, to_id)] = coords
+            return distance
+        except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as e:
             print(f"OSRM routing failed ({e})")
         return None
 
@@ -542,13 +554,13 @@ def _simplify_path(points, tol=0.0002):
     return _simplify_path(points[: idx + 1], tol)[:-1] + _simplify_path(points[idx:], tol)
 
 
-def save_route_path(from_id: str, to_id: str, coords) -> None:
-    """Store route geometry in _data/route_paths.yml under the key 'from-to'."""
-    key = f"{from_id}-{to_id}"
+def save_route_path(from_id: str, to_id: str, coords, *, road: bool = False) -> None:
+    """Store route geometry in _data/route_paths.yml without overwriting existing paths."""
+    key = f"{'road--' if road else ''}{from_id}-{to_id}"
     if PATHS_FILE.exists():
         text = PATHS_FILE.read_text(encoding="utf-8")
     else:
-        text = "# Rutegeometri generert av scripts/add_route.py (ikke rediger manuelt).\n# Nøkkel: fra-til. Kartet bruker omvendt rekkefølge hvis bare til-fra finnes.\n"
+        text = "# Lagret rutegeometri; veikjøring bruker retningsbestemte road--fra-til-nøkler.\n"
     if re.search(rf"^{re.escape(key)}:", text, flags=re.M):
         return
     pts = _simplify_path([(float(a), float(b)) for a, b in coords])
@@ -557,6 +569,7 @@ def save_route_path(from_id: str, to_id: str, coords) -> None:
 
 
 _TRAIN_PATH_CACHE: dict = {}
+_ROAD_PATH_CACHE: dict = {}
 
 
 def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float | None = None, calculate_distance: bool = True) -> bool:
@@ -581,6 +594,7 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
         except Exception:
             dk_val = None
     mode_is_train = any(k in mode_str.lower() for k in ('tog', 'train'))
+    mode_is_road = _is_road_mode(mode_str)
     if mode_is_train:
         route_path = _TRAIN_PATH_CACHE.get((from_id, to_id))
         if route_path is None and dk_val is not None:
@@ -613,8 +627,21 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             if dk_val is None:
                 # attempt to compute using existing helper (OSRM or haversine)
                 dk_val = compute_route_distance(from_id, to_id, mode_str)
+                if mode_is_road:
+                    route_path = _ROAD_PATH_CACHE.get((from_id, to_id))
         except Exception:
             dk_val = None
+    if mode_is_road and route_path is None:
+        route_path = _ROAD_PATH_CACHE.get((from_id, to_id))
+        if route_path is None and dk_val is not None:
+            ca, cb = get_location_coords(from_id), get_location_coords(to_id)
+            if ca and cb:
+                try:
+                    _, route_path = road_route(ca, cb)
+                except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as e:
+                    print(f"Could not fetch road geometry ({e})")
+        if route_path is None:
+            print(f"Warning: no road geometry for {from_id} -> {to_id}; run scripts/cache_road_routes.py to retry.")
 
     route_block = f"  - from: {from_id}\n    to: {to_id}\n    mode: \"{mode_display}\"\n"
     if dk_val is not None:
@@ -624,7 +651,7 @@ def append_route(from_id: str, to_id: str, mode: str = "Fly", distance_km: float
             pass
     route_block += "\n"
     if route_path and not DRY_RUN:
-        save_route_path(from_id, to_id, route_path)
+        save_route_path(from_id, to_id, route_path, road=mode_is_road)
     if routes_match:
         m_comment = re.search(r"^# .*$", text[routes_match.end():], flags=re.M)
         end_idx = routes_match.end() + m_comment.start() if m_comment else len(text)

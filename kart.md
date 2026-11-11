@@ -51,11 +51,7 @@ permalink: /kart/
       Buss: '#ff7f00',
       Båt: '#6a3d9a'
     };
-    const isRoadMode = mode => {
-      const normalized = String(mode || '').toLowerCase();
-      return normalized.includes('bil') || normalized.includes('car') ||
-        normalized.includes('bus');
-    };
+    const isRoadMode = mode => /bil|car|bus/i.test(String(mode || ''));
 
     const openFreeMapLayer = L.maplibreGL({
       style: 'https://tiles.openfreemap.org/styles/liberty'
@@ -161,8 +157,8 @@ permalink: /kart/
       return R * c;
     }
 
-    // render routes; for car routes without explicit points we fetch a driving route from OSRM
-    async function renderRoute(route) {
+    // Render routes from stored geometry or locally calculated great-circle paths.
+    function renderRoute(route) {
       const from = locationById[route.from];
       const to = locationById[route.to];
       if (!from || !to) return;
@@ -180,11 +176,12 @@ permalink: /kart/
         linePoints = part1.concat(part2.slice(1));
       }
 
-      // geometry stored separately in _data/route_paths.yml (key from-to, or reversed to-from)
+      // Road paths are directional; legacy train paths can be reversed.
       if (!linePoints && !(route.points && route.points.length)) {
         const paths = window.mapData.routePaths || {};
-        const direct = paths[`${route.from}-${route.to}`];
-        const rev = paths[`${route.to}-${route.from}`];
+        const road = isRoadMode(route.mode);
+        const direct = paths[`${road ? 'road--' : ''}${route.from}-${route.to}`];
+        const rev = road ? null : paths[`${route.to}-${route.from}`];
         if (direct && direct.length) linePoints = direct.map(p => [p[0], p[1]]);
         else if (rev && rev.length) linePoints = rev.map(p => [p[0], p[1]]).reverse();
       }
@@ -192,29 +189,13 @@ permalink: /kart/
       // prefer explicit points if provided
       if (!linePoints && route.points && Array.isArray(route.points) && route.points.length) {
         linePoints = route.points.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
-      } else if (!linePoints && isRoadMode(route.mode)) {
-        // fetch road route from OSRM between from and to
-        try {
-          const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
-          const resp = await fetch(url);
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data && data.routes && data.routes.length) {
-              const geom = data.routes[0].geometry;
-              if (geom && Array.isArray(geom.coordinates) && geom.coordinates.length) {
-                linePoints = geom.coordinates.map(c => [c[1], c[0]]); // convert [lon,lat] to [lat,lon]
-                // OSRM returns distance in meters
-                routeDist = (typeof route.distance_km === 'number' && isFinite(route.distance_km)) ? route.distance_km : (data.routes[0].distance / 1000);
-              }
-            }
-          }
-        } catch (e) {
-          console.warn('OSRM routing failed, falling back to great-circle', e);
-        }
       }
 
       // fallback: geodesic interpolation
       if (!linePoints) {
+        if (isRoadMode(route.mode)) {
+          console.warn(`Missing stored road geometry for ${route.from} -> ${route.to}; using a great-circle line.`);
+        }
         linePoints = interpolateGreatCircle(from.lat, from.lng, to.lat, to.lng);
       }
 
@@ -342,15 +323,11 @@ permalink: /kart/
 <script>
   (function () {
     // compute stats once DOM and data available
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', () => {
       try {
         const locations = window.mapData && window.mapData.locations ? window.mapData.locations : [];
         const routes = window.mapData && window.mapData.routes ? window.mapData.routes : [];
-        const isRoadMode = mode => {
-          const normalized = String(mode || '').toLowerCase();
-          return normalized.includes('bil') || normalized.includes('car') ||
-            normalized.includes('bus');
-        };
+        const isRoadMode = mode => /bil|car|bus/i.test(String(mode || ''));
 
         function haversine(lat1, lon1, lat2, lon2) {
           const R = 6371; // km
@@ -362,30 +339,14 @@ permalink: /kart/
           return R * c;
         }
 
-        async function fetchOsrmDistance(from, to) {
-          try {
-            const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=false`;
-            const resp = await fetch(url);
-            if (!resp.ok) return null;
-            const data = await resp.json();
-            if (data && data.routes && data.routes.length) {
-              return data.routes[0].distance / 1000;
-            }
-          } catch (e) {
-            console.warn('OSRM distance fetch failed', e);
-          }
-          return null;
-        }
-
         const summary = {};
         // Exclude the first location (home) from city/country counts
         const countedLocations = locations.slice(1);
         summary.cities = Math.max(0, countedLocations.length);
         summary.routes = routes.length;
 
-        // distance metrics over routes — we may need to asynchronously fetch OSRM distances for driving legs
+        // Distance metrics use saved distances or locally available geometry.
         const distances = [];
-        const pending = [];
         routes.forEach(r => {
           const from = locations.find(l => l.id === r.from);
           const to = locations.find(l => l.id === r.to);
@@ -403,30 +364,25 @@ permalink: /kart/
             distances.push({ d: d1 + d2, from: r.from, to: r.to, mode: r.mode });
             return;
           }
-          // if route.points exist, sum along them
-          if (r.points && Array.isArray(r.points) && r.points.length) {
-            const pts = r.points.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
+          const paths = window.mapData.routePaths || {};
+          const road = isRoadMode(r.mode);
+          const stored = paths[`${road ? 'road--' : ''}${r.from}-${r.to}`] ||
+            (!road && paths[`${r.to}-${r.from}`]);
+          const geometry = r.points && r.points.length ? r.points : stored;
+          if (geometry && Array.isArray(geometry) && geometry.length) {
+            const pts = geometry.map(p => Array.isArray(p) ? [p[0], p[1]] : [p.lat, p.lng]);
             let s = 0;
             for (let i = 1; i < pts.length; i++) s += haversine(pts[i-1][0], pts[i-1][1], pts[i][0], pts[i][1]);
             distances.push({ d: s, from: r.from, to: r.to, mode: r.mode });
             return;
           }
-          // For road modes without explicit distance, fetch OSRM distance asynchronously
-          if (isRoadMode(r.mode)) {
-            const p = fetchOsrmDistance(from, to).then(d => {
-              const val = (d !== null) ? d : haversine(from.lat, from.lng, to.lat, to.lng);
-              distances.push({ d: val, from: r.from, to: r.to, mode: r.mode });
-            });
-            pending.push(p);
-            return;
+          if (road) {
+            console.warn(`Missing stored road geometry and distance for ${r.from} -> ${r.to}; using straight-line distance.`);
           }
           // fallback: straight haversine between endpoints
           const d = haversine(from.lat, from.lng, to.lat, to.lng);
           distances.push({ d, from: r.from, to: r.to, mode: r.mode });
         });
-
-        // wait for any pending OSRM fetches
-        if (pending.length) await Promise.all(pending);
 
         const totalDistance = distances.reduce((s, x) => s + x.d, 0);
         summary.totalDistanceKm = totalDistance;
@@ -474,6 +430,7 @@ permalink: /kart/
         const el = document.getElementById('statsSummary');
         const nbFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 0 });
         const nauticalMileFmt = new Intl.NumberFormat('nb-NO', { maximumFractionDigits: 1 });
+        const earthCircumferenceFmt = new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const nf = v => typeof v === 'number' ? nbFmt.format(Math.round(v)) : v;
         const antalLand = summary.estimatedCountries;
         const antalByer = summary.cities;
@@ -505,7 +462,7 @@ permalink: /kart/
             pairs.push([`Distanse ${m}`, `${nf(modeSums[m])} km`]);
           }
         });
-        pairs.push(['Total distanse', `${nf(distanseReist)} km`]);
+        pairs.push(['Total distanse', `${nf(distanseReist)} km = ${earthCircumferenceFmt.format(distanseReist / 40075)} ganger rundt jorden`]);
 
         let html = `<table>`;
         for (let i = 0; i < pairs.length; i += 2) {
