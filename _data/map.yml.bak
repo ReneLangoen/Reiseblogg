@@ -294,14 +294,14 @@ locations:
     lng: 126.7092
 
   - id: incheon
-    label: Incheon Airport T1
+    label: Incheon
     weeks: [8]
     country: Sør-Korea
     lat: 37.44738
     lng: 126.45264
 
   - id: phu-quoc
-    label: Phu Quoc
+    label: Phú Quốc
     weeks: [8]
     country: Vietnam
     lat: 10.1727
@@ -575,3 +575,10 @@ routes:
     to: seoul
     mode: "Buss"
     distance_km: 60.3
+
+
+  - from: incheon
+    to: phu-quoc
+    mode: "Fly"
+    distance_km: 3774.9
+

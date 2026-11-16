@@ -190,6 +190,13 @@ locations:
     lat: 34.6793
     lng: 135.1783
 
+  - id: himeji
+    label: Himeji
+    weeks: [5]
+    country: Japan
+    lat: 34.8154
+    lng: 134.6855
+
   - id: hiroshima
     label: Hiroshima
     weeks: [5]
@@ -306,6 +313,8 @@ locations:
     country: Vietnam
     lat: 10.1727
     lng: 103.9922
+
+
 
 
 
