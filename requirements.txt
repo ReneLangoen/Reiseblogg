@@ -1,5 +1,6 @@
 gspread
 PyYAML
+Pillow>=9.1
 osmnx
 networkx
 requests

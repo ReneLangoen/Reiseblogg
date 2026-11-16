@@ -5,15 +5,20 @@ from datetime import datetime
 import re
 import shutil
 import subprocess
+import tempfile
 import unicodedata
 from urllib.parse import quote, unquote
 from pathlib import Path
 from typing import Optional
 
+from PIL import Image
 import yaml
 
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 IMAGE_EXTENSIONS = {".gif", ".heic", ".heif", ".jpeg", ".jpg", ".png", ".webp"}
+JPEG_EXTENSIONS = {".jpeg", ".jpg"}
+MAX_IMAGE_SIZE = 1920
+JPEG_QUALITY = 60
 
 
 def slugify(value: str) -> str:
@@ -54,6 +59,46 @@ def parse_front_matter(text: str) -> tuple[str, str]:
     if not match:
         raise ValueError("Post must start with YAML front matter delimited by ---")
     return match.group(1), text[match.end() :]
+
+
+def compress_jpeg_photos(folder: Path) -> tuple[int, int]:
+    compressed_count = 0
+    bytes_saved = 0
+    for path in list(folder.iterdir()):
+        if not path.is_file() or path.suffix.lower() not in JPEG_EXTENSIONS:
+            continue
+
+        original_size = path.stat().st_size
+        original_mode = path.stat().st_mode
+        with Image.open(path) as image:
+            image.thumbnail(
+                (MAX_IMAGE_SIZE, MAX_IMAGE_SIZE),
+                Image.Resampling.LANCZOS,
+            )
+            options = {
+                "format": "JPEG",
+                "quality": JPEG_QUALITY,
+                "optimize": True,
+            }
+            if exif := image.info.get("exif"):
+                options["exif"] = exif
+            if icc_profile := image.info.get("icc_profile"):
+                options["icc_profile"] = icc_profile
+
+            with tempfile.NamedTemporaryFile(dir=folder, suffix=path.suffix) as temporary:
+                temporary_path = Path(temporary.name)
+            try:
+                image.convert("RGB").save(temporary_path, **options)
+                compressed_size = temporary_path.stat().st_size
+                if compressed_size < original_size:
+                    temporary_path.chmod(original_mode)
+                    temporary_path.replace(path)
+                    compressed_count += 1
+                    bytes_saved += original_size - compressed_size
+            finally:
+                temporary_path.unlink(missing_ok=True)
+
+    return compressed_count, bytes_saved
 
 
 def capture_datetime(path: Path) -> Optional[datetime]:
@@ -187,6 +232,12 @@ def main() -> None:
         parser.error(f"Post does not exist: {args.post}")
     if not args.folder.is_dir():
         parser.error(f"Photo folder does not exist: {args.folder}")
+
+    compressed, bytes_saved = compress_jpeg_photos(args.folder)
+    if compressed:
+        print(f"Compressed {compressed} JPEG photo(s), saving {bytes_saved:,} bytes")
+    else:
+        print("No JPEG photos needed compression")
 
     added, captions_updated, has_heic = update_images(
         args.post, args.folder, args.city, args.country

@@ -54,16 +54,17 @@ _private/       Lokale, ikke-versjonerte data og skript (holdes utenfor git og b
   python3 scripts/add_photos.py _posts/2026-09-25-uke_1_bangkok.md pictures/week-1 Bangkok Thailand
   ```
 
-  Bildene sorteres etter opptakstidspunkt fra EXIF-metadata, med eldste bilde øverst.
+  JPEG-bilder i mappen komprimeres til maks 1920 piksler på lengste side og
+  kvalitet 60; originalen erstattes bare hvis resultatet er mindre. Andre formater
+  endres ikke. Ta vare på originalene utenfor nettstedet. Bildene sorteres etter
+  opptakstidspunkt fra EXIF-metadata, med eldste bilde øverst.
   Bilder uten lesbart opptakstidspunkt legges til slutt med en advarsel.
   Filnavnet brukes som `id`, bildeteksten blir tom, og by/land hentes fra de siste
   argumentene. Kommandoen krever `exiftool`, er trygg å kjøre flere ganger og legger bare
   til nye filer. Galleriet og lysboksen bruker bildene direkte. Velger man «Alle
   uker», kan dette bruke mye mobildata.
 
-  Ukesbildene er komprimert til JPEG med maks 1920 piksler på lengste side og
-  kvalitet 60 der det ga mindre filer. Nye bilder må komprimeres separat for å
-  holde samme størrelsesnivå; ta vare på originalene utenfor nettstedet.
+  Skriptet krever `Pillow` for JPEG-komprimering og `exiftool` for sortering etter opptakstid.
 
 3. Legg til lokasjon og rute i `_data/map.yml`, se under.
 
