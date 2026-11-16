@@ -1,6 +1,6 @@
 ---
-title: "Uke 8: "
-description: ""
+title: "Uke 8: To vanedyr på tropeøy"
+description: "Etter å ha frosset i Seoul dro vi til Phú Quốc for å tine opp. Der ventet tropiske regnbyger, saltet iskaffe og en romkamerat som het Cuong og gikk på veggene. Mellom regnbygene badet vi, og en kveld ble vi sittende på stranda med nye reisekjente og se på ildshow."
 location: "Phú Quốc, Vietnam"
 tags: [uke 8, Vietnam, Phú Quốc, tropisk, øyliv]
 week_label: "Uke 8"
@@ -161,19 +161,23 @@ images:
     city: "Phú Quốc"
     country: "Vietnam"
 
-  - id: bitt
-    src: "/pictures/week-8/bitt.jpeg"
-    caption: "Bitt"
-    city: "Phú Quốc"
-    country: "Vietnam"
-
   - id: en-liten-konsultasjon-pa-sykehuset
     src: "/pictures/week-8/en_liten_konsultasjon_pa%CC%8A_sykehuset.jpeg"
     caption: "En liten konsultasjon på sykehuset"
     city: "Phú Quốc"
     country: "Vietnam"
 
+  - id: sjosnek
+    src: "/pictures/week-8/sjosnek.jpg"
+    caption: "Kanskje var det denne Hydrophis schistosus som bet Thea"
+    city: "Phú Quốc"
+    country: "Vietnam"
 
+  - id: krabbe
+    src: "/pictures/week-8/krabbe.jpg"
+    caption: "Men mer sannsynlig var det en spøkelseskrabbe"
+    city: "Phú Quốc"
+    country: "Vietnam"
 
   - id: punkteringene
     src: "/pictures/week-8/punkteringene.jpeg"
@@ -204,6 +208,23 @@ hero_image: ildspruteshow-pa-stranden
 ---
 
 
-## 
-{% include side-image.html id="levende-fisk-og-andre-sjoskapninger" %}
+## Opptining på resort
+{% include side-image.html id="fint-ved-bassenget" %}
+{% include side-image.html id="romkameraten-var-cuong" %}
 
+
+
+Fra Seoul fulgte vi med på værmelding i Sørøst-Asia som meldte regn i all overskuelig framtid. Vi satset dermed på at tropeøyen Phú Quốc ville by på sol og varme, selv om det var meldt regn og tordenvær. Det var og veldig billige flybilletter for å være en 6 timers flygning. Da vi landet ble vi møtt med like heftig regnvær som i Bangkok i uke 1. Men mellom bygene er det strålende sol, og vi har tilbrakt de første fire dagene på en avsidesliggende resort. Vi kommer til Phú Quốc som to bortskjemte nordmenn, altfor vant til at det meste rundt oss er kjent og forutsigbart. Vi trenger litt tid til å venne oss til tanken på slanger og til å dele hus med mygg, gekkoer og edderkopper. Gekkoene ser for øvrig ut til å ta det hele med større ro enn oss.
+
+## Tween houses Phú Quốc
+{% include side-image.html id="korridoren-pa-hotellet-er-en-botanisk-hage" %}
+
+Etter noen rolige dager på resort har vi flyttet oss til tettstedet Duong Dong for å oppleve litt mer av øya. Etter mye leting etter oppholdssted fant vi et lite søtt hotell med veldig gode anmeldelser til en rimelig penge. Stedet er en familieeid restaurant med 8 små utleierom i bakgården. Bakgården er innredet som en tropisk hage og gir en skikkelig idyllisk stemning. Familien består og av en rolig eldre hund, og to herlige pusekatter som vandrer fritt rundt. Vi er så glad at vi valgte dette herlige stedet. 
+
+Vi har brukt appen Nomad Table for å komme i kontakt med andre unge reisende på øya. Ene kvelden møttes vi på en bar med ildshow på stranden og vi tilbrakte kvelden sammen med en slovaker, en slovener, en brite, en skotte, en japaner og en filippiner. Godt og blandet. 
+
+## Et bitt i tåen
+
+{% include side-image.html id="en-liten-konsultasjon-pa-sykehuset" %}
+
+Vi har tilbrakt mesteparten av dagene på stranden med soling, bading og vannscooterkjøring. Men en dag ble idyllen brutt da Thea fikk et bitt i tåen da vi var uti og badet. Bittet hadde to røde merker, ca 5 mm fra hverandre, med små punkteringer i midten. Vi så ikke hva som bet, men det er en del som peker mot at det var en Hydrophis schistosus-slange, også kjent som en sjøslange. For å være føre var dro vi til sykehuset for å konsultere med lege. Heldigvis har ikke Thea vist symptomer på at bittet ga gift så vi slapp unna med skrekken denne gangen. Det er kanskje mer sannsynlig at det bare var en krabbe likevel, [se vitnekonfrontasjonsgalleriet her]({{ '/galleri/' | relative_url }}?week={{ page.week_label | url_encode }}).
