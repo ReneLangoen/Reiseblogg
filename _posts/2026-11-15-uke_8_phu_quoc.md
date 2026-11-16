@@ -84,8 +84,8 @@ images:
     country: "Vietnam"
 
   - id: vietnamesisk-kaffe-er-den-bestte-vi-noen-gang-har-smakt
-    src: "/pictures/week-8/Vietnamesisk_kaffe_er_den_beste_vi_noen_gang_har_smakt.jpeg"
-    caption: "Vietnamesisk kaffe er den bestte vi noen gang har smakt"
+    src: "/pictures/week-8/Vietnamesisk_kaffe_er_den_bestte_vi_noen_gang_har_smakt.jpeg"
+    caption: "Vietnamesisk kaffe er den beste vi noen gang har smakt"
     city: "Phú Quốc"
     country: "Vietnam"
 
@@ -167,6 +167,12 @@ images:
     city: "Phú Quốc"
     country: "Vietnam"
 
+  - id: punkteringene
+    src: "/pictures/week-8/punkteringene.jpeg"
+    caption: "Punkteringene"
+    city: "Phú Quốc"
+    country: "Vietnam"
+
   - id: sjosnek
     src: "/pictures/week-8/sjosnek.jpg"
     caption: "Kanskje var det denne Hydrophis schistosus som bet Thea"
@@ -179,11 +185,7 @@ images:
     city: "Phú Quốc"
     country: "Vietnam"
 
-  - id: punkteringene
-    src: "/pictures/week-8/punkteringene.jpeg"
-    caption: "Punkteringene"
-    city: "Phú Quốc"
-    country: "Vietnam"
+
 
   - id: vovven-bor-pa-hotellet
     src: "/pictures/week-8/vovven_bor_pa%CC%8A_hotellet.jpeg"
@@ -227,4 +229,4 @@ Vi har brukt appen Nomad Table for å komme i kontakt med andre unge reisende p�
 
 {% include side-image.html id="en-liten-konsultasjon-pa-sykehuset" %}
 
-Vi har tilbrakt mesteparten av dagene på stranden med soling, bading og vannscooterkjøring. Men en dag ble idyllen brutt da Thea fikk et bitt i tåen da vi var uti og badet. Bittet hadde to røde merker, ca 5 mm fra hverandre, med små punkteringer i midten. Vi så ikke hva som bet, men det er en del som peker mot at det var en Hydrophis schistosus-slange, også kjent som en sjøslange. For å være føre var dro vi til sykehuset for å konsultere med lege. Heldigvis har ikke Thea vist symptomer på at bittet ga gift så vi slapp unna med skrekken denne gangen. Det er kanskje mer sannsynlig at det bare var en krabbe likevel, [se vitnekonfrontasjonsgalleriet her]({{ '/galleri/' | relative_url }}?week={{ page.week_label | url_encode }}).
+Vi har tilbrakt mesteparten av dagene på stranden med soling, bading og vannscooterkjøring. Men en dag ble idyllen brutt da Thea fikk et bitt i tåen da vi var uti og badet. Bittet hadde to røde merker, ca 5 mm fra hverandre, med små punkteringer i midten. Vi så ikke hva som bet, men vi tenkte umiddelbart slange. Sjøslanger er jo en hyggelig del av marinelivet rundt Phú Quốc. For å være føre var dro vi til sykehuset for å konsultere med lege. Heldigvis har ikke Thea vist symptomer på at bittet ga gift så vi får aldri svar på om det var Hydrophis schistosus-slangen eller bare en liten spøkelseskrabbe med sin skarpe klo, [se vitnekonfrontasjonsgalleriet her]({{ '/galleri/' | relative_url }}?week={{ page.week_label | url_encode }}).
