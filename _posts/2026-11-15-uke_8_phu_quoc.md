@@ -79,7 +79,7 @@ images:
 
   - id: korridoren-pa-hotellet-er-en-botanisk-hage
     src: "/pictures/week-8/korridoren_pa%CC%8A_hotellet_er_en_botanisk_hage.jpeg"
-    caption: "Korridoren på andre hotellet er en botanisk hage"
+    caption: "Korridoren på Tween houses er en botanisk hage"
     city: "Phú Quốc"
     country: "Vietnam"
 
